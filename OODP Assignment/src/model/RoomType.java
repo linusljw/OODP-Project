@@ -5,11 +5,20 @@ import persistence.Entity;
 /**
  * Room Type is an {@link Entity} class that encapsulates the information of a Room Type.
  * @author Yijie
- *
  */
 public class RoomType extends Entity {
 	private String name;
 	private double price;
+	
+	/**
+	 * Default Constructor to create a new Room Type. 
+	 * @param name
+	 * @param price
+	 */
+	public RoomType(String name, double price) {
+		this.name = name;
+		this.price = price;
+	}
 	
 	/**
 	 * Gets the name
@@ -40,16 +49,6 @@ public class RoomType extends Entity {
 	 * @param price
 	 */
 	public void setPrice(double price) {
-		this.price = price;
-	}
-	
-	/**
-	 * Default Constructor to create a new Room Type. 
-	 * @param name
-	 * @param price
-	 */
-	public RoomType(String name, double price) {
-		this.name = name;
 		this.price = price;
 	}
 }
