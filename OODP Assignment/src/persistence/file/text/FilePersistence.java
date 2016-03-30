@@ -258,7 +258,7 @@ public class FilePersistence implements Persistence {
 	 * @throws Exception 
 	 */
 	private StringBuilder serialize(Class type, PersistAnnotation metadata, Object value, StringBuilder builder) throws Exception {
-		if(type.isPrimitive() || type.equals(String.class))
+		if(type.isPrimitive() || type.equals(String.class) || Enum.class.isAssignableFrom(type))
 			builder.append(value);
 		else if(Date.class.isAssignableFrom(type))
 			builder.append(((Date) value).getTime());
@@ -373,6 +373,8 @@ public class FilePersistence implements Persistence {
 			value = valueString.charAt(0);
 		else if(Date.class.isAssignableFrom(type))
 			value = new Date(Long.parseLong(valueString));
+		else if(Enum.class.isAssignableFrom(type))
+			value = Enum.valueOf(type, valueString);
 		else if(loadR) {
 			if(Entity.class.isAssignableFrom(type)) {
 				long id = Long.parseLong(valueString);
