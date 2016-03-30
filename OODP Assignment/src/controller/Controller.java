@@ -4,10 +4,10 @@ import java.util.List;
 import view.View;
 
 /**
- * Controller is an abstract base class for all controller classes.
+ * Controller is an interface representing a generic contract for all Controller classes.
  * @author YingHao
  */
-public abstract class Controller {
+public interface Controller {
 	
 	/**
 	 * Callback method to notify the {@link View} of the available options for this controller.

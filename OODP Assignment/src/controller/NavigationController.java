@@ -9,7 +9,7 @@ import view.View;
  * NavigationController implements Controller to control the navigation flow of views.
  * @author YingHao
  */
-public class NavigationController extends Controller {
+public class NavigationController implements Controller {
 	private final List<View> views;
 	
 	public NavigationController() {

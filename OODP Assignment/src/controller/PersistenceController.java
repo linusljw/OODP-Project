@@ -7,7 +7,7 @@ import view.View;
  * An abstract base class for all Controller classes that requires access to Persistence API.
  * @author YingHao
  */
-public abstract class PersistenceController extends Controller {
+public abstract class PersistenceController implements Controller {
 	private final Persistence persistence;
 	
 	/**
