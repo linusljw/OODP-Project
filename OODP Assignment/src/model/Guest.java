@@ -32,7 +32,7 @@ public class Guest extends Entity {
 	/**
 	 * Guest constructor.
 	 * @param identification - The unique identification number of this Guest.
-	 * @param country - The nationality of this Guest.
+	 * @param nationality - The nationality of this Guest.
 	 */
 	public Guest(String identification, String nationality) {
 		this.identification = identification;

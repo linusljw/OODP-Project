@@ -34,13 +34,13 @@ public abstract class View {
 	
 	/**
 	 * Displays the specified entity.
-	 * @param entity - The entity to be displayed.
+	 * @param object - The object to be displayed.
 	 */
 	public abstract void display(Object object);
 	
 	/**
 	 * Displays a list of entity.
-	 * @param entityList - The list of entity to be displayed.
+	 * @param objList - The list of objects to be displayed.
 	 */
 	public abstract void display(List<Object> objList);
 	

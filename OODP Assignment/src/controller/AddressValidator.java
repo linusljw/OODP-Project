@@ -10,7 +10,7 @@ import view.View;
 
 /**
  * AddressValidator is a auxiliary class for classes that wish to manipulate an Address
- * instance. It provides a single method {@link AddressValidator#update(View)} to update the provided Address instance. 
+ * instance. It provides a single method {@link AddressValidator#update(View, Address)} to update the provided Address instance. 
  * @author YingHao
  */
 public class AddressValidator {
@@ -23,7 +23,6 @@ public class AddressValidator {
 
 	/**
 	 * Updates the given address instance with user input from the view.
-	 * @param controller - The controller that requested for this method to be called.
 	 * @param view - A view interface that provides input/output.
 	 * @param address - The address instance to be updated.
 	 * @return A list of fields that are not valid.
