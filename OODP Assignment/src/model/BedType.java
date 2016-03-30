@@ -3,7 +3,6 @@ package model;
 /**
  * BedType is an enumeration that specifies the different type of beds.
  * @author yijie
- *
  */
 public enum BedType {
 	/**
