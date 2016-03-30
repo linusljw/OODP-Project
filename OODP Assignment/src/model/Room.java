@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Room is an {@link Entity} class that encapsulates information about a Room.
+ * Room is a {@link StatusEntity} class that encapsulates information about a Room.
  * @author Yijie
  */
 public class Room extends StatusEntity<RoomStatus> {
