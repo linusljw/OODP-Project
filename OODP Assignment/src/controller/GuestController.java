@@ -129,7 +129,7 @@ public class GuestController extends PersistenceController {
 	}
 	
 	/**
-	 * Search for a guest by name.
+	 * Displays search for a guest by name.
 	 * @param view - A view interface that provides input/output.
 	 * @throws Exception 
 	 */
