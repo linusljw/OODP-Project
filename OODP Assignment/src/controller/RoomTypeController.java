@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import model.RoomType;
-import persistence.Entity;
 import persistence.Persistence;
 import persistence.Predicate;
 import persistence.file.text.EntityIterator;
@@ -17,7 +16,7 @@ import view.View;
  * A controller responsible for managing RoomType entity.
  * @author Yijie
  */
-public class RoomTypeController extends PersistenceController {
+public class RoomTypeController extends PersistenceController implements SelectableController<RoomType> {
 	private final static String KEY_NAME = "room type name";
 	private final static String KEY_PRICE = "room price";
 	private final static String KEY_NAME_UPDATE = "name of room type to update";
@@ -47,9 +46,15 @@ public class RoomTypeController extends PersistenceController {
 			update(view);
 			break;
 		case 2:
-			//delete(view);
+			delete(view);
 			break;
 		}
+	}
+	
+	@Override
+	public RoomType select(View view) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	/**
@@ -97,6 +102,11 @@ public class RoomTypeController extends PersistenceController {
 		} while(!valid && !view.bailout());
 	}
 	
+	/**
+	 * Updates a RoomType
+	 * @param view - A view interface that provides input/output.
+	 * @throws Exception
+	 */
 	public void update(View view) throws Exception {
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
 		inputMap.put(KEY_NAME_UPDATE, null);
@@ -136,5 +146,9 @@ public class RoomTypeController extends PersistenceController {
 			}
 			
 		} while(!valid && !view.bailout());
+	}
+	
+	public void delete(View view) {
+		
 	}
 }
