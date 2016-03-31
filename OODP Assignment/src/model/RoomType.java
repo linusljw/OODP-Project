@@ -50,4 +50,11 @@ public class RoomType extends Entity {
 	public void setPrice(double price) {
 		this.price = price;
 	}
+	
+	@Override
+	public String toString() {
+		return super.toString() +
+				"Type: " + this.name + "\n" +
+				"Price: " + String.format("%.2f", this.price) + "\n";
+	}
 }

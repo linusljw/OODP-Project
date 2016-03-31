@@ -1,9 +1,14 @@
 package controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
+import model.MenuItem;
 import model.RoomType;
+import persistence.Entity;
 import persistence.Persistence;
 import persistence.Predicate;
 import persistence.file.text.EntityIterator;
@@ -74,10 +79,19 @@ public class RoomTypeController extends EntityController<RoomType> {
 		} while(!valid && !view.bailout());
 	}
 	
+	/**
+	 * Retrieves and displays all RoomType instances
+	 */
 	@Override
 	protected void retrieve(View view) throws Exception {
-		// TODO Auto-generated method stub
+		Persistence persistence = this.getPersistenceImpl();
 		
+		List entityList = new ArrayList();
+		Iterable<RoomType> roomTypes = persistence.search(null, RoomType.class, false);
+		for(Entity entity: roomTypes)
+			entityList.add(entity);
+		
+		view.display(entityList);
 	}
 	
 	/**
@@ -85,6 +99,8 @@ public class RoomTypeController extends EntityController<RoomType> {
 	 */
 	@Override
 	protected void update(View view) throws Exception {
+		retrieve(view);
+		
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
 		inputMap.put(KEY_NAME, null);
 		
@@ -114,7 +130,7 @@ public class RoomTypeController extends EntityController<RoomType> {
 					}
 				}
 				else {
-					view.message("Room Type does not exist. Please try again");;
+					view.message("Room Type does not exist. Please try again.");;
 				}
 				
 				roomTypes.close();
@@ -130,8 +146,11 @@ public class RoomTypeController extends EntityController<RoomType> {
 	 */
 	@Override
 	protected void delete(View view) throws Exception {
-		// TODO Auto-generated method stub
+		RoomType roomType = select(view);
 		
+		Persistence persistence = this.getPersistenceImpl();
+		if(roomType != null && persistence.delete(roomType, RoomType.class))
+			view.message("Room Type deleted successfully!");
 	}
 
 	/**
@@ -139,7 +158,34 @@ public class RoomTypeController extends EntityController<RoomType> {
 	 */
 	@Override
 	public RoomType select(View view) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		RoomType roomType = null;
+		
+		retrieve(view);
+		
+		Map<String, String> inputMap = new LinkedHashMap<String, String>();
+		inputMap.put(KEY_NAME, null);
+
+		Persistence persistence = this.getPersistenceImpl();
+		do {
+			view.input(inputMap);
+			
+			try {
+				EntityIterator<RoomType> roomTypes = (EntityIterator<RoomType>) persistence.search(new Predicate<RoomType>() {
+					@Override
+					public boolean test(RoomType item) {
+						return item.getName().toUpperCase().equals(inputMap.get(KEY_NAME).toUpperCase());
+					}
+				}, RoomType.class, false).iterator();
+				if(roomTypes.hasNext())
+					roomType = roomTypes.next();
+				else
+					view.message("Room Type does not exist. Please try again.");
+				roomTypes.close();
+			} catch(Exception e) {
+				view.error(Arrays.asList(KEY_NAME));
+			}
+		} while(roomType != null && !view.bailout());
+		
+		return roomType;
 	}
 }
