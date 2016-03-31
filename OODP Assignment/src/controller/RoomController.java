@@ -12,7 +12,7 @@ import view.View;
 
 /**
  * A controller responsible for managing Room entity. 
- * @author yijie
+ * @author Yijie
  */
 public class RoomController extends PersistenceController {
 	private final static String KEY_NUMBER = "room number";
@@ -37,10 +37,10 @@ public class RoomController extends PersistenceController {
 			create(view);
 			break;
 		case 1:
-			search(view);
+			//search(view);
 			break;
 		case 2:
-			update(view);
+			//update(view);
 			break;
 		}
 	}
@@ -61,10 +61,24 @@ public class RoomController extends PersistenceController {
 			view.input(inputMap);
 			
 			try {
-				Room room = new Room(inputMap.get(KEY_NUMBER));
-				room.setView(inputMap.get(KEY_VIEW));
-				room.setWifi(inputMap.get(KEY_WIFI));
-				room.setSmoking(inputMap.get(KEY_SMOKING));
+				char wifi = Character.toUpperCase(inputMap.get(KEY_WIFI).charAt(0));
+				try {
+					char smoking = Character.toUpperCase(inputMap.get(KEY_SMOKING).charAt(0));
+					Room room = new Room(inputMap.get(KEY_NUMBER));
+					room.setView(inputMap.get(KEY_VIEW));
+					if (wifi == 'Y' || wifi == 'T')
+						room.setWifi(true);
+					else if (wifi == 'F' || wifi == 'N')
+						room.setWifi(false);
+					if (smoking == 'Y' || smoking == 'T')
+						room.setSmoking(true);
+					else if (smoking == 'F' || smoking == 'N')
+						room.setSmoking(false);
+				} catch(IndexOutOfBoundsException e) {
+					view.error(Arrays.asList(KEY_SMOKING));
+				}
+			} catch (IndexOutOfBoundsException e) {
+				view.error(Arrays.asList(KEY_WIFI));
 			}
 		} while (!view.bailout());
 	}
