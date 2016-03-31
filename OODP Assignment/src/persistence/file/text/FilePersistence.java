@@ -103,6 +103,12 @@ public class FilePersistence implements Persistence {
 			if(stream != null)
 				stream.close();
 		}
+		
+		File dataDir = new File(this.configuration.getProperty(KEY_DATA_DIR));
+		File tmpDir = new File(this.configuration.getProperty(KEY_TMP_DIR));
+		
+		dataDir.mkdir();
+		tmpDir.mkdir();
 	}
 	
 	/**

@@ -58,6 +58,8 @@ public class MenuItemController extends PersistenceController implements Selecta
 	public MenuItem select(View view) throws Exception {
 		MenuItem item = null;
 		
+		retrieve(view);
+		
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
 		inputMap.put(KEY_ID, null);
 
@@ -148,7 +150,6 @@ public class MenuItemController extends PersistenceController implements Selecta
 	 * @throws Exception
 	 */
 	public void update(View view) throws Exception {
-		retrieve(view);
 		MenuItem item = select(view);
 		
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
@@ -184,7 +185,6 @@ public class MenuItemController extends PersistenceController implements Selecta
 	 * @throws Exception
 	 */
 	public void delete(View view) throws Exception {
-		retrieve(view);
 		MenuItem item = select(view);
 		
 		Persistence persistence = this.getPersistenceImpl();
