@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import model.RoomType;
-import persistence.Entity;
 import persistence.Persistence;
 import persistence.Predicate;
 import persistence.file.text.EntityIterator;
