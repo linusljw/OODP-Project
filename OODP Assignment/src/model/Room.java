@@ -33,13 +33,9 @@ public class Room extends StatusEntity<RoomStatus> {
 	 * @param type
 	 * @param bedType
 	 */
-	public Room(String number, String view, boolean wifi, boolean smoking, RoomType type, BedType bedType) {
+	public Room(String number) {
 		this.number = number;
-		this.view = view;
-		this.wifi = wifi;
-		this.smoking = smoking;
-		this.type = type;
-		this.bedType = bedType;
+		this.type = new RoomType();
 	}
 
 	/**
