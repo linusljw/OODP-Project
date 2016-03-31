@@ -11,7 +11,15 @@ public class RoomType extends Entity {
 	private double price;
 	
 	/**
-	 * Default Constructor to create a new Room Type. 
+	 * RoomType Constructor. For Persistence API Usage.
+	 */
+	protected RoomType() {
+		this.name = null;
+		this.price = 0;
+	}
+	
+	/**
+	 * RoomType Constructor
 	 * @param name
 	 * @param price
 	 */

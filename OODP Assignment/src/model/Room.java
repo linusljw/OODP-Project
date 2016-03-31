@@ -5,12 +5,24 @@ package model;
  * @author Yijie
  */
 public class Room extends StatusEntity<RoomStatus> {
-	private String number;
+	private final String number;
 	private String view;
 	private boolean wifi;
 	private boolean smoking;
 	private RoomType type;
 	private BedType bedType;
+	
+	/**
+	 * Room Constructor. For Persistence API Usage
+	 */
+	protected Room() {
+		this.number = null;
+		this.view = null;
+		this.wifi = false;
+		this.smoking = false;
+		this.type = null;
+		this.bedType = null;
+	}
 	
 	/**
 	 * Room Constructor
@@ -36,14 +48,6 @@ public class Room extends StatusEntity<RoomStatus> {
 	 */
 	public String getNumber() {
 		return number;
-	}
-
-	/**
-	 * Sets Room Number.
-	 * @param number
-	 */
-	public void setNumber(String number) {
-		this.number = number;
 	}
 
 	/**
