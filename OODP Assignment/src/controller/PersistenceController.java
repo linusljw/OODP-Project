@@ -41,7 +41,7 @@ public abstract class PersistenceController implements Controller {
 	 * to the user.
 	 */
 	@Override
-	public void onOptionSelected(View view, int option) {
+	public final void onOptionSelected(View view, int option) {
 		try {
 			this.safeOnOptionSelected(view, option);
 		} catch(Exception e) {
