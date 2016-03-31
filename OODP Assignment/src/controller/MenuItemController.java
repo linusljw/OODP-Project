@@ -16,12 +16,11 @@ import view.View;
  * A controller responsible for managing MenuItem entity.
  * @author YingHao
  */
-public class MenuItemController extends PersistenceController implements SelectableController<MenuItem> {
+public class MenuItemController extends EntityController<MenuItem> {
 	public final static String KEY_NAME = "item name";
 	public final static String KEY_PRICE = "price";
 	public final static String KEY_DESCRIPTION = "description";
 	public final static String KEY_ID = "ID of menu item";
-	private final static List<String> OPTIONS = Arrays.asList("Create new menu item", "Retrieve menu items", "Update menu items", "Delete menu items");
 	
 	/**
 	 * MenuItemController constructor.
@@ -30,59 +29,17 @@ public class MenuItemController extends PersistenceController implements Selecta
 	public MenuItemController(Persistence persistence) {
 		super(persistence);
 	}
-
-	@Override
-	public List<String> getOptions() {
-		return new ArrayList<String>(OPTIONS);
-	}
-
-	@Override
-	protected void safeOnOptionSelected(View view, int option) throws Exception {
-		switch(option) {
-		case 0: 
-			create(view);
-			break;
-		case 1:
-			retrieve(view);
-			break;
-		case 2:
-			update(view);
-			break;
-		case 3:
-			delete(view);
-			break;
-		}
-	}
 	
 	@Override
-	public MenuItem select(View view) throws Exception {
-		MenuItem item = null;
-		
-		retrieve(view);
-		
-		Map<String, String> inputMap = new LinkedHashMap<String, String>();
-		inputMap.put(KEY_ID, null);
-
-		Persistence persistence = this.getPersistenceImpl();
-		do {
-			view.input(inputMap);
-			
-			try {
-				item = persistence.retrieveByID(Long.parseLong(inputMap.get(KEY_ID)), MenuItem.class);
-			} catch(NumberFormatException e) {
-				view.error(Arrays.asList(KEY_ID));
-			}
-		} while(item == null && !view.bailout());
-		
-		return item;
+	protected String getEntityName() {
+		return "Menu Item";
 	}
 	
 	/**
-	 * Creates a new MenuItem.
-	 * @param view - A view interface that provides input/output.
-	 * @throws Exception 
+	 * Prompts the user to enter relevant information required and creates a new MenuItem instance.
 	 */
-	public void create(View view) throws Exception {
+	@Override
+	protected void create(View view) throws Exception {
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
 		inputMap.put(KEY_NAME, null);
 		inputMap.put(KEY_PRICE, null);
@@ -127,11 +84,10 @@ public class MenuItemController extends PersistenceController implements Selecta
 	}
 	
 	/**
-	 * Displays all menu items.
-	 * @param view - A view interface that provides input/output.
-	 * @throws Exception
+	 * Retrieves and displays all MenuItem instances.
 	 */
-	public void retrieve(View view) throws Exception {
+	@Override
+	protected void retrieve(View view) throws Exception {
 		Persistence persistence = this.getPersistenceImpl();
 		
 		// Store the menu items in an array list
@@ -145,11 +101,10 @@ public class MenuItemController extends PersistenceController implements Selecta
 	}
 	
 	/**
-	 * Updates a menu item.
-	 * @param view - A view interface that provides input/output.
-	 * @throws Exception
+	 * Prompts the user to enter relevant information required and updates a MenuItem instance.
 	 */
-	public void update(View view) throws Exception {
+	@Override
+	protected void update(View view) throws Exception {
 		MenuItem item = select(view);
 		
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
@@ -180,16 +135,43 @@ public class MenuItemController extends PersistenceController implements Selecta
 	}
 	
 	/**
-	 * Deletes a menu item.
-	 * @param view - A view interface that provides input/output.
-	 * @throws Exception
+	 * Prompts the user to enter relevant information required and deletes a MenuItem instance.
 	 */
-	public void delete(View view) throws Exception {
+	@Override
+	protected void delete(View view) throws Exception {
 		MenuItem item = select(view);
 		
 		Persistence persistence = this.getPersistenceImpl();
 		if(item != null && persistence.delete(item, MenuItem.class))
 			view.message("Menu item deleted successfully!");
+	}
+	
+	/**
+	 * Prompts the user to select a MenuItem.
+	 */
+	@Override
+	public MenuItem select(View view) throws Exception {
+		MenuItem item = null;
+		
+		retrieve(view);
+		
+		Map<String, String> inputMap = new LinkedHashMap<String, String>();
+		inputMap.put(KEY_ID, null);
+
+		Persistence persistence = this.getPersistenceImpl();
+		do {
+			view.input(inputMap);
+			
+			try {
+				item = persistence.retrieveByID(Long.parseLong(inputMap.get(KEY_ID)), MenuItem.class);
+				if(item == null)
+					view.error(Arrays.asList(KEY_ID));
+			} catch(NumberFormatException e) {
+				view.error(Arrays.asList(KEY_ID));
+			}
+		} while(item == null && !view.bailout());
+		
+		return item;
 	}
 
 }

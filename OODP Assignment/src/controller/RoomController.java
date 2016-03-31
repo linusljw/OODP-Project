@@ -1,6 +1,5 @@
 package controller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,43 +13,26 @@ import view.View;
  * A controller responsible for managing Room entity. 
  * @author Yijie
  */
-public class RoomController extends PersistenceController {
+public class RoomController extends EntityController<Room> {
 	private final static String KEY_NUMBER = "room number";
 	private final static String KEY_VIEW = "room view";
 	private final static String KEY_WIFI = "room wifi";
 	private final static String KEY_SMOKING = "room smoking";
-	private final static List<String> OPTIONS = Arrays.asList("Add new room", "Check room availability/details", "Update room details");
 	
 	public RoomController(Persistence persistence) {
 		super(persistence);
 	}
 	
 	@Override
-	public List<String> getOptions() {
-		return new ArrayList<String>(OPTIONS);
-	}
-	
-	@Override
-	protected void safeOnOptionSelected(View view, int option) throws Exception {
-		switch(option) {
-		case 0: 
-			create(view);
-			break;
-		case 1:
-			//search(view);
-			break;
-		case 2:
-			//update(view);
-			break;
-		}
+	protected String getEntityName() {
+		return "Room";
 	}
 	
 	/**
-	 * Creates a new Room.
-	 * @param view - A view interface that provides input/output.
-	 * @throws Exception
+	 * Prompts the user to enter relevant information required and creates a new Room instance.
 	 */
-	public void create(View view) throws Exception {
+	@Override
+	protected void create(View view) throws Exception {
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
 		inputMap.put(KEY_NUMBER, null);
 		inputMap.put(KEY_VIEW, null);
@@ -81,5 +63,29 @@ public class RoomController extends PersistenceController {
 				view.error(Arrays.asList(KEY_WIFI));
 			}
 		} while (!view.bailout());
+	}
+	
+	@Override
+	protected void retrieve(View view) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void update(View view) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void delete(View view) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Room select(View view) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

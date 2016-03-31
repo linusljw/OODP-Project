@@ -1,3 +1,2 @@
-model.Address|_id:1|country:Singapore|city:Singapore|state:Singapore|street:Jelapang Road|unitNumber:Blk 540 #20-36|postalCode:670540
-model.Address|_id:2
-model.Address|_id:3|country:Singapore|city:Singapore|state:Singapore|street:Tampines avenue 9 street 45|unitNumber:Blk 487A #06-94|postalCode:520487
+model.Address|_id:1
+model.Address|_id:2|country:Singapore|city:Singapore|state:Singapore|street:Tampines avenue 9 street 45|unitNumber:Blk 487A #06-94|postalCode:520487

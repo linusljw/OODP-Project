@@ -17,7 +17,7 @@ import view.View;
  * A controller responsible for managing Guest entity.
  * @author YingHao
  */
-public class GuestController extends PersistenceController {
+public class GuestController extends EntityController<Guest> {
 	public final static String KEY_NAME = "guest name";
 	public final static String KEY_IDENTIFICATION = "identification number";
 	public final static String KEY_NATIONALITY = "nationality";
@@ -25,39 +25,23 @@ public class GuestController extends PersistenceController {
 	public final static String KEY_CONTACT_NUMBER = "contact number";
 	public final static String KEY_EMAIL_ADDRESS = "email address";
 	public final static String KEY_SEARCH = "name of the guest to search for";
-	public final static String KEY_ID_UPDATE = "ID of guest to update";
-	private final static List<String> OPTIONS = Arrays.asList("Add new guest", "Search guest", "Update guest information");
+	public final static String KEY_ID = "ID of guest";
 
 	public GuestController(Persistence persistence) {
 		super(persistence);
 	}
-
+	
 	@Override
-	public List<String> getOptions() {
-		return new ArrayList<String>(OPTIONS);
-	}
-
-	@Override
-	protected void safeOnOptionSelected(View view, int option) throws Exception {
-		switch(option) {
-		case 0:
-			create(view);
-			break;
-		case 1:
-			search(view);
-			break;
-		case 2:
-			update(view);
-			break;
-		}
+	protected String getEntityName() {
+		return "Guest Profile";
 	}
 	
 	/**
-	 * Creates a new guest profile.
+	 * Prompts the user to enter relevant information required and creates a new Guest instance.
 	 * @param view - A view interface that provides input/output.
 	 * @throws Exception 
 	 */
-	public void create(View view) throws Exception {
+	protected void create(View view) throws Exception {
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
 		inputMap.put(KEY_NAME, null);
 		inputMap.put(KEY_IDENTIFICATION, null);
@@ -129,11 +113,11 @@ public class GuestController extends PersistenceController {
 	}
 	
 	/**
-	 * Displays search for a guest by name.
+	 * Prompts the user to enter relevant information required to search and display guest profiles.
 	 * @param view - A view interface that provides input/output.
 	 * @throws Exception 
 	 */
-	public void search(View view) throws Exception {
+	protected void retrieve(View view) throws Exception {
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
 		inputMap.put(KEY_SEARCH, null);
 		
@@ -161,76 +145,97 @@ public class GuestController extends PersistenceController {
 	}
 	
 	/**
-	 * Updates guest profile.
+	 * Prompts the user to enter relevant information required and updates a Guest instance.
 	 * @param view - A view interface that provides input/output.
 	 * @throws Exception 
 	 */
-	public void update(View view) throws Exception {
-		Map<String, String> inputMap = new LinkedHashMap<String, String>();
-		inputMap.put(KEY_ID_UPDATE, null);
+	protected void update(View view) throws Exception {
+		Guest guest = select(view);
 		
-		boolean valid = false;
+		if(guest != null) {
+			Persistence persistence = this.getPersistenceImpl();
+			Map<String, String> inputMap = new LinkedHashMap<String, String>();
+			inputMap.put(KEY_NAME, null);
+			inputMap.put(KEY_GENDER, null);
+			inputMap.put(KEY_CONTACT_NUMBER, null);
+			inputMap.put(KEY_EMAIL_ADDRESS, null);
+			
+			boolean valid = false;
+			do {
+				// Retrieve user input for updateable fields
+				view.input(inputMap);
+				
+				try {
+					guest.setName(inputMap.get(KEY_NAME));
+					guest.setGender(Character.toUpperCase(inputMap.get(KEY_GENDER).charAt(0)));
+					guest.setContactNo(inputMap.get(KEY_CONTACT_NUMBER));
+					guest.setEmailAddress(inputMap.get(KEY_EMAIL_ADDRESS));
+					
+					// Validate all fields
+					List<String> invalids = new ArrayList<String>();
+					if(guest.getName().length() == 0)
+						invalids.add(KEY_NAME);
+					if(guest.getGender() != 'M' && guest.getGender() != 'F')
+						invalids.add(KEY_GENDER);
+					if(!Pattern.matches("\\+?(\\d|-|\\s|\\(|\\))+", guest.getContactNo()))
+						invalids.add(KEY_CONTACT_NUMBER);
+					if(!Pattern.matches("^.+@.+\\..+$", guest.getEmailAddress()))
+						invalids.add(KEY_EMAIL_ADDRESS);
+					
+					// Attempts to update entity
+					if(invalids.size() == 0) {
+						// Update address information
+						AddressValidator.update(view, guest.getAddress());
+						
+						if(persistence.update(guest, Guest.class)) {
+							valid = true;
+							view.message("Guest profile successfully updated!");
+						}
+					}
+					else {
+						view.error(invalids);
+					}
+				} catch(IndexOutOfBoundsException e) {
+					view.error(Arrays.asList(KEY_GENDER));
+				}
+			} while(!valid && !view.bailout());
+		}
+	}
+
+	@Override
+	protected void delete(View view) throws Exception {
+		Guest guest = select(view);
+		
+		Persistence persistence = this.getPersistenceImpl();
+		if(guest != null && persistence.delete(guest, Guest.class))
+			view.message("Guest profile deleted successfully!");
+	}
+
+	/**
+	 * Prompts the user to select a guest.
+	 */
+	@Override
+	public Guest select(View view) throws Exception {
+		Guest guest = null;
+		
+		Map<String, String> inputMap = new LinkedHashMap<String, String>();
+		inputMap.put(KEY_ID, null);
+		
+		Persistence persistence = this.getPersistenceImpl();
 		do {
-			// Retrieve user input for ID to update
+			// Retrieve user input for ID
 			view.input(inputMap);
 			
 			try {
-				Persistence persistence = this.getPersistenceImpl();
-				
-				// Retrieve Guest entity based on ID
-				Guest guest = persistence.retrieveByID(Long.parseLong(inputMap.get(KEY_ID_UPDATE)), Guest.class);
+				guest = persistence.retrieveByID(Long.parseLong(inputMap.get(KEY_ID)), Guest.class);
 				if(guest == null)
-					view.error(Arrays.asList(KEY_ID_UPDATE));
-				else {
-					do {
-						// Retrieve user input for updateable fields
-						inputMap.clear();
-						inputMap.put(KEY_NAME, null);
-						inputMap.put(KEY_GENDER, null);
-						inputMap.put(KEY_CONTACT_NUMBER, null);
-						inputMap.put(KEY_EMAIL_ADDRESS, null);
-						
-						view.input(inputMap);
-						
-						try {
-							guest.setName(inputMap.get(KEY_NAME));
-							guest.setGender(Character.toUpperCase(inputMap.get(KEY_GENDER).charAt(0)));
-							guest.setContactNo(inputMap.get(KEY_CONTACT_NUMBER));
-							guest.setEmailAddress(inputMap.get(KEY_EMAIL_ADDRESS));
-							
-							// Validate all fields
-							List<String> invalids = new ArrayList<String>();
-							if(guest.getName().length() == 0)
-								invalids.add(KEY_NAME);
-							if(guest.getGender() != 'M' && guest.getGender() != 'F')
-								invalids.add(KEY_GENDER);
-							if(!Pattern.matches("\\+?(\\d|-|\\s|\\(|\\))+", guest.getContactNo()))
-								invalids.add(KEY_CONTACT_NUMBER);
-							if(!Pattern.matches("^.+@.+\\..+$", guest.getEmailAddress()))
-								invalids.add(KEY_EMAIL_ADDRESS);
-							
-							// Attempts to update entity
-							if(invalids.size() == 0) {
-								// Update address information
-								AddressValidator.update(view, guest.getAddress());
-								
-								if(persistence.update(guest, Guest.class)) {
-									valid = true;
-									view.message("Guest profile successfully updated!");
-								}
-							}
-							else {
-								view.error(invalids);
-							}
-						} catch(IndexOutOfBoundsException e) {
-							view.error(Arrays.asList(KEY_GENDER));
-						}
-					} while(!valid && !view.bailout());
-				}
+					view.error(Arrays.asList(KEY_ID));
 			} catch(NumberFormatException e) {
-				view.error(Arrays.asList(KEY_ID_UPDATE));
+				view.error(Arrays.asList(KEY_ID));
 			}
-		} while(!valid && !view.bailout());
+		} while(guest == null && !view.bailout());
+		
+		return guest;
 	}
 
 }

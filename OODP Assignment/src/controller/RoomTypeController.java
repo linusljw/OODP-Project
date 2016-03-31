@@ -1,11 +1,8 @@
 package controller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-
 import model.RoomType;
 import persistence.Persistence;
 import persistence.Predicate;
@@ -16,12 +13,9 @@ import view.View;
  * A controller responsible for managing RoomType entity.
  * @author Yijie
  */
-public class RoomTypeController extends PersistenceController {
+public class RoomTypeController extends EntityController<RoomType> {
 	private final static String KEY_NAME = "room type name";
 	private final static String KEY_PRICE = "room price";
-	private final static String KEY_NAME_UPDATE = "name of room type to update";
-	private final static String KEY_NAME_DELETE = "name of room type to delete";
-	private final static List<String> OPTIONS = Arrays.asList("Add Room Type", "Update Room Price", "Delete Room Type");
 
 	/**
 	 * RoomTypeController constructor
@@ -30,33 +24,17 @@ public class RoomTypeController extends PersistenceController {
 	public RoomTypeController(Persistence persistence) {
 		super(persistence);
 	}
-
+	
 	@Override
-	public List<String> getOptions() {
-		return new ArrayList<String>(OPTIONS);
-	}
-
-	@Override
-	protected void safeOnOptionSelected(View view, int option) throws Exception {
-		switch(option) {
-		case 0:
-			create(view);
-			break;
-		case 1:
-			update(view);
-			break;
-		case 2:
-			//delete(view);
-			break;
-		}
+	protected String getEntityName() {
+		return "Room Type";
 	}
 	
 	/**
-	 * Creates a new RoomType.
-	 * @param view - A view interface that provides input/output.
-	 * @throws Exception
+	 * Prompts the user to enter relevant information required and creates a new RoomType instance.
 	 */
-	public void create(View view) throws Exception {
+	@Override
+	protected void create(View view) throws Exception {
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
 		inputMap.put(KEY_NAME, null);
 		inputMap.put(KEY_PRICE, null);
@@ -96,9 +74,19 @@ public class RoomTypeController extends PersistenceController {
 		} while(!valid && !view.bailout());
 	}
 	
-	public void update(View view) throws Exception {
+	@Override
+	protected void retrieve(View view) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/**
+	 * Prompts the user to enter relevant information required and updates a RoomType instance.
+	 */
+	@Override
+	protected void update(View view) throws Exception {
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
-		inputMap.put(KEY_NAME_UPDATE, null);
+		inputMap.put(KEY_NAME, null);
 		
 		boolean valid = false;
 		Persistence persistence = this.getPersistenceImpl();
@@ -109,7 +97,7 @@ public class RoomTypeController extends PersistenceController {
 				EntityIterator<RoomType> roomTypes = (EntityIterator<RoomType>) persistence.search(new Predicate<RoomType>() {
 					@Override
 					public boolean test(RoomType item) {
-						return item.getName().toUpperCase().equals(inputMap.get(KEY_NAME_UPDATE).toUpperCase());
+						return item.getName().toUpperCase().equals(inputMap.get(KEY_NAME).toUpperCase());
 					}
 				}, RoomType.class, false).iterator();
 				
@@ -135,5 +123,23 @@ public class RoomTypeController extends PersistenceController {
 			}
 			
 		} while(!valid && !view.bailout());
+	}
+
+	/**
+	 * Prompts the user to enter relevant information required and deletes a RoomType instance.
+	 */
+	@Override
+	protected void delete(View view) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * Prompts the user to select a RoomType.
+	 */
+	@Override
+	public RoomType select(View view) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
