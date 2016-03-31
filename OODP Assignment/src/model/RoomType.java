@@ -7,7 +7,7 @@ import persistence.Entity;
  * @author Yijie
  */
 public class RoomType extends Entity {
-	private String name;
+	private final String name;
 	private double price;
 	
 	/**
@@ -23,9 +23,8 @@ public class RoomType extends Entity {
 	 * @param name
 	 * @param price
 	 */
-	public RoomType(String name, double price) {
+	public RoomType(String name) {
 		this.name = name;
-		this.price = price;
 	}
 	
 	/**
@@ -34,14 +33,6 @@ public class RoomType extends Entity {
 	 */
 	public String getName() {
 		return name;
-	}
-	
-	/**
-	 * Sets the name
-	 * @param name
-	 */
-	public void setName(String name) {
-		this.name = name;
 	}
 	
 	/**

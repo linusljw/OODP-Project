@@ -4,6 +4,7 @@ import java.util.Scanner;
 import controller.GuestController;
 import controller.MenuItemController;
 import controller.NavigationController;
+import controller.RoomTypeController;
 import persistence.file.text.FilePersistence;
 import view.ConsoleView;
 
@@ -18,6 +19,7 @@ public class Test {
 			
 			controller.addView(new ConsoleView(new GuestController(persistence), "Manage Guest", sc));
 			controller.addView(new ConsoleView(new MenuItemController(persistence), "Manage Menu Item", sc));
+			controller.addView(new ConsoleView(new RoomTypeController(persistence), "Manage Room Type", sc));
 			
 			ConsoleView mainView = new ConsoleView(controller, "Main View", sc);
 			

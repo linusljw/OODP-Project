@@ -46,6 +46,7 @@ public abstract class PersistenceController implements Controller {
 			this.safeOnOptionSelected(view, option);
 		} catch(Exception e) {
 			view.message("An error occurred while performing file operations, please try again later.");
+			e.printStackTrace();
 		}
 	}
 
