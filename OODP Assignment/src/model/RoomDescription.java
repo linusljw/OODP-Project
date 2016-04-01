@@ -7,10 +7,6 @@ import persistence.Entity;
  * @author YingHao
  */
 public class RoomDescription extends Entity {
-	/**
-	 * A magic string to indicate that an attribute can be ignored in determining if a criteria is being fulfilled.
-	 */
-	public static final String ANY = "*";
 	
 	private String view;
 	private RoomType type;
@@ -109,9 +105,9 @@ public class RoomDescription extends Entity {
 		if(desc == null)
 			flag = false;
 		else {
-			if(desc.getView() != null && !desc.getView().equals(ANY) && !desc.getView().toLowerCase().equals(this.getView().toLowerCase()))
+			if(desc.getView() != null && !desc.getView().toLowerCase().equals(this.getView().toLowerCase()))
 				flag = false;
-			else if(desc.getRoomType() != null && !desc.getRoomType().equals(ANY) && !desc.getRoomType().equals(this.getRoomType()))
+			else if(desc.getRoomType() != null && !desc.getRoomType().equals(this.getRoomType()))
 				flag = false;
 			else if(desc.getBedType() != null && !desc.getBedType().equals(this.getBedType()))
 				flag = false;

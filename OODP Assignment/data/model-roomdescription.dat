@@ -1,3 +1,4 @@
-model.RoomDescription|_id:1|view:-|type:1|bedType:Single|wifi:true|smoking:false
-model.RoomDescription|_id:2|view:-|type:2|bedType:Double|wifi:true|smoking:false
-model.RoomDescription|_id:3|view:-|type:1|bedType:Queen|wifi:true|smoking:false
+model.RoomDescription|_id:1|view:None|type:1|bedType:Single|wifi:true|smoking:false
+model.RoomDescription|_id:2|view:Swimming Pool|type:2|bedType:Double|wifi:true|smoking:false
+model.RoomDescription|_id:3|view:Swimming Pool|type:1|bedType:Queen|wifi:true|smoking:false
+model.RoomDescription|_id:4|view:Seaside|type:2|bedType:King|wifi:false|smoking:true
