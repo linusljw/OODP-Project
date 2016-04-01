@@ -109,19 +109,26 @@ public class Address extends Entity {
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
 	}
-
+	
 	/**
-	 * Clones this Address instance and returns a new Address instance with similar values.
+	 * Sets the fields of the specified address instance to be similar to the fields of this address instance.
+	 * @param address
 	 */
-	public Address clone() {
-		Address address = new Address();
-		
+	public void set(Address address) {
 		address.setCity(this.getCity());
 		address.setCountry(this.getCountry());
 		address.setPostalCode(this.getPostalCode());
 		address.setState(this.getState());
 		address.setStreet(this.getStreet());
 		address.setUnitNumber(this.getUnitNumber());
+	}
+
+	/**
+	 * Clones this Address instance and returns a new Address instance with similar values.
+	 */
+	public Address clone() {
+		Address address = new Address();
+		set(address);
 		
 		return address;
 	}

@@ -93,5 +93,30 @@ public class RoomDescription extends Entity {
 	public void setIsWifi(boolean wifi) {
 		this.wifi = wifi;
 	}
+	
+	/**
+	 * Gets a flag indicating if the specified RoomDescription fulfils the criteria set by this RoomDescription instance. 
+	 * @return flag
+	 */
+	public boolean fulfils(RoomDescription desc) {
+		boolean flag = true;
+		
+		if(desc == null)
+			flag = false;
+		else {
+			if(this.getView() != null && !this.getView().toLowerCase().equals(desc.getView().toLowerCase()))
+				flag = false;
+			else if(this.getRoomType() != null && !this.getRoomType().equals(desc.getRoomType()))
+				flag = false;
+			else if(this.getBedType() != null && !this.getBedType().equals(desc.getBedType()))
+				flag = false;
+			else if(this.isSmoking() == true && desc.isSmoking() == false)
+				flag = false;
+			else if(this.isWifi() == true && desc.isWifi() == false)
+				flag = false;
+		}
+		
+		return flag;
+	}
 
 }
