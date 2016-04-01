@@ -83,7 +83,7 @@ public class ConsoleView extends View {
 
 	@Override
 	public void error(List<String> invalidFields) {
-		System.out.println("The following fields are invalid: ");
+		System.out.println("One or all of the following fields are invalid: ");
 		for(String field: invalidFields)
 			System.out.println("\t- " + Character.toUpperCase(field.charAt(0)) + field.substring(1));
 		

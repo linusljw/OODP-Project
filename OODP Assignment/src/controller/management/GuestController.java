@@ -27,7 +27,7 @@ public class GuestController extends EntityController<Guest> {
 	public final static String KEY_CONTACT_NUMBER = "contact number";
 	public final static String KEY_EMAIL_ADDRESS = "email address";
 	public final static String KEY_SEARCH = "name of the guest to search for";
-	public final static String KEY_ID = "ID of guest";
+	public final static String KEY_ID = "ID of guest or 'Search' to search for guest ID by name";
 
 	/**
 	 * GuestController constructor.
@@ -229,31 +229,33 @@ public class GuestController extends EntityController<Guest> {
 	public Guest select(View view) throws Exception {
 		Guest guest = null;
 		
-		boolean retrieved = false;
-		do {
-			retrieved = retrieve(view);
-			if(!retrieved)
-				view.message("Please enter an existing guest name or create a new guest profile first.\n");
-		} while(!retrieved && !view.bailout());
+		Map<String, String> inputMap = new LinkedHashMap<String, String>();
+		inputMap.put(KEY_ID, null);
 		
-		if(retrieved) {
-			Map<String, String> inputMap = new LinkedHashMap<String, String>();
-			inputMap.put(KEY_ID, null);
-			
-			Persistence persistence = this.getPersistenceImpl();
+		Persistence persistence = this.getPersistenceImpl();
+		do {
+			boolean retry;
 			do {
+				retry = false;
 				// Retrieve user input for ID
 				view.input(inputMap);
 				
 				try {
-					guest = persistence.retrieveByID(Long.parseLong(inputMap.get(KEY_ID)), Guest.class);
-					if(guest == null)
-						view.error(Arrays.asList(KEY_ID));
+					String input = inputMap.get(KEY_ID);
+					if(input.toLowerCase().equals("search")) {
+						retrieve(view);
+						retry = true;
+					}
+					else {
+						guest = persistence.retrieveByID(Long.parseLong(input), Guest.class);
+						if(guest == null)
+							view.error(Arrays.asList(KEY_ID));
+					}
 				} catch(NumberFormatException e) {
 					view.error(Arrays.asList(KEY_ID));
 				}
-			} while(guest == null && !view.bailout());
-		}
+			} while(retry);
+		} while(guest == null && !view.bailout());
 		
 		return guest;
 	}

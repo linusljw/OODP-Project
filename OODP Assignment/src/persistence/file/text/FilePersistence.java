@@ -17,7 +17,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.sql.Date;
+import java.util.Date;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

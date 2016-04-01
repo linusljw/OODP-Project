@@ -1,27 +1,25 @@
 package model;
 
+import persistence.CascadeType;
+import persistence.PersistAnnotation;
+
 /**
  * Room is a {@link StatusEntity} class that encapsulates information about a Room.
  * @author Yijie
  */
 public class Room extends StatusEntity<RoomStatus> {
 	private final String number;
-	private String view;
-	private boolean wifi;
-	private boolean smoking;
-	private RoomType type;
-	private BedType bedType;
+	@PersistAnnotation(
+			cascade = {CascadeType.Create, CascadeType.Update, CascadeType.Delete}
+	)
+	private final RoomDescription description;
 	
 	/**
 	 * Room Constructor. For Persistence API Usage
 	 */
 	protected Room() {
 		this.number = null;
-		this.view = null;
-		this.wifi = false;
-		this.smoking = false;
-		this.type = null;
-		this.bedType = null;
+		this.description = null;
 	}
 	
 	/**
@@ -35,6 +33,7 @@ public class Room extends StatusEntity<RoomStatus> {
 	 */
 	public Room(String number) {
 		this.number = number;
+		this.description = new RoomDescription();
 		this.setStatus(RoomStatus.Vacant);
 	}
 
@@ -51,7 +50,7 @@ public class Room extends StatusEntity<RoomStatus> {
 	 * @return view
 	 */
 	public String getView() {
-		return view;
+		return description.getView();
 	}
 	
 	/**
@@ -59,7 +58,7 @@ public class Room extends StatusEntity<RoomStatus> {
 	 * @param view
 	 */
 	public void setView(String view) {
-		this.view = view;
+		this.description.setView(view);
 	}
 
 	/**
@@ -67,7 +66,7 @@ public class Room extends StatusEntity<RoomStatus> {
 	 * @return wifi
 	 */
 	public boolean isWifi() {
-		return wifi;
+		return description.isWifi();
 	}
 
 	/**
@@ -75,7 +74,7 @@ public class Room extends StatusEntity<RoomStatus> {
 	 * @param wifi
 	 */
 	public void setWifi(boolean wifi) {
-		this.wifi = wifi;
+		this.description.setIsWifi(wifi);
 	}
 
 	/**
@@ -83,7 +82,7 @@ public class Room extends StatusEntity<RoomStatus> {
 	 * @return
 	 */
 	public boolean isSmoking() {
-		return smoking;
+		return description.isSmoking();
 	}
 
 	/**
@@ -91,7 +90,7 @@ public class Room extends StatusEntity<RoomStatus> {
 	 * @param smoking
 	 */
 	public void setSmoking(boolean smoking) {
-		this.smoking = smoking;
+		this.description.setIsSmoking(smoking);
 	}
 
 	/**
@@ -99,7 +98,7 @@ public class Room extends StatusEntity<RoomStatus> {
 	 * @return type
 	 */
 	public RoomType getType() {
-		return type;
+		return description.getRoomType();
 	}
 
 	/**
@@ -107,7 +106,7 @@ public class Room extends StatusEntity<RoomStatus> {
 	 * @param type
 	 */
 	public void setType(RoomType type) {
-		this.type = type;
+		this.description.setRoomType(type);
 	}
 	
 	/**
@@ -115,7 +114,7 @@ public class Room extends StatusEntity<RoomStatus> {
 	 * @return
 	 */
 	public BedType getBedType() {
-		return bedType;
+		return description.getBedType();
 	}
 
 	/**
@@ -123,7 +122,15 @@ public class Room extends StatusEntity<RoomStatus> {
 	 * @param bedType
 	 */
 	public void setBedType(BedType bedType) {
-		this.bedType = bedType;
+		this.description.setBedType(bedType);
+	}
+	
+	/**
+	 * Gets the {@link RoomDescription} of this Room instance.
+	 * @return description
+	 */
+	public RoomDescription getDescription() {
+		return description;
 	}
 	
 	@Override
