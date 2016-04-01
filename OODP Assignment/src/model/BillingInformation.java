@@ -7,7 +7,6 @@ import persistence.PersistAnnotation;
 /**
  * BillingInformation is an {@link Entity} that encapsulates informaton about billing.
  * @author YingHao
- *
  */
 public class BillingInformation extends Entity {
 	@PersistAnnotation(

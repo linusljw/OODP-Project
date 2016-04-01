@@ -3,7 +3,7 @@ package model;
 import persistence.Entity;
 
 /**
- * RoomDescription is a class that encapsulates description about a {@link Room}.
+ * RoomDescription is an {@link Entity} that encapsulates description about a {@link Room}.
  * @author YingHao
  */
 public class RoomDescription extends Entity {
