@@ -252,8 +252,11 @@ public class FilePersistence implements Persistence {
 	 * @throws Exception 
 	 */
 	private StringBuilder serialize(Class type, PersistAnnotation metadata, Object value, StringBuilder builder) throws Exception {
-		if(type.isPrimitive() || type.equals(String.class) || Enum.class.isAssignableFrom(type))
+		if(type.isPrimitive() || type.equals(String.class) || Enum.class.isAssignableFrom(type)) {
+			if(type.equals(String.class))
+				value = ((String)value).trim();
 			builder.append(value);
+		}
 		else if(Date.class.isAssignableFrom(type))
 			builder.append(((Date) value).getTime());
 		else if(Entity.class.isAssignableFrom(type)) {
