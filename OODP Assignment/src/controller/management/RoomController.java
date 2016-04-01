@@ -1,13 +1,16 @@
 package controller.management;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import controller.EntityController;
 import model.BedType;
 import model.Room;
 import model.RoomType;
+import persistence.Entity;
 import persistence.Persistence;
 import persistence.Predicate;
 import view.View;
@@ -105,12 +108,24 @@ public class RoomController extends EntityController<Room> {
 		} while (!valid && !view.bailout());
 	}
 	
+	/**
+	 * Retrieves and display all Room instances.
+	 */
 	@Override
 	protected void retrieve(View view) throws Exception {
-		// TODO Auto-generated method stub
-		
+			Persistence persistence = this.getPersistenceImpl();
+
+			List entityList = new ArrayList();
+			Iterable<Room> rooms = persistence.search(null, Room.class, false);
+			for(Entity entity: rooms)
+				entityList.add(entity);
+			
+			view.display(entityList);
 	}
 
+	/**
+	 * Prompts the user to enter relevant information required and updates a Room instance.
+	 */
 	@Override
 	protected void update(View view) throws Exception {
 		// TODO Auto-generated method stub

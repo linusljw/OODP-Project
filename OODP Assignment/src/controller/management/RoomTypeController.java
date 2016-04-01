@@ -80,7 +80,7 @@ public class RoomTypeController extends EntityController<RoomType> {
 	}
 	
 	/**
-	 * Retrieves and displays all RoomType instances
+	 * Retrieves and displays all RoomType instances.
 	 */
 	@Override
 	protected void retrieve(View view) throws Exception {
