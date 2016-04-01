@@ -32,7 +32,7 @@ public abstract class EntityController<T> extends PersistenceController {
 	}
 
 	@Override
-	protected final void safeOnOptionSelected(View view, int option) throws Exception {
+	protected void safeOnOptionSelected(View view, int option) throws Exception {
 		switch(option) {
 		case 0:
 			create(view);
