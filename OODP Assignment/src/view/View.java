@@ -42,7 +42,7 @@ public abstract class View {
 	 * Displays a list of entity.
 	 * @param objList - The list of objects to be displayed.
 	 */
-	public abstract void display(List<Object> objList);
+	public abstract void display(List objList);
 	
 	/**
 	 * Display a message.
@@ -55,6 +55,13 @@ public abstract class View {
 	 * @return A flag indicating if user wants to bailout.
 	 */
 	public abstract boolean bailout();
+	
+	/**
+	 * Displays a list of options for the user to select.
+	 * @param options - The list of options.
+	 * @return Selected option.
+	 */
+	public abstract <T> T options(List<T> options);
 	
 	/**
 	 * Gets the title of the view.

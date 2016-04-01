@@ -1,5 +1,6 @@
 package view;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import controller.Controller;
  * @author YingHao
  */
 public class ConsoleView extends View {
+	public final static String KEY_OPTION = "Option";
 	public final static String KEY_BAILOUT = "choice";
 	
 	private final Controller controller;
@@ -138,6 +140,26 @@ public class ConsoleView extends View {
 		} while(!valid);
 		
 		return bailout;
+	}
+
+	@Override
+	public <T> T options(List<T> options) {
+		T selected = null;
+		
+		for(int i = 0; i < options.size(); i++)
+			System.out.println((i + 1) + ") " + options.get(i).toString());
+		
+		do {
+			System.out.print("Select an option: ");
+			try {
+				selected = options.get(Integer.parseInt(scanner.nextLine()) - 1);
+			} catch(NumberFormatException | IndexOutOfBoundsException e) {
+				selected = null;
+				error(Arrays.asList(KEY_OPTION));
+			}
+		} while(selected == null);
+			
+		return selected;
 	}
 	
 }
