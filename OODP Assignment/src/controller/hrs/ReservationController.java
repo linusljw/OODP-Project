@@ -8,7 +8,9 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
+import controller.AddressValidator;
 import controller.EntityController;
 import controller.PersistenceController;
 import model.BedType;
@@ -46,6 +48,8 @@ public class ReservationController extends PersistenceController {
 	public final static String KEY_ANY = "Any";
 	public final static String KEY_REQUIRED = "Required";
 	public final static String KEY_NOT_REQUIRED = "Not required";
+	public final static String KEY_CREDIT_CARD_NO = "credit card number(Omit dashes and spaces)";
+	public final static String KEY_CVV_NO = "credit card cvv/cvc";
 	private EntityController<Guest> gController;
 	
 	/**
@@ -382,9 +386,46 @@ public class ReservationController extends PersistenceController {
 	 * @param guest - The guest that made the billing request.
 	 * @param billing - BillingInformation to be populated with user entered information.
 	 */
-	private void updateBillingInformation(View view, Guest guest, BillingInformation billing) {
+	private void updateBillingInformation(View view, Guest guest, BillingInformation billing) throws Exception {
 		view.message("----- Billing Information -----");
-		// TODO billing
+		
+		Map<String, String> inputMap = new LinkedHashMap<String, String>();
+		inputMap.put(KEY_CREDIT_CARD_NO, null);
+		inputMap.put(KEY_CVV_NO, null);
+		
+		boolean valid = false;
+		do {
+			view.input(inputMap);
+			
+			billing.setCreditCardNumber(inputMap.get(KEY_CREDIT_CARD_NO));
+			billing.setCVV(inputMap.get(KEY_CVV_NO));
+			
+			List<String> invalids = new ArrayList<String>();
+			if(!Pattern.matches(
+					"^(?:4[0-9]{12}(?:[0-9]{3})?" + // Visa
+					"|  5[1-5][0-9]{14}" + // Mastercard
+					"|  3[47][0-9]{13}" + // American Express
+					"|  3(?:0[0-5]|[68][0-9])[0-9]{11}" + // Diners club
+					"|  6(?:011|5[0-9]{2})[0-9]{12}" + // Discover
+					"|  (?:2131|1800|35\\d{3})\\d{11}" + // JCB
+					")$", billing.getCreditCardNumber()))
+				invalids.add(KEY_CREDIT_CARD_NO);
+			if(!Pattern.matches(
+					"[0-9]{3}|[0-9]{4}", billing.getCVV()))
+				invalids.add(KEY_CVV_NO);
+			
+			if(invalids.size() > 0)
+				view.error(invalids);
+			else {
+				view.message("Do you want to use guest's address as billing address?");
+				if(view.options(Arrays.asList(KEY_YES, KEY_NO)).equals(KEY_YES))
+					guest.getAddress().set(billing.getAddress());
+				else
+					AddressValidator.update(view, billing.getAddress());
+				
+				valid = true;
+			}
+		} while(!valid);
 	}
 	
 	/**
@@ -392,6 +433,6 @@ public class ReservationController extends PersistenceController {
 	 * @param reservation - The reservation used to reserve a room.
 	 */
 	private void reserveRoomForReservation(Reservation reservation) {
-		// TODO
+		// TODO reserve room
 	}
 }

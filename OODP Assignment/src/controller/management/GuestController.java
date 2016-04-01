@@ -102,6 +102,7 @@ public class GuestController extends EntityController<Guest> {
 					}
 					else {
 						// Update Address information
+						view.message("---- Address Information ----");
 						AddressValidator.update(view, guest.getAddress());
 						
 						persistence.create(guest, Guest.class);
@@ -196,6 +197,7 @@ public class GuestController extends EntityController<Guest> {
 					// Attempts to update entity
 					if(invalids.size() == 0) {
 						// Update address information
+						view.message("---- Address Information ----");
 						AddressValidator.update(view, guest.getAddress());
 						
 						if(persistence.update(guest, Guest.class)) {

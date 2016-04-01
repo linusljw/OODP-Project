@@ -296,12 +296,14 @@ public class FilePersistence implements Persistence {
 			else
 				items = (List) value;
 			
-			for(Object item: items)
-				if(item != null)
-					this.serialize(componentType, metadata, item, builder).append(arrDelimiter);
-		
-			// Remove trailing array delimiter
-			builder.setLength(builder.length() - arrDelimiter.length());
+			if(items.size() > 0) {
+				for(Object item: items)
+					if(item != null)
+						this.serialize(componentType, metadata, item, builder).append(arrDelimiter);
+			
+				// Remove trailing array delimiter
+				builder.setLength(builder.length() - arrDelimiter.length());
+			}
 		}
 		
 		return builder;
@@ -397,10 +399,15 @@ public class FilePersistence implements Persistence {
 				// Split the data string into the array elements
 				String[] arrString = valueString.split(Pattern.quote(this.configuration.getProperty(KEY_ARRAY_DELIMITER)));
 				if(!Entity.class.isAssignableFrom(componentType) || loadR) {
-					Object[] array = (Object[]) Array.newInstance(componentType, arrString.length);
-					// Loop through the array and deserialize each component
-					for(int i = 0; i < array.length; i++)
-						array[i] = deserialize(genericType, componentType, metadata, arrString[i], loadR);
+					Object[] array = null;
+					if(arrString.length == 1 && arrString[0].length() == 0)
+						array = (Object[]) Array.newInstance(componentType, 0);
+					else {
+						array = (Object[]) Array.newInstance(componentType, arrString.length);
+						// Loop through the array and deserialize each component
+						for(int i = 0; i < array.length; i++)
+							array[i] = deserialize(genericType, componentType, metadata, arrString[i], loadR);
+					}
 					
 					// Cast to appropriate type
 					if(type.isArray())
@@ -433,7 +440,7 @@ public class FilePersistence implements Persistence {
 		Map<String, String> kvMap = new HashMap<String, String>();
 		for(int i = 1; i < arrString.length; i++) {
 			String[] kvPair = arrString[i].split(Pattern.quote(this.configuration.getProperty(KEY_KV_DELIMITER)));
-			kvMap.put(kvPair[0], kvPair[1]);
+			kvMap.put(kvPair[0], kvPair.length == 2? kvPair[1]: "");
 		}
 		
 		long id = Long.parseLong(kvMap.get("_id"));

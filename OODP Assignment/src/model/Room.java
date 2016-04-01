@@ -1,5 +1,8 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import persistence.CascadeType;
 import persistence.PersistAnnotation;
 
@@ -9,6 +12,7 @@ import persistence.PersistAnnotation;
  */
 public class Room extends StatusEntity<RoomStatus> {
 	private final String number;
+	private final List<Reservation> reservations;
 	@PersistAnnotation(
 			cascade = {CascadeType.Create, CascadeType.Update, CascadeType.Delete}
 	)
@@ -19,20 +23,17 @@ public class Room extends StatusEntity<RoomStatus> {
 	 */
 	protected Room() {
 		this.number = null;
+		this.reservations = null;
 		this.description = null;
 	}
 	
 	/**
 	 * Room Constructor
-	 * @param number
-	 * @param view
-	 * @param wifi
-	 * @param smoking
-	 * @param type
-	 * @param bedType
+	 * @param number - The room number.
 	 */
 	public Room(String number) {
 		this.number = number;
+		this.reservations = new ArrayList<Reservation>();
 		this.description = new RoomDescription();
 		this.setStatus(RoomStatus.Vacant);
 	}
@@ -43,6 +44,14 @@ public class Room extends StatusEntity<RoomStatus> {
 	 */
 	public String getNumber() {
 		return number;
+	}
+	
+	/**
+	 * Gets a list of {@link Reservation} associated with this Room instance.
+	 * @return reservations
+	 */
+	public List<Reservation> getReservationList() {
+		return reservations;
 	}
 
 	/**

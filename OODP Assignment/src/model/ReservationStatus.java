@@ -23,9 +23,8 @@ public enum ReservationStatus {
 	CheckedIn,
 	
 	/**
-	 * The Guest with this reservation has either not appeared for check-in within the grace period or this reservation
-	 * has been cancelled
+	 * This reservation has been cancelled
 	 */
-	Expired
+	Cancelled
 
 }

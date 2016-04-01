@@ -25,7 +25,6 @@ public class AddressValidator {
 	 * Updates the given address instance with user input from the view.
 	 * @param view - A view interface that provides input/output.
 	 * @param address - The address instance to be updated.
-	 * @return A list of fields that are not valid.
 	 */
 	public static void update(View view, Address address) {
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
@@ -35,8 +34,6 @@ public class AddressValidator {
 		inputMap.put(KEY_STREET, null);
 		inputMap.put(KEY_UNIT_NO, null);
 		inputMap.put(KEY_POSTAL_CODE, null);
-		
-		view.message("---- Address Information ----");
 		
 		boolean valid = false;
 		do {
