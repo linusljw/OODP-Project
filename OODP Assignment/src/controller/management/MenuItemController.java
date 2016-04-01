@@ -1,4 +1,4 @@
-package controller;
+package controller.management;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import controller.EntityController;
 import model.MenuItem;
 import persistence.Entity;
 import persistence.Persistence;

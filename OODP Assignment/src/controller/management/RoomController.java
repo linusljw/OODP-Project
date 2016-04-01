@@ -1,9 +1,10 @@
-package controller;
+package controller.management;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import controller.EntityController;
 import model.Room;
 import persistence.Persistence;
 import view.View;

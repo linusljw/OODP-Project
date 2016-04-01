@@ -1,10 +1,10 @@
 import java.io.File;
 import java.util.Scanner;
 
-import controller.GuestController;
-import controller.MenuItemController;
 import controller.NavigationController;
-import controller.RoomTypeController;
+import controller.management.GuestController;
+import controller.management.MenuItemController;
+import controller.management.RoomTypeController;
 import persistence.file.text.FilePersistence;
 import view.ConsoleView;
 
