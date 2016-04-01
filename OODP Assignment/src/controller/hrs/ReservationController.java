@@ -1,5 +1,6 @@
 package controller.hrs;
 
+import java.util.Arrays;
 import java.util.List;
 
 import controller.PersistenceController;
@@ -18,8 +19,7 @@ public class ReservationController extends PersistenceController {
 
 	@Override
 	public List<String> getOptions() {
-		// TODO Auto-generated method stub
-		return null;
+		return Arrays.asList("Make a reservation");
 	}
 
 	@Override

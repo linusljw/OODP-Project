@@ -2,6 +2,7 @@ import java.io.File;
 import java.util.Scanner;
 
 import controller.NavigationController;
+import controller.hrs.ReservationController;
 import controller.management.*;
 import persistence.file.text.FilePersistence;
 import view.ConsoleView;
@@ -23,6 +24,7 @@ public class Test {
 			ConsoleView managementView = new ConsoleView(managementController, "Management View", sc);
 			
 			NavigationController hrsController = new NavigationController();
+			hrsController.addView(new ConsoleView(new ReservationController(persistence), "Reservation System", sc));
 			
 			ConsoleView hrsView = new ConsoleView(hrsController, "Hotel Reservation System", sc);
 			
