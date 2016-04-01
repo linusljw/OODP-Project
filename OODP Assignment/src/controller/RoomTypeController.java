@@ -97,46 +97,29 @@ public class RoomTypeController extends EntityController<RoomType> {
 	 */
 	@Override
 	protected void update(View view) throws Exception {
-		retrieve(view);
-		
-		Map<String, String> inputMap = new LinkedHashMap<String, String>();
-		inputMap.put(KEY_NAME, null);
+		RoomType roomType = select(view);
 		
 		boolean valid = false;
-		Persistence persistence = this.getPersistenceImpl();
-		
-		do {
-			view.input(inputMap);
-			try {
-				EntityIterator<RoomType> roomTypes = (EntityIterator<RoomType>) persistence.search(new Predicate<RoomType>() {
-					@Override
-					public boolean test(RoomType item) {
-						return item.getName().toUpperCase().equals(inputMap.get(KEY_NAME).toUpperCase());
-					}
-				}, RoomType.class, false).iterator();
-				
-				if(roomTypes.hasNext()) {
-					// RoomType is present
-					RoomType chosen = roomTypes.next();
-					inputMap.clear();
-					inputMap.put(KEY_PRICE, null);
-					view.input(inputMap);;
-					chosen.setPrice(Double.parseDouble(inputMap.get(KEY_PRICE)));
-					if (persistence.update(chosen, RoomType.class)) {
-						valid = true;
-						view.message("Room Type sucessfully updated!");
-					}
-				}
-				else {
-					view.message("Room Type does not exist. Please try again.");;
-				}
-				
-				roomTypes.close();
-			} catch (NumberFormatException e) {
-				view.error(Arrays.asList(KEY_PRICE));
-			}
+		if(roomType != null) {
+			Persistence persistence = this.getPersistenceImpl();
 			
-		} while(!valid && !view.bailout());
+			Map<String, String> inputMap = new LinkedHashMap<String, String>();
+			inputMap.put(KEY_PRICE, null);
+			do {
+				view.input(inputMap);
+				
+				try {
+					roomType.setPrice(Double.parseDouble(inputMap.get(KEY_PRICE)));
+					
+					if(persistence.update(roomType, RoomType.class)) {
+						valid = true;
+						view.message("Room Type successfully updated!");
+					}
+				} catch(NumberFormatException e) {
+					view.error(Arrays.asList(KEY_PRICE));
+				}
+			} while(!valid);
+		}
 	}
 
 	/**
@@ -167,22 +150,18 @@ public class RoomTypeController extends EntityController<RoomType> {
 		do {
 			view.input(inputMap);
 			
-			try {
-				EntityIterator<RoomType> roomTypes = (EntityIterator<RoomType>) persistence.search(new Predicate<RoomType>() {
-					@Override
-					public boolean test(RoomType item) {
-						return item.getName().toUpperCase().equals(inputMap.get(KEY_NAME).toUpperCase());
-					}
-				}, RoomType.class, false).iterator();
-				if(roomTypes.hasNext())
-					roomType = roomTypes.next();
-				else
-					view.message("Room Type does not exist. Please try again.");
-				roomTypes.close();
-			} catch(Exception e) {
-				view.error(Arrays.asList(KEY_NAME));
-			}
-		} while(roomType != null && !view.bailout());
+			EntityIterator<RoomType> roomTypes = (EntityIterator<RoomType>) persistence.search(new Predicate<RoomType>() {
+				@Override
+				public boolean test(RoomType item) {
+					return item.getName().toUpperCase().equals(inputMap.get(KEY_NAME).toUpperCase());
+				}
+			}, RoomType.class, false).iterator();
+			if(roomTypes.hasNext())
+				roomType = roomTypes.next();
+			else
+				view.message("Room Type does not exist. Please try again.\n");
+			roomTypes.close();
+		} while(roomType == null && !view.bailout());
 		
 		return roomType;
 	}
