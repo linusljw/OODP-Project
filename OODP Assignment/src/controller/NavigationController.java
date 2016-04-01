@@ -36,7 +36,7 @@ public class NavigationController implements Controller {
 	public List<String> getOptions() {
 		List<String> options = new ArrayList<String>();
 		for(View view: this.views)
-			options.add("Navigate to " + view.getTitle());
+			options.add(view.getTitle());
 		
 		return options;
 	}
