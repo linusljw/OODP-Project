@@ -63,7 +63,7 @@ public class ReservationController extends PersistenceController {
 
 	@Override
 	public List<String> getOptions() {
-		return Arrays.asList("Make a reservation");
+		return Arrays.asList("Make a reservation", "Cancel a reservation");
 	}
 
 	@Override
