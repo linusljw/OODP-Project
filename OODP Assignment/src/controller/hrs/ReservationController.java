@@ -94,8 +94,8 @@ public class ReservationController extends PersistenceController {
 								// Updates the criteria for the desired room
 								updateRoomCriteria(view, reservation.getCriteria());
 								
-								// Sets the billing information
-								reservation.setBillingInformation(getBillingInformation(view));
+								// Updates the billing information
+								updateBillingInformation(view, guest, reservation.getBillingInformation());
 								
 								// Attempts to reserve room for the reservation
 								reserveRoomForReservation(reservation);
@@ -136,14 +136,14 @@ public class ReservationController extends PersistenceController {
 	}
 	
 	/**
-	 * Prompts the user to enter relevant information for billing information and returns a new
-	 * BillingInformation instance populated with the information.
+	 * Prompts the user to enter relevant information for billing information and populates the BillingInformation parameter
+	 * with the information.
 	 * @param view - A view interface that provides input/output.
-	 * @return
+	 * @param guest - The guest that made the billing request.
+	 * @param billing - BillingInformation to be populated with user entered information.
 	 */
-	private BillingInformation getBillingInformation(View view) {
+	private void updateBillingInformation(View view, Guest guest, BillingInformation billing) {
 		// TODO
-		return null;
 	}
 	
 	/**

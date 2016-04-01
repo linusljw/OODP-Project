@@ -15,11 +15,14 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 			cascade = {CascadeType.Create, CascadeType.Update, CascadeType.Delete}
 	)
 	private final RoomDescription criteria;
+	@PersistAnnotation(
+			cascade = {CascadeType.Create, CascadeType.Update, CascadeType.Delete}
+	)
+	private final BillingInformation billingInformation;
 	private int numOfChildren;
 	private int numOfAdult;
 	private Date startDate;
 	private Date endDate;
-	private BillingInformation billingInformation;
 	private Room assignedRoom;
 	
 	/**
@@ -28,6 +31,7 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 	protected Reservation() {
 		this.guest = null;
 		this.criteria = null;
+		this.billingInformation = null;
 	}
 	
 	/**
@@ -37,6 +41,7 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 	public Reservation(Guest guest) {
 		this.guest = guest;
 		this.criteria = new RoomDescription();
+		this.billingInformation = new BillingInformation();
 		this.setStatus(ReservationStatus.Waitlist);
 	}
 	
@@ -54,6 +59,14 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 	 */
 	public RoomDescription getCriteria() {
 		return criteria;
+	}
+	
+	/**
+	 * Gets the billing information registered with this reservation.
+	 * @return billingInformation
+	 */
+	public BillingInformation getBillingInformation() {
+		return billingInformation;
 	}
 	
 	/**
@@ -118,22 +131,6 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 	 */
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
-	}
-	
-	/**
-	 * Gets the billing information registered with this reservation.
-	 * @return billingInformation
-	 */
-	public BillingInformation getBillingInformation() {
-		return billingInformation;
-	}
-	
-	/**
-	 * Sets the billing information registered with this reservation.
-	 * @param billingInformation - Billing information
-	 */
-	public void setBillingInformation(BillingInformation billingInformation) {
-		this.billingInformation = billingInformation;
 	}
 	
 	/**
