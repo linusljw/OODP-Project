@@ -158,6 +158,7 @@ public class ConsoleView extends View {
 				error(Arrays.asList(KEY_OPTION));
 			}
 		} while(selected == null);
+		System.out.println();
 			
 		return selected;
 	}

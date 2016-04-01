@@ -13,6 +13,8 @@ import java.lang.ref.SoftReference;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.sql.Date;
@@ -339,6 +341,7 @@ public class FilePersistence implements Persistence {
 	
 	/**
 	 * Deserializes the specified string data into the field for the specified entity instance.
+	 * @param genericType - The generic type of the containing class
 	 * @param type - The type to deserialize into.
 	 * @param metadata - The persistence metadata.
 	 * @param valueString - The string containing the serialized value.
@@ -347,7 +350,7 @@ public class FilePersistence implements Persistence {
 	 * @throws Exception 
 	 * @throws NumberFormatException 
 	 */
-	private Object deserialize(Class type, PersistAnnotation metadata, String valueString, boolean loadR) throws NumberFormatException, Exception {
+	private Object deserialize(Class genericType, Class type, PersistAnnotation metadata, String valueString, boolean loadR) throws NumberFormatException, Exception {
 		Object value = null;
 		
 		if(type.equals(String.class))
@@ -370,8 +373,12 @@ public class FilePersistence implements Persistence {
 			value = valueString.charAt(0);
 		else if(Date.class.isAssignableFrom(type))
 			value = new Date(Long.parseLong(valueString));
-		else if(Enum.class.isAssignableFrom(type))
-			value = Enum.valueOf(type, valueString);
+		else if(Enum.class.isAssignableFrom(type)) {
+			if(Enum.class.equals(type))
+				value = Enum.valueOf(genericType, valueString);
+			else
+				value = Enum.valueOf(type, valueString);
+		}
 		else if(loadR) {
 			if(Entity.class.isAssignableFrom(type)) {
 				long id = Long.parseLong(valueString);
@@ -393,7 +400,7 @@ public class FilePersistence implements Persistence {
 					Object[] array = (Object[]) Array.newInstance(componentType, arrString.length);
 					// Loop through the array and deserialize each component
 					for(int i = 0; i < array.length; i++)
-						array[i] = deserialize(componentType, metadata, arrString[i], loadR);
+						array[i] = deserialize(genericType, componentType, metadata, arrString[i], loadR);
 					
 					// Cast to appropriate type
 					if(type.isArray())
@@ -447,12 +454,19 @@ public class FilePersistence implements Persistence {
 			}
 		}
 		
+		// Probe for generics and retrieve the actual types whenever it contains generics. Supports up to one generic only.
+		Class genericType = null;
+		Type gType = type.getGenericSuperclass();
+		if(gType instanceof ParameterizedType) {
+			ParameterizedType pType = (ParameterizedType) gType;
+			genericType = (Class) pType.getActualTypeArguments()[0];
+		}
 		// Loop through all fields and attempt to initialize them if they are present in kvMap
 		for(Field field: fields) {
 			if(kvMap.containsKey(field.getName())) {
 				if(!partial || field.get(entity) == null) {
 					PersistAnnotation metadata = this.getFieldPersistenceMetadata(field);
-					field.set(entity, this.deserialize(field.getType(), metadata, kvMap.get(field.getName()), loadR));
+					field.set(entity, this.deserialize(genericType, field.getType(), metadata, kvMap.get(field.getName()), loadR));
 				}
 			}
 		}

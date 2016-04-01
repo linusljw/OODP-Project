@@ -35,6 +35,7 @@ public class Room extends StatusEntity<RoomStatus> {
 	 */
 	public Room(String number) {
 		this.number = number;
+		this.setStatus(RoomStatus.Vacant);
 	}
 
 	/**
