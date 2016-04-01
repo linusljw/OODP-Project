@@ -47,6 +47,10 @@ public class ReservationController extends PersistenceController {
 	 */
 	protected void makeReservation(View view) throws Exception {
 		Guest guest = gController.select(view);
+		
+		if(guest != null) {
+			
+		}
 	}
 
 }

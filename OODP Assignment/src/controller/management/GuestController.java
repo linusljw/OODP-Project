@@ -229,22 +229,31 @@ public class GuestController extends EntityController<Guest> {
 	public Guest select(View view) throws Exception {
 		Guest guest = null;
 		
-		Map<String, String> inputMap = new LinkedHashMap<String, String>();
-		inputMap.put(KEY_ID, null);
-		
-		Persistence persistence = this.getPersistenceImpl();
+		boolean retrieved = false;
 		do {
-			// Retrieve user input for ID
-			view.input(inputMap);
+			retrieved = retrieve(view);
+			if(!retrieved)
+				view.message("Please enter an existing guest name or create a new guest profile first.\n");
+		} while(!retrieved && !view.bailout());
+		
+		if(retrieved) {
+			Map<String, String> inputMap = new LinkedHashMap<String, String>();
+			inputMap.put(KEY_ID, null);
 			
-			try {
-				guest = persistence.retrieveByID(Long.parseLong(inputMap.get(KEY_ID)), Guest.class);
-				if(guest == null)
+			Persistence persistence = this.getPersistenceImpl();
+			do {
+				// Retrieve user input for ID
+				view.input(inputMap);
+				
+				try {
+					guest = persistence.retrieveByID(Long.parseLong(inputMap.get(KEY_ID)), Guest.class);
+					if(guest == null)
+						view.error(Arrays.asList(KEY_ID));
+				} catch(NumberFormatException e) {
 					view.error(Arrays.asList(KEY_ID));
-			} catch(NumberFormatException e) {
-				view.error(Arrays.asList(KEY_ID));
-			}
-		} while(guest == null && !view.bailout());
+				}
+			} while(guest == null && !view.bailout());
+		}
 		
 		return guest;
 	}
