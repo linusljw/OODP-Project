@@ -149,6 +149,7 @@ public class Room extends StatusEntity<RoomStatus> {
 				"Room Number: " + this.getNumber() + "\n" +
 				"Room View: " + this.getView() + "\n" +
 				"Room Type: " + this.getType().getName() + "\n" +
+				"Room Status: " + this.getStatus() +"\n" +
 				"Bed Type: " + this.getBedType() + "\n" +
 				"Wifi-Enabled: " + this.isWifi() + "\n" +
 				"Smoking-Room: " + this.isSmoking() + "\n";

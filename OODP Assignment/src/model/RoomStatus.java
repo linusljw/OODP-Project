@@ -17,5 +17,9 @@ public enum RoomStatus {
 	/**
 	 * Room is under maintenance.
 	 */
-	Maintenance
+	Maintenance,
+	/**
+	 * Allows option to exit.
+	 */
+	Exit
 }
