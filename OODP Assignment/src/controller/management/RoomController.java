@@ -6,6 +6,7 @@ import java.util.Map;
 
 import controller.EntityController;
 import model.Room;
+import model.RoomType;
 import persistence.Persistence;
 import view.View;
 
@@ -18,9 +19,13 @@ public class RoomController extends EntityController<Room> {
 	private final static String KEY_VIEW = "room view";
 	private final static String KEY_WIFI = "room wifi";
 	private final static String KEY_SMOKING = "room smoking";
+	private final static String KEY_ROOM_TYPE = "room type";
+	private final static String KEY_BED_TYPE = "room bed type";
+	private EntityController<RoomType> rtController = null;
 	
-	public RoomController(Persistence persistence) {
+	public RoomController(Persistence persistence, EntityController<RoomType> rtController) {
 		super(persistence);
+		this.rtController = rtController;
 	}
 	
 	@Override
@@ -33,11 +38,14 @@ public class RoomController extends EntityController<Room> {
 	 */
 	@Override
 	protected void create(View view) throws Exception {
+		Persistence persistence = this.getPersistenceImpl();
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
 		inputMap.put(KEY_NUMBER, null);
 		inputMap.put(KEY_VIEW, null);
 		inputMap.put(KEY_WIFI, null);
 		inputMap.put(KEY_SMOKING, null);
+		inputMap.put(KEY_ROOM_TYPE, rtController.select(view).getName());
+		
 		
 		do {
 			view.input(inputMap);
