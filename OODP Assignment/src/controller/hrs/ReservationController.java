@@ -63,7 +63,7 @@ public class ReservationController extends PersistenceController {
 
 	@Override
 	public List<String> getOptions() {
-		return Arrays.asList("Make a reservation", "Cancel a reservation");
+		return Arrays.asList("Make a reservation", "Cancel a reservation", "Search reservation by guest");
 	}
 
 	@Override
@@ -71,6 +71,12 @@ public class ReservationController extends PersistenceController {
 		switch(option) {
 		case 0:
 			makeReservation(view);
+			break;
+		case 1:
+			cancelReservation(view);
+			break;
+		case 2:
+			searchReservation(view);
 			break;
 		}
 	}
@@ -150,6 +156,22 @@ public class ReservationController extends PersistenceController {
 	}
 	
 	/**
+	 * Prompts the user to enter relevant information to cancel a reservation.
+	 * @param view - A view interface that provides input/output.
+	 */
+	private void cancelReservation(View view) {
+		// TODO Cancel reservation
+	}
+	
+	/**
+	 * Prompts the user to enter relevant information to search for a reservation.
+	 * @param view - A view interface that provides input/output.
+	 */
+	private void searchReservation(View view) {
+		// TODO Search reservation
+	}
+	
+	/**
 	 * Prompts the user to enter relevant information for their desired room and populates the criteria attribute of the provided
 	 * reservation parameter.
 	 * with the information.
@@ -191,7 +213,8 @@ public class ReservationController extends PersistenceController {
 	}
 	
 	/**
-	 * Displays available room types and number of available rooms with that room type.
+	 * Displays available room types and number of available rooms with that room type and prompts the user
+	 * to select a RoomType to be populated into the criteria attribute of the specified reservation.
 	 * @param view - A view interface that provides input/output.
 	 * @param reservation - Reservation instance that this method will base on for the start and end date.
 	 */
@@ -224,7 +247,8 @@ public class ReservationController extends PersistenceController {
 	}
 	
 	/**
-	 * Displays available bed types and number of available rooms with that bed type.
+	 * Displays available bed types and number of available rooms with that bed type and prompts the user
+	 * to select a BedType to be populated into the criteria attribute of the specified reservation.
 	 * @param view - A view interface that provides input/output.
 	 * @param reservation - Reservation instance that this method will base on for the start and end date.
 	 */
@@ -256,7 +280,8 @@ public class ReservationController extends PersistenceController {
 	}
 	
 	/**
-	 * Displays available room views and number of available rooms with that view.
+	 * Displays available room views and number of available rooms with that view and prompts the user
+	 * to select a view to be populated into the criteria attribute of the specified reservation.
 	 * @param view - A view interface that provides input/output.
 	 * @param reservation - Reservation instance that this method will base on for the start and end date.
 	 */
@@ -293,7 +318,8 @@ public class ReservationController extends PersistenceController {
 	}
 	
 	/**
-	 * Displays number of available wifi-enabled rooms.
+	 * Displays number of available wifi-enabled rooms and prompts the user to select
+	 * a requirement to be populated into the criteria attribute of the specified reservation.
 	 * @param view - A view interface that provides input/output.
 	 * @param reservation - Reservation instance that this method will base on for the start and end date.
 	 */
@@ -320,7 +346,8 @@ public class ReservationController extends PersistenceController {
 	}
 	
 	/**
-	 * Displays number of available rooms that allows smoking.
+	 * Displays number of available rooms that allows smoking and prompts the user to select
+	 * a requirement to be populated into the criteria attribute of the specified reservation.
 	 * @param view - A view interface that provides input/output.
 	 * @param reservation - Reservation instance that this method will base on for the start and end date.
 	 */
