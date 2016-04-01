@@ -9,6 +9,7 @@ import java.util.Map;
 import controller.EntityController;
 import model.BedType;
 import model.Room;
+import model.RoomStatus;
 import model.RoomType;
 import persistence.Entity;
 import persistence.Persistence;
@@ -25,6 +26,7 @@ public class RoomController extends EntityController<Room> {
 	private final static String KEY_VIEW = "room view";
 	private final static String KEY_WIFI = "room wifi";
 	private final static String KEY_SMOKING = "room smoking";
+	public final static String KEY_STATUS = "room status";
 	private EntityController<RoomType> rtController = null;
 	
 	/**
@@ -40,6 +42,38 @@ public class RoomController extends EntityController<Room> {
 	@Override
 	protected String getEntityName() {
 		return "Room";
+	}
+	
+	@Override
+	public List<String> getOptions() {
+		return Arrays.asList(
+					"Create " + this.getEntityName().toLowerCase(),
+					"Retrieve/Search " + this.getEntityName().toLowerCase(),
+					"Update " + this.getEntityName().toLowerCase(),
+					"Update " + this.getEntityName().toLowerCase() + " status",
+					"Delete " + this.getEntityName().toLowerCase()
+				);
+	}
+
+	@Override
+	protected void safeOnOptionSelected(View view, int option) throws Exception {
+		switch(option) {
+		case 0:
+			create(view);
+			break;
+		case 1:
+			retrieve(view);
+			break;
+		case 2:
+			update(view);
+			break;
+		case 3:
+			updateStatus(view);
+			break;
+		case 4:
+			delete(view);
+			break;
+		}
 	}
 	
 	/**
@@ -222,5 +256,29 @@ public class RoomController extends EntityController<Room> {
 		} while(room == null && !view.bailout());
 		
 		return room;
+	}
+	
+	/**
+	 * Prompts the user to enter relevant information to update Room status.
+	 */
+	public void updateStatus(View view) throws Exception {
+		Room room = select(view);
+		
+		if (room != null) {
+			Persistence persistence = this.getPersistenceImpl();
+			
+			RoomStatus status = null;
+			
+			if (room.getStatus() == RoomStatus.Occupied || room.getStatus() == RoomStatus.Maintenance)
+				status = view.options(Arrays.asList(RoomStatus.Vacant, RoomStatus.Exit));
+			else
+				status = view.options(Arrays.asList(RoomStatus.Occupied, RoomStatus.Maintenance, RoomStatus.Exit));
+			
+			if (status != RoomStatus.Exit) {
+				if (persistence.update(room, Room.class)) {
+					view.message("Room status has been updated successfully!");
+				}
+			}
+		}
 	}
 }
