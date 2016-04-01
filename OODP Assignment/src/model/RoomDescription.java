@@ -96,7 +96,7 @@ public class RoomDescription extends Entity {
 	}
 	
 	/**
-	 * Gets a flag indicating if the specified RoomDescription fulfils the criteria set by this RoomDescription instance. 
+	 * Gets a flag indicating if this RoomDescription instance fulfils the criteria set by the specified RoomDescription instance.
 	 * @return flag
 	 */
 	public boolean fulfils(RoomDescription desc) {

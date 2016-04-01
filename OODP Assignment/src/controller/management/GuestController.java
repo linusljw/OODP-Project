@@ -140,7 +140,7 @@ public class GuestController extends EntityController<Guest> {
 
 										@Override
 										public boolean test(Guest item) {
-											return item.getName().contains(inputMap.get(KEY_SEARCH));
+											return item.getName().toLowerCase().contains(inputMap.get(KEY_SEARCH).toLowerCase());
 										}
 								
 									}, Guest.class, false);

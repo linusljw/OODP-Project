@@ -1,4 +1,4 @@
-model.Room|_id:1|status:Vacant|number:0201|reservations:|description:1
+model.Room|_id:1|status:Vacant|number:0201|reservations:1|description:1
 model.Room|_id:2|status:Vacant|number:0202|reservations:|description:2
 model.Room|_id:3|status:Vacant|number:0203|reservations:|description:3
 model.Room|_id:4|status:Vacant|number:0204|reservations:|description:4

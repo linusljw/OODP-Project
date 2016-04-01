@@ -12,6 +12,7 @@ import persistence.PersistAnnotation;
  */
 public class Room extends StatusEntity<RoomStatus> {
 	private final String number;
+	@PersistAnnotation(type = Reservation.class)
 	private final List<Reservation> reservations;
 	@PersistAnnotation(
 			cascade = {CascadeType.Create, CascadeType.Update, CascadeType.Delete}

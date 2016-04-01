@@ -19,10 +19,9 @@ import model.Guest;
 import model.Reservation;
 import model.ReservationStatus;
 import model.Room;
-import model.RoomDescription;
 import model.RoomType;
 import persistence.Persistence;
-import persistence.Predicate;
+import persistence.file.text.EntityIterator;
 import view.View;
 import viewmodel.reservation.BedTypeVM;
 import viewmodel.reservation.RoomTypeVM;
@@ -158,16 +157,8 @@ public class ReservationController extends PersistenceController {
 		Persistence persistence = this.getPersistenceImpl();
 		
 		boolean done = false;
-		RoomDescription criteria = reservation.getCriteria();
 		do {
-			long matches = persistence.getCount(new Predicate<Room>() {
-	
-				@Override
-				public boolean test(Room item) {
-					return item.getDescription().fulfils(criteria);
-				}
-				
-			}, Room.class, true);
+			long matches = persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true);
 			view.message("There are " + matches + " room(s) that are available and matches your room requirements");
 			view.message("Do you want to refine your room requirements?");
 			if(view.options(Arrays.asList(KEY_YES, KEY_NO)).equals(KEY_NO))
@@ -177,19 +168,19 @@ public class ReservationController extends PersistenceController {
 				// Request the user to select an option to update the room requirement
 				switch(view.options(Arrays.asList(KEY_ROOM_TYPE, KEY_BED_TYPE, KEY_VIEW, KEY_WIFI, KEY_SMOKING))) {
 				case KEY_ROOM_TYPE:
-					criteria.setRoomType(getRoomType(view, reservation));
+					updateRoomType(view, reservation);
 					break;
 				case KEY_BED_TYPE:
-					criteria.setBedType(getBedType(view, reservation));
+					updateBedType(view, reservation);
 					break;
 				case KEY_VIEW:
-					criteria.setView(getView(view, reservation));
+					updateView(view, reservation);
 					break;
 				case KEY_WIFI:
-					criteria.setIsWifi(getWifiStatus(view, reservation));
+					updateWifiStatus(view, reservation);
 					break;
 				case KEY_SMOKING:
-					criteria.setIsSmoking(getSmokingStatus(view, reservation));
+					updateSmokingStatus(view, reservation);
 					break;
 				}
 			}
@@ -200,9 +191,8 @@ public class ReservationController extends PersistenceController {
 	 * Displays available room types and number of available rooms with that room type.
 	 * @param view - A view interface that provides input/output.
 	 * @param reservation - Reservation instance that this method will base on for the start and end date.
-	 * @return RoomType instance that the user has selected.
 	 */
-	private RoomType getRoomType(View view, Reservation reservation) throws Exception {
+	private void updateRoomType(View view, Reservation reservation) throws Exception {
 		RoomType rType = reservation.getCriteria().getRoomType();
 		
 		Persistence persistence = this.getPersistenceImpl();
@@ -215,14 +205,8 @@ public class ReservationController extends PersistenceController {
 		List options = new ArrayList();
 		Iterable<RoomType> roomTypes = persistence.search(null, RoomType.class, false);
 		for(RoomType roomType: roomTypes) {
-			options.add(new RoomTypeVM(roomType, persistence.getCount(new Predicate<Room>() {
-
-				@Override
-				public boolean test(Room item) {
-					return roomType.equals(item.getType());
-				}
-				
-			}, Room.class, true)));
+			reservation.getCriteria().setRoomType(roomType);
+			options.add(new RoomTypeVM(roomType, persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true)));
 		}
 		options.add(KEY_ANY);
 		
@@ -233,16 +217,15 @@ public class ReservationController extends PersistenceController {
 		else
 			rType = ((RoomTypeVM) selected).getRoomType();
 		
-		return rType;
+		reservation.getCriteria().setRoomType(rType);
 	}
 	
 	/**
 	 * Displays available bed types and number of available rooms with that bed type.
 	 * @param view - A view interface that provides input/output.
 	 * @param reservation - Reservation instance that this method will base on for the start and end date.
-	 * @return BedType enum that user has selected.
 	 */
-	private BedType getBedType(View view, Reservation reservation) throws Exception {
+	private void updateBedType(View view, Reservation reservation) throws Exception {
 		BedType bType = reservation.getCriteria().getBedType();
 		
 		Persistence persistence = this.getPersistenceImpl();
@@ -254,14 +237,8 @@ public class ReservationController extends PersistenceController {
 		
 		List options = new ArrayList();
 		for(BedType bedType: BedType.values()) {
-			options.add(new BedTypeVM(bedType, persistence.getCount(new Predicate<Room>() {
-
-				@Override
-				public boolean test(Room item) {
-					return item.getBedType() == bedType;
-				}
-				
-			}, Room.class, true)));
+			reservation.getCriteria().setBedType(bedType);
+			options.add(new BedTypeVM(bedType, persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true)));
 		}
 		options.add(KEY_ANY);
 		
@@ -272,16 +249,15 @@ public class ReservationController extends PersistenceController {
 		else
 			bType = ((BedTypeVM) selected).getBedType();
 		
-		return bType;
+		reservation.getCriteria().setBedType(bType);
 	}
 	
 	/**
 	 * Displays available room views and number of available rooms with that view.
 	 * @param view - A view interface that provides input/output.
 	 * @param reservation - Reservation instance that this method will base on for the start and end date.
-	 * @return String representing the view that user has selected.
 	 */
-	private String getView(View view, Reservation reservation) throws Exception {
+	private void updateView(View view, Reservation reservation) throws Exception {
 		String rView = reservation.getCriteria().getView();
 		
 		Persistence persistence = this.getPersistenceImpl();
@@ -294,12 +270,10 @@ public class ReservationController extends PersistenceController {
 		List options = new ArrayList();
 		Iterable<Room> rooms = persistence.search(null, Room.class, true);
 		for(Room room: rooms) {
-			TextAndCountVM viewModel = new TextAndCountVM(room.getView(), 1);
-			if(options.contains(viewModel)) {
-				viewModel = (TextAndCountVM) options.get(options.indexOf(viewModel));
-				viewModel.setCount(viewModel.getCount() + 1);
-			}
-			else {
+			TextAndCountVM viewModel = new TextAndCountVM(room.getView(), 0);
+			if(!options.contains(viewModel)) {
+				reservation.getCriteria().setView(room.getView());
+				viewModel.setCount(persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true));
 				options.add(viewModel);
 			}
 		}
@@ -312,16 +286,15 @@ public class ReservationController extends PersistenceController {
 		else
 			rView = ((TextAndCountVM) selected).getText();
 		
-		return rView;
+		reservation.getCriteria().setView(rView);
 	}
 	
 	/**
 	 * Displays number of available wifi-enabled rooms.
 	 * @param view - A view interface that provides input/output.
 	 * @param reservation - Reservation instance that this method will base on for the start and end date.
-	 * @return A flag indicating the requirement of Wifi.
 	 */
-	private boolean getWifiStatus(View view, Reservation reservation) throws Exception {
+	private void updateWifiStatus(View view, Reservation reservation) throws Exception {
 		boolean wifiStatus = reservation.getCriteria().isWifi();
 		
 		String wifiStatusName = KEY_NOT_REQUIRED;
@@ -331,52 +304,43 @@ public class ReservationController extends PersistenceController {
 		
 		Persistence persistence = this.getPersistenceImpl();
 		List<TextAndCountVM> options = new ArrayList<TextAndCountVM>();
-		options.add(new TextAndCountVM(KEY_REQUIRED, persistence.getCount(new Predicate<Room>() {
-
-			@Override
-			public boolean test(Room item) {
-				return item.isWifi();
-			}
-			
-		}, Room.class, true)));
-		options.add(new TextAndCountVM(KEY_NOT_REQUIRED, persistence.getCount(null, Room.class, false)));
+		
+		reservation.getCriteria().setIsWifi(true);
+		options.add(new TextAndCountVM(KEY_REQUIRED, persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true)));
+		reservation.getCriteria().setIsWifi(false);
+		options.add(new TextAndCountVM(KEY_NOT_REQUIRED, persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true)));
 		
 		view.message("Please select a Wifi requirement");
 		wifiStatus = view.options(options).getText().equals(KEY_REQUIRED);
 		
-		return wifiStatus;
+		reservation.getCriteria().setIsWifi(wifiStatus);
 	}
 	
 	/**
 	 * Displays number of available rooms that allows smoking.
 	 * @param view - A view interface that provides input/output.
 	 * @param reservation - Reservation instance that this method will base on for the start and end date.
-	 * @return A flag indicating the requirement of Smoking-Room.
 	 */
-	private boolean getSmokingStatus(View view, Reservation reservation) throws Exception {
-		boolean wifiStatus = reservation.getCriteria().isSmoking();
+	private void updateSmokingStatus(View view, Reservation reservation) throws Exception {
+		boolean smokingStatus = reservation.getCriteria().isSmoking();
 		
-		String wifiStatusName = KEY_NOT_REQUIRED;
-		if(wifiStatus)
-			wifiStatusName = KEY_REQUIRED;
-		view.message("Currently selected Smoking-Room requirement: " + wifiStatusName);
+		String smokingStatusName = KEY_NOT_REQUIRED;
+		if(smokingStatus)
+			smokingStatusName = KEY_REQUIRED;
+		view.message("Currently selected Smoking-Room requirement: " + smokingStatusName);
 		
 		Persistence persistence = this.getPersistenceImpl();
 		List<TextAndCountVM> options = new ArrayList<TextAndCountVM>();
-		options.add(new TextAndCountVM(KEY_REQUIRED, persistence.getCount(new Predicate<Room>() {
-
-			@Override
-			public boolean test(Room item) {
-				return item.isSmoking();
-			}
-			
-		}, Room.class, true)));
-		options.add(new TextAndCountVM(KEY_NOT_REQUIRED, persistence.getCount(null, Room.class, false)));
+		
+		reservation.getCriteria().setIsSmoking(true);
+		options.add(new TextAndCountVM(KEY_REQUIRED, persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true)));
+		reservation.getCriteria().setIsSmoking(false);
+		options.add(new TextAndCountVM(KEY_NOT_REQUIRED, persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true)));
 		
 		view.message("Please select a Smoking-Room requirement");
-		wifiStatus = view.options(options).getText().equals(KEY_REQUIRED);
+		smokingStatus = view.options(options).getText().equals(KEY_REQUIRED);
 		
-		return wifiStatus;
+		reservation.getCriteria().setIsSmoking(smokingStatus);
 	}
 	
 	/**
@@ -432,7 +396,13 @@ public class ReservationController extends PersistenceController {
 	 * Reserves a room for the specified Reservation.
 	 * @param reservation - The reservation used to reserve a room.
 	 */
-	private void reserveRoomForReservation(Reservation reservation) {
-		// TODO reserve room
+	private void reserveRoomForReservation(Reservation reservation) throws Exception {
+		Persistence persistence = this.getPersistenceImpl();
+		EntityIterator<Room> rooms = (EntityIterator<Room>) persistence.search(new RoomReservationPredicate(reservation), Room.class, true).iterator();
+		
+		if(rooms.hasNext())
+			reservation.setAssignedRoom(rooms.next());
+		
+		rooms.close();
 	}
 }

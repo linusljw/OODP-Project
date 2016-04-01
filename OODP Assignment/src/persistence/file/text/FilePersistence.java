@@ -18,6 +18,7 @@ import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Date;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -413,7 +414,7 @@ public class FilePersistence implements Persistence {
 					if(type.isArray())
 						value = array;
 					else
-						value = Arrays.asList(array);
+						value = new ArrayList(Arrays.asList(array));
 				}
 			}
 		}

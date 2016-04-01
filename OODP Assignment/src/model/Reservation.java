@@ -23,6 +23,9 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 	private int numOfAdult;
 	private Date startDate;
 	private Date endDate;
+	@PersistAnnotation(
+			cascade = {CascadeType.Update}
+	)
 	private Room assignedRoom;
 	
 	/**
@@ -146,8 +149,14 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 	 * @param room - Room assigned to this reservation.
 	 */
 	public void setAssignedRoom(Room room) {
-		this.setStatus(ReservationStatus.Confirmed);
 		this.assignedRoom = room;
+		if(room == null) {
+			this.setStatus(ReservationStatus.Waitlist);
+		}
+		else {
+			this.setStatus(ReservationStatus.Confirmed);
+			this.assignedRoom.getReservationList().add(this);
+		}
 	}
 
 }
