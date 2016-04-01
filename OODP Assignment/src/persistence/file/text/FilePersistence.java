@@ -35,7 +35,6 @@ import persistence.UnresolvedEntityException;
  * between the application code and the underlying file system.
  * @author YingHao
  */
-@PersistAnnotation // This serves as the default instance for PersistAnnotation
 public class FilePersistence implements Persistence {
 	public final static String KEY_FIELD_DELIMITER = "field-delimiter";
 	public final static String KEY_KV_DELIMITER = "key-value-delimiter";
@@ -47,7 +46,6 @@ public class FilePersistence implements Persistence {
 	public final static String KEY_AUTO_ID = "{type}.auto-id";
 	public final static String AUTO_ID_TYPE_REGEX = "{type}";
 	public final static Properties DEFAULT_CONFIGURATION;
-	private final static PersistAnnotation DEFAULT_METADATA;
 	
 	/**
 	 * Static initializer initializes class constants during classloader loading
@@ -61,8 +59,6 @@ public class FilePersistence implements Persistence {
 		DEFAULT_CONFIGURATION.setProperty(KEY_FIELD_DELIMITER, "|");
 		DEFAULT_CONFIGURATION.setProperty(KEY_KV_DELIMITER, ":");
 		DEFAULT_CONFIGURATION.setProperty(KEY_ARRAY_DELIMITER, ";");
-		
-		DEFAULT_METADATA = FilePersistence.class.getDeclaredAnnotation(PersistAnnotation.class);
 	}
 	
 	private final File configurationFile;
@@ -109,14 +105,6 @@ public class FilePersistence implements Persistence {
 		
 		dataDir.mkdir();
 		tmpDir.mkdir();
-	}
-	
-	/**
-	 * Gets the configuration for this FilePersistence instance.
-	 * @return configuration
-	 */
-	public Properties getConfiguration() {
-		return configuration;
 	}
 	
 	/**
@@ -197,13 +185,13 @@ public class FilePersistence implements Persistence {
 			// Retrieves metadata from cache when it is present.
 			meta = pmCache.get(field);
 		}
-		else if((meta =  field.getAnnotation(PersistAnnotation.class)) == null && 
-				(meta = field.getDeclaringClass().getAnnotation(PersistAnnotation.class)) == null) {
-			// Attempts to retrieve metadata from field followed by class hierarchy and defaults to the
-			// default PersistAnnotation values if it is not present.
-			meta = DEFAULT_METADATA;
+		else {
+			// Attempts to retrieve metadata from field followed by class hierarchy.
+			meta = field.getAnnotation(PersistAnnotation.class);
+			if(meta == null)
+				meta = field.getDeclaringClass().getAnnotation(PersistAnnotation.class);
 			
-			// Store to metadata to cache
+			// Store metadata to cache
 			pmCache.put(field, meta);
 		}
 		
@@ -686,6 +674,11 @@ public class FilePersistence implements Persistence {
 		}
 		
 		return entity;
+	}
+	
+	@Override
+	public Properties getConfiguration() {
+		return new Properties(this.configuration);
 	}
 	
 	/**

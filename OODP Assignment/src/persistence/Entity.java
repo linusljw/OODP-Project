@@ -6,6 +6,7 @@ package persistence;
  * @author YingHao
  * @see Persistence
  */
+@PersistAnnotation
 public abstract class Entity {
 	private final long _id;
 	
