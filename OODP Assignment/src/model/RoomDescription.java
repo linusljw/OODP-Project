@@ -7,19 +7,11 @@ import persistence.Entity;
  * @author YingHao
  */
 public class RoomDescription extends Entity {
-	private final String view;
-	private final RoomType type;
-	private final BedType bedType;
-	private final boolean wifi;
-	private final boolean smoking;
-	
-	public RoomDescription(String view, RoomType type, BedType bedType, boolean wifi, boolean smoking) {
-		this.view = view;
-		this.type = type;
-		this.bedType = bedType;
-		this.wifi = wifi;
-		this.smoking = smoking;
-	}
+	private String view;
+	private RoomType type;
+	private BedType bedType;
+	private boolean wifi;
+	private boolean smoking;
 	
 	/**
 	 * Gets room view.
@@ -27,6 +19,14 @@ public class RoomDescription extends Entity {
 	 */
 	public String getView() {
 		return view;
+	}
+	
+	/**
+	 * Sets the room view.
+	 * @param view
+	 */
+	public void setView(String view) {
+		this.view = view;
 	}
 	
 	/**
@@ -38,28 +38,60 @@ public class RoomDescription extends Entity {
 	}
 	
 	/**
+	 * Sets room type.
+	 * @param roomType
+	 */
+	public void setRoomType(RoomType roomType) {
+		this.type = roomType;
+	}
+	
+	/**
 	 * Gets bed type.
 	 * @return bedType
-	 * @return
+	 * @return bedType
 	 */
 	public BedType getBedType() {
 		return bedType;
 	}
 	
 	/**
+	 * Sets bed type.
+	 * @param bedType
+	 */
+	public void setBedType(BedType bedType) {
+		this.bedType = bedType;
+	}
+	
+	/**
 	 * Gets smoking-room.
-	 * @return
+	 * @return smoking
 	 */
 	public boolean isSmoking() {
 		return smoking;
 	}
 	
 	/**
+	 * Sets smoking-room.
+	 * @param smoking
+	 */
+	public void setIsSmoking(boolean smoking) {
+		this.smoking = smoking;
+	}
+	
+	/**
 	 * Gets is Wifi-Enabled.
-	 * @return
+	 * @return wifi
 	 */
 	public boolean isWifi() {
 		return wifi;
+	}
+	
+	/**
+	 * Sets is Wifi-Enabled
+	 * @param wifi
+	 */
+	public void setIsWifi(boolean wifi) {
+		this.wifi = wifi;
 	}
 
 }
