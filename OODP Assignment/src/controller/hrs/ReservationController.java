@@ -12,7 +12,10 @@ import view.View;
  * @author YingHao
  */
 public class ReservationController extends PersistenceController {
-
+	/**
+	 * ReservationController constructor.
+	 * @param persistence - The Persistence API implementation class to interact with for entity persistency.
+	 */
 	public ReservationController(Persistence persistence) {
 		super(persistence);
 	}
@@ -24,7 +27,17 @@ public class ReservationController extends PersistenceController {
 
 	@Override
 	protected void safeOnOptionSelected(View view, int option) throws Exception {
-		// TODO Auto-generated method stub
+		switch(option) {
+		case 0:
+			break;
+		}
+	}
+	
+	/**
+	 * Prompts the user to enter relevant information to make a reservation.
+	 * @param view - A view interface that provides input/output.
+	 */
+	protected void makeReservation(View view) {
 		
 	}
 

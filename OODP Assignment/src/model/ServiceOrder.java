@@ -8,22 +8,34 @@ import java.util.Date;
  * @author YingHao
  */
 public class ServiceOrder extends StatusEntity<OrderStatus> {
+	private final Reservation reservation;
 	private final MenuItem item;
 	private final Date timestamp;
+	private Room room;
 	private String remarks;
 	
 	/**
 	 * RoomServiceOrder constructor.
+	 * @param reservation - The reservation to place this ServiceOrder under.
 	 * @param item - The MenuItem that this RoomServiceOrder will reference.
 	 */
-	public ServiceOrder(MenuItem item) {
+	public ServiceOrder(Reservation reservation, MenuItem item) {
+		this.reservation = reservation;
 		this.item = item;
 		this.timestamp = new Date();
 	}
 	
 	/**
+	 * Gets the Reservation that this ServiceOrder is under.
+	 * @return reservation
+	 */
+	public Reservation getReservation() {
+		return reservation;
+	}
+	
+	/**
 	 * Gets the MenuItem this RoomServiceOrder references.
-	 * @return
+	 * @return item
 	 */
 	public MenuItem getItem() {
 		return item;
@@ -31,15 +43,31 @@ public class ServiceOrder extends StatusEntity<OrderStatus> {
 	
 	/**
 	 * Gets the timestamp that indicates when this RoomServiceOrder was created.
-	 * @return
+	 * @return timestamp
 	 */
 	public Date getTimestamp() {
 		return timestamp;
 	}
 	
 	/**
+	 * Gets the room where this order is to be served.
+	 * @return room
+	 */
+	public Room getRoom() {
+		return room;
+	}
+	
+	/**
+	 * Sets the room where this order is to be served.
+	 * @param room
+	 */
+	public void setRoom(Room room) {
+		this.room = room;
+	}
+	
+	/**
 	 * Gets the remarks.
-	 * @return
+	 * @return remarks
 	 */
 	public String getRemarks() {
 		return remarks;
