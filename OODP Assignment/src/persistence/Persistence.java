@@ -1,5 +1,7 @@
 package persistence;
 
+import java.util.Properties;
+
 /**
  * Persistence is an interface representing a generic contract for persisting an Entity.
  * @author YingHao
@@ -55,5 +57,13 @@ public interface Persistence {
 	 * @return A managed entity with the unique identifier or null if it does not exists.
 	 */
 	public <T extends Entity> T retrieveByID(long id, Class<T> type) throws Exception;
+	
+	/**
+	 * Retrieves configuration loaded from the configuration file.
+	 * This is a read-only copy of our properties.
+	 * @return A properties instance containing all configuration values loaded from configuration file.
+	 * @throws UnsupportedOperationException This exception is thrown when the persistence provider does not support retrieving of configurations.
+	 */
+	public Properties getConfiguration() throws UnsupportedOperationException;
 
 }
