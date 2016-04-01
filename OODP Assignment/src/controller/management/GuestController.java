@@ -47,6 +47,7 @@ public class GuestController extends EntityController<Guest> {
 	 * @param view - A view interface that provides input/output.
 	 * @throws Exception 
 	 */
+	@Override
 	protected void create(View view) throws Exception {
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
 		inputMap.put(KEY_NAME, null);
@@ -123,7 +124,8 @@ public class GuestController extends EntityController<Guest> {
 	 * @param view - A view interface that provides input/output.
 	 * @throws Exception 
 	 */
-	protected void retrieve(View view) throws Exception {
+	@Override
+	protected boolean retrieve(View view) throws Exception {
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
 		inputMap.put(KEY_SEARCH, null);
 		
@@ -148,6 +150,8 @@ public class GuestController extends EntityController<Guest> {
 		
 		// Display guests
 		view.display(entityList);
+		
+		return entityList.size() > 0;
 	}
 	
 	/**
@@ -155,6 +159,7 @@ public class GuestController extends EntityController<Guest> {
 	 * @param view - A view interface that provides input/output.
 	 * @throws Exception 
 	 */
+	@Override
 	protected void update(View view) throws Exception {
 		Guest guest = select(view);
 		

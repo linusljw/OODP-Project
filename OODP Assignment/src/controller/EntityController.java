@@ -75,8 +75,9 @@ public abstract class EntityController<T> extends PersistenceController {
 	 * Prompts the user to enter relevant information required to retrieve and display
 	 * entity instances.
 	 * @param view - A view interface that provides input/output.
+	 * @return A flag indicating if any entity is displayed.
 	 */
-	protected abstract void retrieve(View view) throws Exception;
+	protected abstract boolean retrieve(View view) throws Exception;
 	
 	/**
 	 * Prompts the user to enter relevant information required and updates an

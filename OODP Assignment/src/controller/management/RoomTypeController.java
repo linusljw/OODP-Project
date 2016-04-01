@@ -83,7 +83,7 @@ public class RoomTypeController extends EntityController<RoomType> {
 	 * Retrieves and displays all RoomType instances.
 	 */
 	@Override
-	protected void retrieve(View view) throws Exception {
+	protected boolean retrieve(View view) throws Exception {
 		Persistence persistence = this.getPersistenceImpl();
 		
 		List entityList = new ArrayList();
@@ -92,6 +92,8 @@ public class RoomTypeController extends EntityController<RoomType> {
 			entityList.add(entity);
 		
 		view.display(entityList);
+		
+		return entityList.size() > 0;
 	}
 	
 	/**

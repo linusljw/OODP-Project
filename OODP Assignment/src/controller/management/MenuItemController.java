@@ -88,7 +88,7 @@ public class MenuItemController extends EntityController<MenuItem> {
 	 * Retrieves and displays all MenuItem instances.
 	 */
 	@Override
-	protected void retrieve(View view) throws Exception {
+	protected boolean retrieve(View view) throws Exception {
 		Persistence persistence = this.getPersistenceImpl();
 		
 		// Store the menu items in an array list
@@ -99,6 +99,8 @@ public class MenuItemController extends EntityController<MenuItem> {
 		
 		// Call view display method for list of items
 		view.display(entityList);
+		
+		return true;
 	}
 	
 	/**

@@ -118,15 +118,17 @@ public class RoomController extends EntityController<Room> {
 	 * Retrieves and display all Room instances.
 	 */
 	@Override
-	protected void retrieve(View view) throws Exception {
-			Persistence persistence = this.getPersistenceImpl();
+	protected boolean retrieve(View view) throws Exception {
+		Persistence persistence = this.getPersistenceImpl();
 
-			List entityList = new ArrayList();
-			Iterable<Room> rooms = persistence.search(null, Room.class, false);
-			for(Entity entity: rooms)
-				entityList.add(entity);
-			
-			view.display(entityList);
+		List entityList = new ArrayList();
+		Iterable<Room> rooms = persistence.search(null, Room.class, false);
+		for(Entity entity: rooms)
+			entityList.add(entity);
+		
+		view.display(entityList);
+		
+		return entityList.size() > 0;
 	}
 
 	/**
