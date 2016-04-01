@@ -3,4 +3,4 @@ model.Room|_id:2|status:Vacant|number:0202|view:-|wifi:true|smoking:false|type:2
 model.Room|_id:3|status:Vacant|number:0203|view:-|wifi:true|smoking:false|type:1|bedType:Single
 model.Room|_id:4|status:Vacant|number:0204|view:-|wifi:false|smoking:false|type:2|bedType:Double
 model.Room|_id:5|status:Vacant|number:0205|view:-|wifi:true|smoking:false|type:1|bedType:Single
-model.Room|_id:6|status:Vacant|number:0206|view:-|wifi:true|smoking:true|type:1|bedType:King
+model.Room|_id:6|status:Vacant|number:0206|view:-|wifi:true|smoking:true|type:1|bedType:Queen

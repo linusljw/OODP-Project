@@ -15,10 +15,6 @@ public enum RoomStatus {
 	 */
 	Occupied,
 	/**
-	 * Room is reserved.
-	 */
-	Reserved,
-	/**
 	 * Room is under maintenance.
 	 */
 	Maintenance

@@ -13,6 +13,7 @@ import model.RoomType;
 import persistence.Entity;
 import persistence.Persistence;
 import persistence.Predicate;
+import persistence.file.text.EntityIterator;
 import view.View;
 
 /**
@@ -26,6 +27,11 @@ public class RoomController extends EntityController<Room> {
 	private final static String KEY_SMOKING = "room smoking";
 	private EntityController<RoomType> rtController = null;
 	
+	/**
+	 * RoomController constructor
+	 * @param persistence - The Persistence API implementation class to interact with for entity persistency.
+	 * @param rtController - The RoomType EntityController to allow RoomController to interact with for information sharing.
+	 */
 	public RoomController(Persistence persistence, EntityController<RoomType> rtController) {
 		super(persistence);
 		this.rtController = rtController;
@@ -128,19 +134,91 @@ public class RoomController extends EntityController<Room> {
 	 */
 	@Override
 	protected void update(View view) throws Exception {
-		// TODO Auto-generated method stub
+		Room room = select(view);
 		
+		boolean valid = false;
+		if (room != null) {
+			Persistence persistence = this.getPersistenceImpl();
+			
+			Map<String, String> inputMap = new LinkedHashMap<String, String>();
+			inputMap.put(KEY_VIEW, null);
+			inputMap.put(KEY_WIFI, null);
+			inputMap.put(KEY_SMOKING, null);
+			do {
+				view.input(inputMap);
+				
+				try {
+					char wifi = inputMap.get(KEY_WIFI).charAt(0);
+					try {
+						char smoking = inputMap.get(KEY_SMOKING).charAt(0);
+						room.setView(inputMap.get(KEY_VIEW));
+						if (wifi == 'Y' || wifi == 'T')
+							room.setWifi(true);
+						else if (wifi == 'F' || wifi == 'N')
+							room.setWifi(false);
+						if (smoking == 'Y' || smoking == 'T')
+							room.setSmoking(true);
+						else if (smoking == 'F' || smoking == 'N')
+							room.setSmoking(false);
+						view.message("Enter bed type");
+						room.setBedType(view.options(Arrays.asList(BedType.values())));
+						room.setType(rtController.select(view));
+						
+						if (persistence.update(room, Room.class)) {
+							valid = true;
+							view.message("Room successfully updated!");
+						}
+					} catch (IndexOutOfBoundsException e) {
+						view.error(Arrays.asList(KEY_SMOKING));
+					}
+				} catch (IndexOutOfBoundsException e) {
+					view.error(Arrays.asList(KEY_WIFI));
+				}
+			} while (!valid);
+		}
 	}
 
+	/**
+	 * Prompts the user to enter relevant information required and deletes a Room instance.
+	 */
 	@Override
 	protected void delete(View view) throws Exception {
-		// TODO Auto-generated method stub
+		Room room = select(view);
 		
+		Persistence persistence = this.getPersistenceImpl();
+		if(room != null && persistence.delete(room, Room.class))
+			view.message("Room deleted successfully!");
 	}
 
+	/**
+	 * Prompts the user to select a Room.
+	 */
 	@Override
 	public Room select(View view) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Room room = null;
+		
+		retrieve(view);
+		
+		Map<String, String> inputMap = new LinkedHashMap<String, String>();
+		inputMap.put(KEY_NUMBER, null);
+
+		Persistence persistence = this.getPersistenceImpl();
+		do {
+			view.input(inputMap);
+			
+			EntityIterator<Room> rooms = (EntityIterator<Room>) persistence.search(new Predicate<Room>() {
+				@Override
+				public boolean test(Room item) {
+					return item.getNumber().equals(inputMap.get(KEY_NUMBER));
+				}
+			}, Room.class, false).iterator();
+			if(rooms.hasNext())
+				room = rooms.next();
+			else
+				view.message("Room does not exist. Please try again.\n");
+			rooms.close();
+		} while(room == null && !view.bailout());
+		
+		return room;
 	}
 }
