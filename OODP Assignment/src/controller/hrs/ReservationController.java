@@ -128,6 +128,9 @@ public class ReservationController extends PersistenceController {
 									view.message("The reservation has been made, but no room is currently available, your reservation has been placed in the waiting list.");
 								else
 									view.message("The reservation has been made, and a room has been reserved for you.");
+								
+								view.message("Please take note of the reservation receipt below");
+								view.display(reservation);
 							}
 							else {
 								view.message("Invalid end date, end date must be after start date.");
