@@ -22,9 +22,9 @@ import model.RoomType;
 import persistence.Persistence;
 import persistence.Predicate;
 import view.View;
-import viewmodel.BedTypeVM;
-import viewmodel.RoomTypeVM;
-import viewmodel.TextAndCountVM;
+import viewmodel.reservation.BedTypeVM;
+import viewmodel.reservation.RoomTypeVM;
+import viewmodel.reservation.TextAndCountVM;
 
 /**
  * ReservationController is a controller that performs reservation operations.

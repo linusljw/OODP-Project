@@ -1,4 +1,4 @@
-package viewmodel;
+package viewmodel.reservation;
 
 import model.Room;
 import model.BedType;

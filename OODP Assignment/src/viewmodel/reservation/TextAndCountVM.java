@@ -1,4 +1,4 @@
-package viewmodel;
+package viewmodel.reservation;
 
 /**
  * A view model class that encapsulates information about a text and a count.
