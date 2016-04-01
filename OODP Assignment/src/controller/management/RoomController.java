@@ -45,8 +45,6 @@ public class RoomController extends EntityController<Room> {
 		inputMap.put(KEY_VIEW, null);
 		inputMap.put(KEY_WIFI, null);
 		inputMap.put(KEY_SMOKING, null);
-		inputMap.put(KEY_ROOM_TYPE, rtController.select(view).getName());
-		inputMap.put(KEY_BED_TYPE, view.options(Arrays.asList(BedType.values())).toString());
 		
 		
 		do {
@@ -66,7 +64,9 @@ public class RoomController extends EntityController<Room> {
 						room.setSmoking(true);
 					else if (smoking == 'F' || smoking == 'N')
 						room.setSmoking(false);
-					room.setType(new RoomType(inputMap.get(KEY_ROOM_TYPE)));
+					
+					room.setBedType(view.options(Arrays.asList(BedType.values())));
+					room.setType(rtController.select(view));
 				} catch(IndexOutOfBoundsException e) {
 					view.error(Arrays.asList(KEY_SMOKING));
 				}
