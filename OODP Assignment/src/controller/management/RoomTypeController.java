@@ -24,7 +24,7 @@ public class RoomTypeController extends EntityController<RoomType> {
 
 	/**
 	 * RoomTypeController constructor
-	 * @param persistence
+	 * @param persistence - The Persistence API implementation class to interact with for entity persistency.
 	 */
 	public RoomTypeController(Persistence persistence) {
 		super(persistence);

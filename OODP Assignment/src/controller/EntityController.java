@@ -13,6 +13,10 @@ import view.View;
  */
 public abstract class EntityController<T> extends PersistenceController {
 
+	/**
+	 * EntityController constructor.
+	 * @param persistence - The Persistence API implementation class to interact with for entity persistency.
+	 */
 	public EntityController(Persistence persistence) {
 		super(persistence);
 	}

@@ -29,6 +29,10 @@ public class GuestController extends EntityController<Guest> {
 	public final static String KEY_SEARCH = "name of the guest to search for";
 	public final static String KEY_ID = "ID of guest";
 
+	/**
+	 * GuestController constructor.
+	 * @param persistence - The Persistence API implementation class to interact with for entity persistency.
+	 */
 	public GuestController(Persistence persistence) {
 		super(persistence);
 	}
