@@ -1,7 +1,9 @@
 package model;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import persistence.CascadeType;
 import persistence.PersistAnnotation;
@@ -20,6 +22,7 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 			cascade = {CascadeType.Create, CascadeType.Update, CascadeType.Delete}
 	)
 	private final BillingInformation billingInformation;
+	private final List<ServiceOrder> orders;
 	private int numOfChildren;
 	private int numOfAdult;
 	private Date startDate;
@@ -28,6 +31,7 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 			cascade = {CascadeType.Update}
 	)
 	private Room assignedRoom;
+	private PaymentType paymentType;
 	
 	/**
 	 * Reservation constructor. For Persistence API usage.
@@ -36,6 +40,7 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 		this.guest = null;
 		this.criteria = null;
 		this.billingInformation = null;
+		this.orders = null;
 	}
 	
 	/**
@@ -46,6 +51,7 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 		this.guest = guest;
 		this.criteria = new RoomDescription();
 		this.billingInformation = new BillingInformation();
+		this.orders = new ArrayList<ServiceOrder>();
 		this.setStatus(ReservationStatus.Waitlist);
 	}
 	
@@ -71,6 +77,14 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 	 */
 	public BillingInformation getBillingInformation() {
 		return billingInformation;
+	}
+	
+	/**
+	 * Gets the service orders that have been made using this reservation.
+	 * @return orders
+	 */
+	public List<ServiceOrder> getOrderList() {
+		return orders;
 	}
 	
 	/**
@@ -161,6 +175,22 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 			this.setStatus(ReservationStatus.Confirmed);
 			this.assignedRoom.getReservationList().add(this);
 		}
+	}
+	
+	/**
+	 * Gets the payment type. This returns null if no payment has been made for this reservation yet.
+	 * @return PaymentType enum
+	 */
+	public PaymentType getPaymentType() {
+		return paymentType;
+	}
+	
+	/**
+	 * Sets the payment type.
+	 * @param paymentType 
+	 */
+	public void setPaymentType(PaymentType paymentType) {
+		this.paymentType = paymentType;
 	}
 
 	@Override
