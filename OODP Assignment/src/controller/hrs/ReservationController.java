@@ -195,9 +195,9 @@ public class ReservationController extends PersistenceController implements Rese
 					}
 					else {
 						Room room = reservation.getAssignedRoom();
-						reservation.setAssignedRoom(null);
+						reservation.setStatus(ReservationStatus.Cancelled);
 						
-						persistence.delete(reservation, Reservation.class);
+						persistence.update(reservation, Reservation.class);
 						
 						success = true;
 						if(room != null) {
@@ -252,7 +252,9 @@ public class ReservationController extends PersistenceController implements Rese
 	
 				@Override
 				public boolean test(Reservation item) {
-					return !item.getEndDate().before(today) && guest.equals(item.getGuest());
+					return !item.getEndDate().before(today) && 
+							item.getStatus() != ReservationStatus.Cancelled && 
+							guest.equals(item.getGuest());
 				}
 				
 			}, Reservation.class, true);
@@ -263,6 +265,25 @@ public class ReservationController extends PersistenceController implements Rese
 			
 			view.display(reservationList);
 		}
+	}
+	
+	@Override
+	public boolean reserveRoomForReservation(Reservation reservation) throws Exception {
+		boolean flag = false;
+		
+		if(reservation.getStatus() == ReservationStatus.Waitlist) {
+			Persistence persistence = this.getPersistenceImpl();
+			EntityIterator<Room> rooms = (EntityIterator<Room>) persistence.search(new RoomReservationPredicate(reservation), Room.class, true).iterator();
+			
+			if(rooms.hasNext()) {
+				reservation.setAssignedRoom(rooms.next());
+				flag = true;
+			}
+			
+			rooms.close();
+		}
+		
+		return flag;
 	}
 	
 	/**
@@ -520,26 +541,5 @@ public class ReservationController extends PersistenceController implements Rese
 				valid = true;
 			}
 		} while(!valid);
-	}
-	
-	/**
-	 * Reserves a room for the specified Reservation.
-	 * @param reservation - The reservation used to reserve a room.
-	 * @return A flag indicating if a room was reserved.
-	 */
-	private boolean reserveRoomForReservation(Reservation reservation) throws Exception {
-		boolean flag = false;
-		
-		Persistence persistence = this.getPersistenceImpl();
-		EntityIterator<Room> rooms = (EntityIterator<Room>) persistence.search(new RoomReservationPredicate(reservation), Room.class, true).iterator();
-		
-		if(rooms.hasNext()) {
-			reservation.setAssignedRoom(rooms.next());
-			flag = true;
-		}
-		
-		rooms.close();
-		
-		return flag;
 	}
 }

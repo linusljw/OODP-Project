@@ -29,5 +29,12 @@ public interface ReservationInterface {
 	 * @param view - A view interface that provides input/output.
 	 */
 	public void searchReservation(View view) throws Exception;
+	
+	/**
+	 * Reserves a room for the specified Reservation.
+	 * @param reservation - The reservation used to reserve a room.
+	 * @return A flag indicating if a room was reserved.
+	 */
+	public boolean reserveRoomForReservation(Reservation reservation) throws Exception;
 
 }

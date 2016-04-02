@@ -6,3 +6,6 @@ model.RoomDescription|_id:5|view:None|type:1|bedType:King|wifi:true|smoking:true
 model.RoomDescription|_id:6|view:Seaside|type:1|bedType:Single|wifi:false|smoking:true
 model.RoomDescription|_id:7|view:Seaside|type:1|bedType:Single|wifi:false|smoking:true
 model.RoomDescription|_id:43|bedType:Double|wifi:false|smoking:false
+model.RoomDescription|_id:44|bedType:Double|wifi:false|smoking:false
+model.RoomDescription|_id:45|bedType:Double|wifi:false|smoking:false
+model.RoomDescription|_id:46|bedType:Double|wifi:false|smoking:false

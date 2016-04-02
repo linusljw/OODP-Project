@@ -192,6 +192,14 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 	public void setPaymentType(PaymentType paymentType) {
 		this.paymentType = paymentType;
 	}
+	
+	@Override
+	public void setStatus(ReservationStatus status) {
+		if(status == ReservationStatus.Cancelled)
+			setAssignedRoom(null);
+		
+		super.setStatus(status);
+	}
 
 	@Override
 	public String toString() {
