@@ -42,51 +42,42 @@ public class EntityIterator<T extends Entity> implements Iterator<T>, AutoClosea
 		}
 		this.predicate = predicate;
 		this.loadR = loadR;
-		
-		load();
-	}
-	
-	/**
-	 * Make an attempt to load the next entity into our buffer.
-	 * @throws Exception 
-	 * @throws IllegalArgumentException 
-	 * @throws NumberFormatException 
-	 */
-	private void load() throws NumberFormatException, IllegalArgumentException, Exception {
-		this.entity = null;
-		
-		String entityString = null;
-		while(this.entity == null && ((entityString = reader.readLine()) != null)) {
-			T next = persistence.deserialize(entityString, loadR, false);
-			if(predicate == null || predicate.test(next)) {
-				if(!loadR)
-					this.entity = persistence.deserialize(entityString, true, true);
-				else
-					this.entity = next;
-			}
-		}
-		
-		// Reached the end of the file, close iterator.
-		if(this.entity == null && entityString == null)
-			this.close();
 	}
 
 	@Override
 	public boolean hasNext() {
-		return reader != null && entity != null;
+		this.entity = null;
+		
+		if(this.entity == null && reader != null) {
+			try {
+				String entityString = null;
+				while(this.entity == null && ((entityString = reader.readLine()) != null)) {
+					T next = persistence.deserialize(entityString, loadR, false);
+					if(predicate == null || predicate.test(next)) {
+						if(!loadR)
+							this.entity = persistence.deserialize(entityString, true, true);
+						else
+							this.entity = next;
+					}
+				}
+				
+				// Reached the end of the file, close iterator.
+				if(this.entity == null && entityString == null)
+					this.close();
+			} catch(Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		
+		return this.entity != null;
 	}
 
 	@Override
 	public T next() {
-		T next = this.entity;
-		try {
-			if(next != null)
-				load();
-		} catch (Exception e) {
-			throw new RuntimeException("Error loading next entity into buffer", e);
-		}
+		T entity = this.entity;
+		this.entity = null;
 		
-		return next;
+		return entity;
 	}
 
 	@Override

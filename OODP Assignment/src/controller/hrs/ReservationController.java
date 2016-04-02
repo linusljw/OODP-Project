@@ -47,6 +47,7 @@ public class ReservationController extends PersistenceController implements Rese
 	public final static String KEY_SMOKING = "Smoking Room";
 	public final static String KEY_CREDIT_CARD_NO = "credit card number(Omit dashes and spaces)";
 	public final static String KEY_CVV_NO = "credit card cvv/cvc";
+	public final static int DAY_IN_MILLIS = 24 * 60 * 60 * 1000;
 	private final EntityController<Guest> gController;
 	
 	/**
@@ -119,6 +120,22 @@ public class ReservationController extends PersistenceController implements Rese
 						
 						// Updates the criteria for the desired room
 						updateRoomCriteria(view, reservation);
+						
+						// Display expected cost
+						double cost = 0;
+						if(reservation.getCriteria().getRoomType() == null) {
+							// No room type selected, find the highest price
+							Iterable<RoomType> roomTypes = persistence.search(null, RoomType.class, false);
+							for(RoomType rType: roomTypes)
+								if(rType.getPrice() > cost)
+									cost = rType.getPrice();
+						}
+						else {
+							// Retrieve the cost of the selected room type
+							cost = reservation.getCriteria().getRoomType().getPrice();
+						}
+						cost = cost * (reservation.getEndDate().getTime() - reservation.getStartDate().getTime()) / DAY_IN_MILLIS;
+						view.message("The expected cost will be: $" + String.format("%.2f", cost));
 						
 						// Prompts the user whether or not the reservation should be made
 						view.message("Do you want to continue to make the reservation?");

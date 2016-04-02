@@ -50,6 +50,9 @@ public class CheckInCheckOutController extends PersistenceController {
 		case 0:
 			performCheckIn(view);
 			break;
+		case 1:
+			performCheckOut(view);
+			break;
 		}
 	}
 	
@@ -60,9 +63,10 @@ public class CheckInCheckOutController extends PersistenceController {
 	private void performCheckIn(View view) throws Exception {
 		Guest guest = gController.select(view);
 		
-		Persistence persistence = this.getPersistenceImpl();
-		CheckInPredicate predicate = new CheckInPredicate(guest);
 		if(guest != null) {
+			Persistence persistence = this.getPersistenceImpl();
+			CheckInPredicate predicate = new CheckInPredicate(guest);
+			
 			long count = persistence.getCount(predicate, Reservation.class, true);
 			
 			List<Reservation> reservations = new ArrayList<Reservation>();
@@ -97,7 +101,7 @@ public class CheckInCheckOutController extends PersistenceController {
 					else {
 						view.display(reservation);
 						view.display(reservation.getCriteria());
-						view.message("Do you wish to check-in this reservation?");
+						view.message("Do you wish to check-in the above reservation?");
 						if(view.options(ynOptionList) == Options.Yes)
 							reservations.add(reservation);
 					}
@@ -107,7 +111,7 @@ public class CheckInCheckOutController extends PersistenceController {
 			// Proceed with check-in
 			if(reservations.size() > 0) {
 				view.message("You have selected " + reservations.size() + " reservation(s), do you wish to proceed to check-in?");
-				if(view.options(Arrays.asList(Options.Yes, Options.No)) == Options.Yes)
+				if(view.options(ynOptionList) == Options.Yes)
 					checkin(view, reservations);
 			}
 			else {
@@ -117,8 +121,59 @@ public class CheckInCheckOutController extends PersistenceController {
 	}
 	
 	/**
+	 * Prompts user to enter relevant information to perform a check-out.
+	 * @param view - A view interface that provides input/output.
+	 */
+	private void performCheckOut(View view) throws Exception {
+		Guest guest = gController.select(view);
+		
+		if(guest != null) {
+			Persistence persistence = this.getPersistenceImpl();
+			CheckOutPredicate predicate = new CheckOutPredicate(guest);
+			
+			long count = persistence.getCount(predicate, Reservation.class, true);
+			if(count == 0) {
+				view.message("No checked-in room that is available for check-out.");
+			}
+			else {
+				view.message("You have " + count + " rooms eligible for check-out");
+				view.message("Do you wish to add check-out all your rooms (Select no to inspect each reservation to decide which ones to check-out)?");
+				
+				List<Reservation> reservations = new ArrayList<Reservation>();
+				List<Options> ynOptionList = Arrays.asList(Options.Yes, Options.No);
+				Options selectedOption = view.options(ynOptionList);
+				
+				// Display reservations for user to select
+				Iterable<Reservation> rIterable = persistence.search(predicate, Reservation.class, true);
+				for(Reservation reservation: rIterable) {
+					if(selectedOption == Options.Yes) {
+						reservations.add(reservation);
+					}
+					else {
+						view.message("Room number: " + reservation.getAssignedRoom().getNumber());
+						view.display(reservation);
+						view.message("Do you wish to check-out of the above room?");
+						if(view.options(ynOptionList) == Options.Yes)
+							reservations.add(reservation);
+					}
+				}
+				
+				if(reservations.size() > 0) {
+					view.message("You have selected " + reservations.size() + " room(s) to check out, do you wish to proceed?");
+					if(view.options(ynOptionList) == Options.Yes)
+						checkout(view, reservations);
+				}
+				else {
+					view.message("You have no rooms selected for check-out");
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Performs check in for all the reservations present in the specified list and prints out
 	 * the respective room numbers.
+	 * @param view - A view interface that provides input/output.
 	 * @param reservations - The reservations to perform check in.
 	 */
 	private void checkin(View view, List<Reservation> reservations) throws Exception {
@@ -141,6 +196,28 @@ public class CheckInCheckOutController extends PersistenceController {
 		}
 	}
 	
+	/**
+	 * Performs check out for all the reservations present in the specified list and prints out
+	 * the bill.
+	 * @param view - A view interface that provides input/output.
+	 * @param reservations - The reservations to perform check in.
+	 */
+	private void checkout(View view, List<Reservation> reservations) throws Exception {
+		Persistence persistence = this.getPersistenceImpl();
+		
+		for(Reservation reservation: reservations) {
+			reservation.setStatus(ReservationStatus.CheckedOut);
+			persistence.update(reservation, Reservation.class);
+			
+			// TODO create payment VM and display after looping through all reservations
+		}
+	}
+	
+	/**
+	 * Finds a vacant and available room that fits the criteria of the specified reservation.
+	 * @param reservation - The reservation to find a room for.
+	 * @return A room instance that fits the criteria of the specified reservation and is vacant and available.
+	 */
 	private Room findVacantAndAvailableRoom(Reservation reservation) throws Exception {
 		Room room = null;
 		Persistence persistence = this.getPersistenceImpl();

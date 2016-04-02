@@ -35,8 +35,7 @@ public class RoomReservationPredicate implements Predicate<Room> {
 			List<Reservation> reservations = item.getReservationList();
 			for(int i = 0; i < reservations.size(); i++) {
 				Reservation roomReservation = reservations.get(i);
-				if(roomReservation.getStatus() != ReservationStatus.Cancelled &&
-					roomReservation.getStatus() != ReservationStatus.Expired &&
+				if((roomReservation.getStatus() == ReservationStatus.Confirmed || roomReservation.getStatus() == ReservationStatus.CheckedIn) &&
 					roomReservation.getStartDate().before(reservation.getEndDate()) &&
 					roomReservation.getEndDate().after(reservation.getStartDate())) {
 					flag = false;

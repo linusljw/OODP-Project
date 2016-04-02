@@ -40,7 +40,7 @@ public class RoomTypeVM {
 
 	@Override
 	public String toString() {
-		return roomType.getName() + "(" + count + " room(s) available)";
+		return roomType.getName() + "(" + count + " room(s) available)($" + String.format("%.2f", roomType.getPrice()) + "/night)";
 	}
 
 }
