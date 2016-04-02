@@ -259,6 +259,7 @@ public class ReservationController extends PersistenceController implements Rese
 				@Override
 				public boolean test(Reservation item) {
 					return !item.getEndDate().before(today) && 
+							item.getStatus() != ReservationStatus.Expired &&
 							item.getStatus() != ReservationStatus.Cancelled && 
 							guest.equals(item.getGuest());
 				}

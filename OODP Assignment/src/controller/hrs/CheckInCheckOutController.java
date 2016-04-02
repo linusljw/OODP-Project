@@ -157,7 +157,7 @@ public class CheckInCheckOutController extends PersistenceController {
 				boolean flag = false;
 				
 				// Only care about vacant rooms
-				if(item.getStatus() == RoomStatus.Vacant) {
+				if(item.getStatus() == RoomStatus.Vacant && item.getDescription().fulfils(reservation.getCriteria())) {
 					// Loop through the list to find out which reservation has expired (Grace period is over).
 					List<Reservation> reservations = item.getReservationList();
 					for(int i = 0; i < reservations.size(); i++) {
@@ -165,10 +165,11 @@ public class CheckInCheckOutController extends PersistenceController {
 						// Find overlapping reservations
 						if(roomReservation.getStartDate().before(reservation.getEndDate()) &&
 								roomReservation.getEndDate().after(reservation.getStartDate())) {
-							if((now - roomReservation.getStartDate().getTime()) > grace) {
+							long overtime = now - roomReservation.getStartDate().getTime();
+							if(overtime > grace) {
 								// Find expired reservations
 								flag = true;
-								expiredList.add(reservation);
+								expiredList.add(roomReservation);
 							}
 							else {
 								// Sets flag back to false if we find reservations that are
@@ -182,7 +183,7 @@ public class CheckInCheckOutController extends PersistenceController {
 				return flag;
 			}
 			
-		}, Room.class, true);
+		}, Room.class, true).iterator();
 		
 		if(roomIterator.hasNext())
 			room = roomIterator.next();

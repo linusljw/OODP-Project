@@ -3,6 +3,7 @@ package controller.hrs;
 import java.util.List;
 
 import model.Reservation;
+import model.ReservationStatus;
 import model.Room;
 import model.RoomStatus;
 import persistence.Predicate;
@@ -34,8 +35,10 @@ public class RoomReservationPredicate implements Predicate<Room> {
 			List<Reservation> reservations = item.getReservationList();
 			for(int i = 0; i < reservations.size(); i++) {
 				Reservation roomReservation = reservations.get(i);
-				if(roomReservation.getStartDate().before(reservation.getEndDate()) &&
-						roomReservation.getEndDate().after(reservation.getStartDate())) {
+				if(roomReservation.getStatus() != ReservationStatus.Cancelled &&
+					roomReservation.getStatus() != ReservationStatus.Expired &&
+					roomReservation.getStartDate().before(reservation.getEndDate()) &&
+					roomReservation.getEndDate().after(reservation.getStartDate())) {
 					flag = false;
 					break;
 				}

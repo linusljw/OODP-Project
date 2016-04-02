@@ -1,7 +1,7 @@
-model.Room|_id:1|status:Vacant|number:0201|reservations:45|description:1
-model.Room|_id:2|status:Vacant|number:0202|reservations:|description:2
-model.Room|_id:3|status:Vacant|number:0203|reservations:|description:3
-model.Room|_id:4|status:Occupied|number:0204|reservations:46|description:4
+model.Room|_id:1|status:Vacant|number:0201|reservations:|description:1
+model.Room|_id:2|status:Occupied|number:0202|reservations:2|description:2
+model.Room|_id:3|status:Vacant|number:0203|reservations:6|description:3
+model.Room|_id:4|status:Vacant|number:0204|reservations:|description:4
 model.Room|_id:5|status:Vacant|number:0205|reservations:|description:5
 model.Room|_id:6|status:Vacant|number:0301|reservations:|description:6
 model.Room|_id:7|status:Vacant|number:0302|reservations:|description:7

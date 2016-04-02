@@ -1,11 +1,6 @@
-model.Reservation|_id:36|status:Cancelled|guest:1|criteria:43|billingInformation:36|orders:|numOfChildren:2|numOfAdult:2|startDate:1468425600000|endDate:1468512000000|assignedRoom:2
-model.Reservation|_id:37|status:Cancelled|guest:1|criteria:44|billingInformation:37|orders:|numOfChildren:2|numOfAdult:2|startDate:1468425600000|endDate:1471104000000|assignedRoom:2
-model.Reservation|_id:38|status:Cancelled|guest:2|criteria:45|billingInformation:38|orders:|numOfChildren:2|numOfAdult:2|startDate:1468425600000|endDate:1468512000000|assignedRoom:2
-model.Reservation|_id:39|status:Cancelled|guest:2|criteria:46|billingInformation:39|orders:|numOfChildren:2|numOfAdult:2|startDate:1470758400000|endDate:1470844800000|assignedRoom:2
-model.Reservation|_id:40|status:Cancelled|guest:1|criteria:47|billingInformation:40|orders:|numOfChildren:2|numOfAdult:2|startDate:1459526400000|endDate:1459612800000|assignedRoom:2
-model.Reservation|_id:41|status:Cancelled|guest:2|criteria:48|billingInformation:41|orders:|numOfChildren:2|numOfAdult:2|startDate:1459526400000|endDate:1459612800000|assignedRoom:4
-model.Reservation|_id:42|status:Cancelled|guest:1|criteria:49|billingInformation:42|orders:|numOfChildren:2|numOfAdult:2|startDate:1468425600000|endDate:1468512000000|assignedRoom:4
-model.Reservation|_id:43|status:Cancelled|guest:1|criteria:50|billingInformation:43|orders:|numOfChildren:2|numOfAdult:2|startDate:1468425600000|endDate:1468512000000|assignedRoom:5
-model.Reservation|_id:44|status:Cancelled|guest:1|criteria:51|billingInformation:44|orders:|numOfChildren:2|numOfAdult:2|startDate:1468425600000|endDate:1468512000000|assignedRoom:6
-model.Reservation|_id:45|status:Confirmed|guest:1|criteria:52|billingInformation:45|orders:|numOfChildren:2|numOfAdult:2|startDate:1459526400000|endDate:1459612800000|assignedRoom:1
-model.Reservation|_id:46|status:CheckedIn|guest:1|criteria:53|billingInformation:46|orders:|numOfChildren:2|numOfAdult:2|startDate:1459526400000|endDate:1459612800000|assignedRoom:4
+model.Reservation|_id:1|status:Cancelled|guest:1|criteria:8|billingInformation:1|orders:|numOfChildren:2|numOfAdult:2|startDate:1459526400000|endDate:1459612800000|assignedRoom:2
+model.Reservation|_id:2|status:CheckedIn|guest:1|criteria:9|billingInformation:2|orders:|numOfChildren:2|numOfAdult:2|startDate:1459526400000|endDate:1459612800000|assignedRoom:2
+model.Reservation|_id:3|status:Expired|guest:1|criteria:10|billingInformation:3|orders:|numOfChildren:0|numOfAdult:1|startDate:1459526400000|endDate:1459612800000|assignedRoom:3
+model.Reservation|_id:4|status:Cancelled|guest:1|criteria:11|billingInformation:4|orders:|numOfChildren:0|numOfAdult:1|startDate:1459526400000|endDate:1459612800000
+model.Reservation|_id:5|status:Cancelled|guest:1|criteria:12|billingInformation:5|orders:|numOfChildren:2|numOfAdult:2|startDate:1459612800000|endDate:1459699200000|assignedRoom:3
+model.Reservation|_id:6|status:Confirmed|guest:1|criteria:13|billingInformation:6|orders:|numOfChildren:2|numOfAdult:2|startDate:1459526400000|endDate:1459699200000|assignedRoom:3
