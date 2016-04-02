@@ -2,6 +2,7 @@ import java.io.File;
 import java.util.Scanner;
 
 import controller.NavigationController;
+import controller.hrs.CheckInCheckOutController;
 import controller.hrs.ReservationController;
 import controller.management.*;
 import persistence.file.text.FilePersistence;
@@ -17,6 +18,7 @@ public class Test {
 			
 			RoomTypeController rtController = new RoomTypeController(persistence);
 			GuestController gController = new GuestController(persistence);
+			ReservationController rController = new ReservationController(persistence, gController);
 			
 			NavigationController managementController = new NavigationController();
 			managementController.addView(new ConsoleView(new GuestController(persistence), "Manage Guest", sc));
@@ -27,7 +29,8 @@ public class Test {
 			ConsoleView managementView = new ConsoleView(managementController, "Management View", sc);
 			
 			NavigationController hrsController = new NavigationController();
-			hrsController.addView(new ConsoleView(new ReservationController(persistence, gController), "Reservation System", sc));
+			hrsController.addView(new ConsoleView(rController, "Reservation System", sc));
+			hrsController.addView(new ConsoleView(new CheckInCheckOutController(persistence, rController), "Check-in/Check-out", sc));
 			
 			ConsoleView hrsView = new ConsoleView(hrsController, "Hotel Reservation System", sc);
 			

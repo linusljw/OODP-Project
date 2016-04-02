@@ -47,7 +47,7 @@ public class ReservationController extends PersistenceController implements Rese
 	public final static String KEY_SMOKING = "Smoking Room";
 	public final static String KEY_CREDIT_CARD_NO = "credit card number(Omit dashes and spaces)";
 	public final static String KEY_CVV_NO = "credit card cvv/cvc";
-	private EntityController<Guest> gController;
+	private final EntityController<Guest> gController;
 	
 	/**
 	 * ReservationController constructor.
@@ -61,7 +61,9 @@ public class ReservationController extends PersistenceController implements Rese
 
 	@Override
 	public List<String> getOptions() {
-		return Arrays.asList("Check room availability/Make a reservation", "Cancel a reservation", "Search reservation by guest");
+		return Arrays.asList("Check room availability/Make a reservation",
+				"Cancel a reservation", 
+				"Search reservation by guest");
 	}
 
 	@Override
