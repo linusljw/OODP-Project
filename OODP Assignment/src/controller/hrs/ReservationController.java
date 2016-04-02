@@ -195,10 +195,40 @@ public class ReservationController extends PersistenceController {
 						valid = view.bailout();
 					}
 					else {
-						if(reservation.getStatus() == ReservationStatus.Confirmed)
-							reservation.setAssignedRoom(null);
+						Room room = reservation.getAssignedRoom();
+						reservation.setAssignedRoom(null);
 						
 						persistence.delete(reservation, Reservation.class);
+						
+						if(room != null) {
+							// Attempts to find rooms that are on the waitlist that can be assigned
+							// with this room
+							Iterable<Reservation> waitlist = persistence.search(new Predicate<Reservation>() {
+
+								@Override
+								public boolean test(Reservation item) {
+									return item.getStatus() == ReservationStatus.Waitlist && 
+											new RoomReservationPredicate(item).test(room);
+								}
+								
+							}, Reservation.class, true);
+							
+							List<Reservation> reservations = new ArrayList<Reservation>();
+							// Stores into temporary list as we can read from file and update at the same time
+							for(Reservation r: waitlist)
+								reservations.add(r);
+							
+							// Perform last round check to ensure that the selected reservation is eligible to be assigned this room
+							// This step is to ensure that assigning this room to the next reservation will not affect the
+							// eligibility of the succeeding reservations
+							for(Reservation r: reservations) {
+								if(new RoomReservationPredicate(r).test(room)) {
+									r.setAssignedRoom(room);
+									persistence.update(r, Reservation.class);
+								}
+							}
+						}
+						
 						view.message("Reservation cancelled!");
 						valid = true;
 					}
@@ -496,14 +526,21 @@ public class ReservationController extends PersistenceController {
 	/**
 	 * Reserves a room for the specified Reservation.
 	 * @param reservation - The reservation used to reserve a room.
+	 * @return A flag indicating if a room was reserved.
 	 */
-	private void reserveRoomForReservation(Reservation reservation) throws Exception {
+	private boolean reserveRoomForReservation(Reservation reservation) throws Exception {
+		boolean flag = false;
+		
 		Persistence persistence = this.getPersistenceImpl();
 		EntityIterator<Room> rooms = (EntityIterator<Room>) persistence.search(new RoomReservationPredicate(reservation), Room.class, true).iterator();
 		
-		if(rooms.hasNext())
+		if(rooms.hasNext()) {
 			reservation.setAssignedRoom(rooms.next());
+			flag = true;
+		}
 		
 		rooms.close();
+		
+		return flag;
 	}
 }
