@@ -33,7 +33,7 @@ import viewmodel.reservation.TextAndCountVM;
  * ReservationController is a controller that performs reservation operations.
  * @author YingHao
  */
-public class ReservationController extends PersistenceController {
+public class ReservationController extends PersistenceController implements ReservationInterface {
 	public final static String DATE_FORMAT = "dd-MM-yyyy";
 	public final static String KEY_RESERVATION_NO = "reservation number or 'Search' to search for reservation by guest";
 	public final static String KEY_NUM_CHILDREN = "number of children(s)";
@@ -79,17 +79,14 @@ public class ReservationController extends PersistenceController {
 		}
 	}
 	
-	/**
-	 * Prompts the user to enter relevant information to make a reservation.
-	 * @param view - A view interface that provides input/output.
-	 * @throws Exception 
-	 */
-	private void makeReservation(View view) throws Exception {
+	@Override
+	public Reservation makeReservation(View view) throws Exception {
+		Reservation reservation = null;
 		Guest guest = gController.select(view);
 		
 		if(guest != null) {
 			Map<String, String> inputMap = new LinkedHashMap<String, String>();
-			Reservation reservation = new Reservation(guest);
+			reservation = new Reservation(guest);
 			
 			inputMap.put(KEY_START_DATE, null);
 			inputMap.put(KEY_END_DATE, null);
@@ -167,13 +164,13 @@ public class ReservationController extends PersistenceController {
 				}
 			} while(!valid && !view.bailout());
 		}
+		
+		return reservation;
 	}
 	
-	/**
-	 * Prompts the user to enter relevant information to cancel a reservation.
-	 * @param view - A view interface that provides input/output.
-	 */
-	private void cancelReservation(View view) throws Exception {
+	@Override
+	public boolean cancelReservation(View view) throws Exception {
+		boolean success = false;
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
 		inputMap.put(KEY_RESERVATION_NO, null);
 		
@@ -200,6 +197,7 @@ public class ReservationController extends PersistenceController {
 						
 						persistence.delete(reservation, Reservation.class);
 						
+						success = true;
 						if(room != null) {
 							// Attempts to find rooms that are on the waitlist that can be assigned
 							// with this room
@@ -238,13 +236,12 @@ public class ReservationController extends PersistenceController {
 				}
 			}
 		} while(!valid);
+		
+		return success;
 	}
 	
-	/**
-	 * Prompts the user to enter relevant information to search for a reservation.
-	 * @param view - A view interface that provides input/output.
-	 */
-	private void searchReservation(View view) throws Exception {
+	@Override
+	public void searchReservation(View view) throws Exception {
 		Guest guest = gController.select(view);
 		
 		if(guest != null) {
