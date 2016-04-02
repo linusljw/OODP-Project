@@ -577,43 +577,6 @@ public class FilePersistence implements Persistence {
 			// Move and rename data file to temporary file
 			Files.move(dataFile.toPath(), tmpFile.toPath(), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
 			
-			Field[] fields = this.getFieldsForType(type);
-			for(Field field: fields) {
-				// Delete fields with cascade delete annotations and update fields with cascade update annotations.
-				PersistAnnotation metadata = this.getFieldPersistenceMetadata(field);
-				
-				Class fType = field.getType();
-				Object value = field.get(entity);
-				
-				if(Entity.class.isAssignableFrom(fType)) {
-					if(CascadeType.cascade(metadata.cascade(), CascadeType.Delete))
-						this.delete((Entity) value, fType);
-					else if(CascadeType.cascade(metadata.cascade(), CascadeType.Update))
-						this.update((Entity) value, fType);
-				}
-				else if(fType.isArray() || List.class.isAssignableFrom(fType)) {
-					Class componentType = type.isArray()? type.getComponentType():
-						metadata.type();
-					
-					if(Entity.class.isAssignableFrom(componentType)) {
-						// Cast the references as a List
-						List items = null;
-						if(type.isArray())
-							items = Arrays.asList((Object[]) value);
-						else
-							items = (List) value;
-						
-						// Loop through all items and delete
-						for(Object item: items) {
-							if(CascadeType.cascade(metadata.cascade(), CascadeType.Delete))
-								this.delete((Entity) item, componentType);
-							else if(CascadeType.cascade(metadata.cascade(), CascadeType.Update))
-								this.update((Entity) item, componentType);
-						}
-					}
-				}
-			}
-			
 			// Create new file and write data from temporary file to new file, ignoring entity string that matches
 			// the specified entity's identifier.
 			dataFile.createNewFile();
@@ -626,6 +589,9 @@ public class FilePersistence implements Persistence {
 							.split(this.configuration.getProperty(KEY_KV_DELIMITER))[1]);
 					if(_id == entity.getIdentifier()) {
 						success = true;
+						// Unmanage entity
+						getFieldsForType(Entity.class)[0].set(entity, Long.MIN_VALUE);
+						
 						// Remove entity from cache
 						synchronized(this.entityCache) {
 							if(this.entityCache.containsKey(type)) {
@@ -642,6 +608,47 @@ public class FilePersistence implements Persistence {
 			} finally {
 				reader.close();
 				writer.close();
+			}
+			
+			if(success) {
+				Field[] fields = this.getFieldsForType(type);
+				for(Field field: fields) {
+					// Delete fields with cascade delete annotations and update fields with cascade update annotations.
+					PersistAnnotation metadata = this.getFieldPersistenceMetadata(field);
+					
+					Class fType = field.getType();
+					Object value = field.get(entity);
+					
+					if(value != null) {
+						if(Entity.class.isAssignableFrom(fType)) {
+							if(CascadeType.cascade(metadata.cascade(), CascadeType.Delete))
+								this.delete((Entity) value, fType);
+							else if(CascadeType.cascade(metadata.cascade(), CascadeType.Update))
+								this.update((Entity) value, fType);
+						}
+						else if(fType.isArray() || List.class.isAssignableFrom(fType)) {
+							Class componentType = type.isArray()? type.getComponentType():
+								metadata.type();
+							
+							if(Entity.class.isAssignableFrom(componentType)) {
+								// Cast the references as a List
+								List items = null;
+								if(type.isArray())
+									items = Arrays.asList((Object[]) value);
+								else
+									items = (List) value;
+								
+								// Loop through all items and delete
+								for(Object item: items) {
+									if(CascadeType.cascade(metadata.cascade(), CascadeType.Delete))
+										this.delete((Entity) item, componentType);
+									else if(CascadeType.cascade(metadata.cascade(), CascadeType.Update))
+										this.update((Entity) item, componentType);
+								}
+							}
+						}
+					}
+				}
 			}
 			
 			// Delete temporary file

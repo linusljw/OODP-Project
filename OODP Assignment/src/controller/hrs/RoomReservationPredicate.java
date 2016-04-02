@@ -4,6 +4,7 @@ import java.util.List;
 
 import model.Reservation;
 import model.Room;
+import model.RoomStatus;
 import persistence.Predicate;
 
 /**
@@ -27,13 +28,17 @@ public class RoomReservationPredicate implements Predicate<Room> {
 	public boolean test(Room item) {
 		boolean flag = true;
 		
-		List<Reservation> reservations = item.getReservationList();
-		for(int i = 0; i < reservations.size(); i++) {
-			Reservation roomReservation = reservations.get(i);
-			if(roomReservation.getStartDate().before(reservation.getEndDate()) &&
-					roomReservation.getEndDate().after(reservation.getStartDate())) {
-				flag = false;
-				break;
+		if(item.getStatus() == RoomStatus.Maintenance)
+			flag = false;
+		else {
+			List<Reservation> reservations = item.getReservationList();
+			for(int i = 0; i < reservations.size(); i++) {
+				Reservation roomReservation = reservations.get(i);
+				if(roomReservation.getStartDate().before(reservation.getEndDate()) &&
+						roomReservation.getEndDate().after(reservation.getStartDate())) {
+					flag = false;
+					break;
+				}
 			}
 		}
 		

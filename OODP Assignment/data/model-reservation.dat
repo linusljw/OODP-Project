@@ -1,4 +1,0 @@
-model.Reservation|_id:1|status:Confirmed|guest:1|criteria:8|billingInformation:1|numOfChildren:2|numOfAdult:2|startDate:1468425600000|endDate:1468857600000|assignedRoom:1
-model.Reservation|_id:2|status:Confirmed|guest:1|criteria:9|billingInformation:2|numOfChildren:2|numOfAdult:2|startDate:1468339200000|endDate:1468425600000|assignedRoom:2
-model.Reservation|_id:3|status:Confirmed|guest:1|criteria:10|billingInformation:3|numOfChildren:2|numOfAdult:2|startDate:1468252800000|endDate:1468339200000|assignedRoom:1
-model.Reservation|_id:4|status:Confirmed|guest:2|criteria:11|billingInformation:4|numOfChildren:2|numOfAdult:3|startDate:1468425600000|endDate:1468512000000|assignedRoom:2

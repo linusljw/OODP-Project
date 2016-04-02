@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Arrays;
+
 import persistence.CascadeType;
 import persistence.Entity;
 import persistence.PersistAnnotation;
@@ -62,5 +64,19 @@ public class BillingInformation extends Entity {
 	 */
 	public void setCVV(String cvv) {
 		this.cvv = cvv;
+	}
+
+	@Override
+	public String toString() {
+		String ccNumberMask = getCreditCardNumber();
+		
+		// Prepare obfuscation mask
+		char[] mask = new char[ccNumberMask.length() - 4];
+		Arrays.fill(mask, '*');
+		ccNumberMask = new String(mask) + ccNumberMask.substring(ccNumberMask.length() - 4, ccNumberMask.length());
+		
+		return "----- Billing Information -----\n" +
+				"Credit card number: " + ccNumberMask + "\n" +
+				getAddress().toString();
 	}
 }

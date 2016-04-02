@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 
 import controller.AddressValidator;
 import controller.EntityController;
-import controller.Options;
 import controller.PersistenceController;
 import model.BedType;
 import model.BillingInformation;
@@ -22,7 +21,9 @@ import model.ReservationStatus;
 import model.Room;
 import model.RoomType;
 import persistence.Persistence;
+import persistence.Predicate;
 import persistence.file.text.EntityIterator;
+import view.Options;
 import view.View;
 import viewmodel.reservation.BedTypeVM;
 import viewmodel.reservation.RoomTypeVM;
@@ -34,6 +35,7 @@ import viewmodel.reservation.TextAndCountVM;
  */
 public class ReservationController extends PersistenceController {
 	public final static String DATE_FORMAT = "dd-MM-yyyy";
+	public final static String KEY_RESERVATION_NO = "reservation number or 'Search' to search for reservation by guest";
 	public final static String KEY_NUM_CHILDREN = "number of children(s)";
 	public final static String KEY_NUM_ADULT = "number of adult(s)";
 	public final static String KEY_START_DATE = "start date(" + DATE_FORMAT + ")";
@@ -43,7 +45,6 @@ public class ReservationController extends PersistenceController {
 	public final static String KEY_VIEW = "Room View";
 	public final static String KEY_WIFI = "Wifi Status";
 	public final static String KEY_SMOKING = "Smoking Room";
-	public final static String KEY_ANY = "Any";
 	public final static String KEY_CREDIT_CARD_NO = "credit card number(Omit dashes and spaces)";
 	public final static String KEY_CVV_NO = "credit card cvv/cvc";
 	private EntityController<Guest> gController;
@@ -60,7 +61,7 @@ public class ReservationController extends PersistenceController {
 
 	@Override
 	public List<String> getOptions() {
-		return Arrays.asList("Make a reservation", "Cancel a reservation", "Search reservation by guest");
+		return Arrays.asList("Check room availability/Make a reservation", "Cancel a reservation", "Search reservation by guest");
 	}
 
 	@Override
@@ -90,8 +91,6 @@ public class ReservationController extends PersistenceController {
 			Map<String, String> inputMap = new LinkedHashMap<String, String>();
 			Reservation reservation = new Reservation(guest);
 			
-			inputMap.put(KEY_NUM_CHILDREN, null);
-			inputMap.put(KEY_NUM_ADULT, null);
 			inputMap.put(KEY_START_DATE, null);
 			inputMap.put(KEY_END_DATE, null);
 			
@@ -101,52 +100,70 @@ public class ReservationController extends PersistenceController {
 				view.input(inputMap);
 				
 				try {
-					reservation.setNumOfChildren(Integer.parseInt(inputMap.get(KEY_NUM_CHILDREN)));
-					reservation.setNumOfAdult(Integer.parseInt(inputMap.get(KEY_NUM_ADULT)));
-					try {
-						SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-						
-						Date todayDate = new Date();
-						Date startDate = sdf.parse(inputMap.get(KEY_START_DATE));
-						Date endDate = sdf.parse(inputMap.get(KEY_END_DATE));
-						
-						if(startDate.after(todayDate)) {
-							if(endDate.after(startDate)) {
-								reservation.setStartDate(startDate);
-								reservation.setEndDate(endDate);
+					SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+					
+					Date todayDate = new Date();
+					Date startDate = sdf.parse(inputMap.get(KEY_START_DATE));
+					Date endDate = sdf.parse(inputMap.get(KEY_END_DATE));
+					
+					if(startDate.after(todayDate)) {
+						if(endDate.after(startDate)) {
+							reservation.setStartDate(startDate);
+							reservation.setEndDate(endDate);
+							
+							// Updates the criteria for the desired room
+							updateRoomCriteria(view, reservation);
+							
+							// Prompts the user whether or not the reservation should be made
+							view.message("Do you want to continue to make the reservation?");
+							if(view.options(Arrays.asList(Options.Yes, Options.No)) == Options.Yes) {
+								inputMap.clear();
+								inputMap.put(KEY_NUM_CHILDREN, null);
+								inputMap.put(KEY_NUM_ADULT, null);
 								
-								// Updates the criteria for the desired room
-								updateRoomCriteria(view, reservation);
-								
-								// Updates the billing information
-								updateBillingInformation(view, guest, reservation.getBillingInformation());
-								
-								// Attempts to reserve room for the reservation
-								reserveRoomForReservation(reservation);
-								
-								persistence.create(reservation, Reservation.class);
-								
-								valid = true;
-								if(reservation.getStatus() == ReservationStatus.Waitlist)
-									view.message("The reservation has been made, but no room is currently available, your reservation has been placed in the waiting list.");
-								else
-									view.message("The reservation has been made, and a room has been reserved for you.");
-								
-								view.message("Please take note of the reservation receipt below");
-								view.display(reservation);
+								do {
+									view.input(inputMap);
+									
+									try {
+										reservation.setNumOfChildren(Integer.parseInt(inputMap.get(KEY_NUM_CHILDREN)));
+										reservation.setNumOfAdult(Integer.parseInt(inputMap.get(KEY_NUM_ADULT)));
+										
+										// Updates the billing information
+										updateBillingInformation(view, guest, reservation.getBillingInformation());
+										
+										// Attempts to reserve room for the reservation
+										reserveRoomForReservation(reservation);
+										
+										persistence.create(reservation, Reservation.class);
+										
+										valid = true;
+										if(reservation.getStatus() == ReservationStatus.Waitlist)
+											view.message("The reservation has been made, but no room is currently available, your reservation has been placed in the waiting list.");
+										else
+											view.message("The reservation has been made, and a room has been reserved for you.");
+										
+										view.message("Please take note of the reservation receipt below");
+										view.display(reservation);
+										view.display(reservation.getCriteria());
+										view.display(reservation.getBillingInformation());
+									} catch(NumberFormatException e) {
+										view.error(Arrays.asList(KEY_NUM_CHILDREN, KEY_NUM_ADULT));
+									}
+								} while(!valid && !view.bailout());
 							}
 							else {
-								view.message("Invalid end date, end date must be after start date.");
+								valid = true;
 							}
 						}
 						else {
-							view.message("Invalid start date, start date must be after today's date.");
+							view.message("Invalid end date, end date must be after start date.");
 						}
-					} catch(ParseException e) {
-						view.error(Arrays.asList(KEY_START_DATE, KEY_END_DATE));
 					}
-				} catch(NumberFormatException e) {
-					view.error(Arrays.asList(KEY_NUM_CHILDREN, KEY_NUM_ADULT));
+					else {
+						view.message("Invalid start date, start date must be after today's date.");
+					}
+				} catch(ParseException e) {
+					view.error(Arrays.asList(KEY_START_DATE, KEY_END_DATE));
 				}
 			} while(!valid && !view.bailout());
 		}
@@ -156,16 +173,67 @@ public class ReservationController extends PersistenceController {
 	 * Prompts the user to enter relevant information to cancel a reservation.
 	 * @param view - A view interface that provides input/output.
 	 */
-	private void cancelReservation(View view) {
-		// TODO Cancel reservation
+	private void cancelReservation(View view) throws Exception {
+		Map<String, String> inputMap = new LinkedHashMap<String, String>();
+		inputMap.put(KEY_RESERVATION_NO, null);
+		
+		Persistence persistence = this.getPersistenceImpl();
+		boolean valid = false;
+		do {
+			view.input(inputMap);
+			
+			String input = inputMap.get(KEY_RESERVATION_NO);
+			if(input.toLowerCase().equals("search"))
+				searchReservation(view);
+			else {
+				try {
+					long id = Long.parseLong(inputMap.get(KEY_RESERVATION_NO));
+					Reservation reservation = persistence.retrieveByID(id, Reservation.class);
+					
+					if(reservation == null) {
+						view.error(Arrays.asList(KEY_RESERVATION_NO));
+						valid = view.bailout();
+					}
+					else {
+						if(reservation.getStatus() == ReservationStatus.Confirmed)
+							reservation.setAssignedRoom(null);
+						
+						persistence.delete(reservation, Reservation.class);
+						view.message("Reservation cancelled!");
+						valid = true;
+					}
+				} catch(NumberFormatException e) {
+					view.error(Arrays.asList(KEY_RESERVATION_NO));
+					valid = view.bailout();
+				}
+			}
+		} while(!valid);
 	}
 	
 	/**
 	 * Prompts the user to enter relevant information to search for a reservation.
 	 * @param view - A view interface that provides input/output.
 	 */
-	private void searchReservation(View view) {
-		// TODO Search reservation
+	private void searchReservation(View view) throws Exception {
+		Guest guest = gController.select(view);
+		
+		if(guest != null) {
+			Date today = new Date();
+			Iterable<Reservation> reservations = this.getPersistenceImpl().search(new Predicate<Reservation>() {
+	
+				@Override
+				public boolean test(Reservation item) {
+					return !item.getEndDate().before(today) && guest.equals(item.getGuest());
+				}
+				
+			}, Reservation.class, true);
+			
+			List<Reservation> reservationList = new ArrayList<Reservation>();
+			for(Reservation reservation: reservations)
+				reservationList.add(reservation);
+			
+			view.display(reservationList);
+		}
 	}
 	
 	/**
@@ -231,11 +299,11 @@ public class ReservationController extends PersistenceController {
 			reservation.getCriteria().setRoomType(roomType);
 			options.add(new RoomTypeVM(roomType, persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true)));
 		}
-		options.add(KEY_ANY);
+		options.add(Options.Any);
 		
 		view.message("Please select a room type");
 		Object selected = view.options(options);
-		if(selected.equals(KEY_ANY))
+		if(selected.equals(Options.Any))
 			rType = null;
 		else
 			rType = ((RoomTypeVM) selected).getRoomType();
@@ -264,11 +332,11 @@ public class ReservationController extends PersistenceController {
 			reservation.getCriteria().setBedType(bedType);
 			options.add(new BedTypeVM(bedType, persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true)));
 		}
-		options.add(KEY_ANY);
+		options.add(Options.Any);
 		
 		view.message("Please select a room type");
 		Object selected = view.options(options);
-		if(selected.equals(KEY_ANY))
+		if(selected.equals(Options.Any))
 			bType = null;
 		else
 			bType = ((BedTypeVM) selected).getBedType();
@@ -302,11 +370,11 @@ public class ReservationController extends PersistenceController {
 				options.add(viewModel);
 			}
 		}
-		options.add(KEY_ANY);
+		options.add(Options.Any);
 		
 		view.message("Please select the desired view for your room");
 		Object selected = view.options(options);
-		if(selected.equals(KEY_ANY))
+		if(selected.equals(Options.Any))
 			rView = null;
 		else
 			rView = ((TextAndCountVM) selected).getText();

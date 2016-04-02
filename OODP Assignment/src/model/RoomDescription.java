@@ -120,4 +120,29 @@ public class RoomDescription extends Entity {
 		return flag;
 	}
 
+	@Override
+	public String toString() {
+		String roomType = "Any";
+		String bedType = "Any";
+		String view = "Any";
+		String wifi = "Not required";
+		String smoking = "Not required";
+		
+		if(getRoomType() != null)
+			roomType = getRoomType().getName();
+		if(getBedType() != null)
+			bedType = getBedType().toString();
+		if(getView() != null)
+			view = getView();
+		if(isWifi())
+			wifi = "Required";
+		if(isSmoking())
+			smoking = "Required";
+		
+		return "Room type: " + roomType + "\n" +
+				"Bed type: " + bedType + "\n" +
+				"View: " + view + "\n" +
+				"Wifi-Enabled: " + wifi + "\n" +
+				"Smoking-Room: " + smoking + "\n";
+	}
 }

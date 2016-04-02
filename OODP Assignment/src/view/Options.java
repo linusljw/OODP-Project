@@ -1,4 +1,4 @@
-package controller;
+package view;
 
 /**
  * An enumeration of standard options for controller classes.
@@ -24,7 +24,12 @@ public enum Options {
 	/**
 	 * Not required option.
 	 */
-	NotRequired;
+	NotRequired,
+	
+	/**
+	 * Any option.
+	 */
+	Any;
 
 	@Override
 	public String toString() {

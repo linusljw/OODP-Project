@@ -1,7 +1,6 @@
 package view;
 
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -15,7 +14,6 @@ import controller.Controller;
  */
 public class ConsoleView extends View {
 	public final static String KEY_OPTION = "Option";
-	public final static String KEY_BAILOUT = "choice";
 	
 	private final Controller controller;
 	private final Scanner scanner;
@@ -112,34 +110,10 @@ public class ConsoleView extends View {
 	
 	@Override
 	public boolean bailout() {
-		boolean bailout = false;
-		
 		// Prompt user
-		message("Enter 'Y' to return to menu or 'N' to retry");
+		message("Do you want to retry?");
 		
-		Map<String, String> inputMap = new LinkedHashMap<String, String>();
-		inputMap.put(KEY_BAILOUT, null);
-		
-		boolean valid = false;
-		do {
-			// Repeatedly ask for user input until a valid choice is selected.
-			input(inputMap);
-			
-			String input = inputMap.get(KEY_BAILOUT);
-			if(input.length() > 0) {
-				char charInput = input.charAt(0);
-				if(charInput == 'Y' || charInput == 'y') {
-					bailout = true;
-					valid = true;
-				}
-				else if(charInput == 'N' || charInput == 'n') {
-					bailout = false;
-					valid = true;
-				}
-			}
-		} while(!valid);
-		
-		return bailout;
+		return options(Arrays.asList(Options.Yes, Options.No)) == Options.No;
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package model;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 
 import persistence.CascadeType;
@@ -151,12 +150,14 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 	 * @param room - Room assigned to this reservation.
 	 */
 	public void setAssignedRoom(Room room) {
-		this.assignedRoom.getReservationList().remove(this);
-		this.assignedRoom = room;
+		if(this.assignedRoom != null)
+			this.assignedRoom.getReservationList().remove(this);
+		
 		if(room == null) {
 			this.setStatus(ReservationStatus.Waitlist);
 		}
 		else {
+			this.assignedRoom = room;
 			this.setStatus(ReservationStatus.Confirmed);
 			this.assignedRoom.getReservationList().add(this);
 		}
@@ -166,50 +167,16 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 	public String toString() {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		
-		RoomDescription criteria = this.getCriteria();
 		String status = this.getStatus().toString();
 		if(this.getStatus() == ReservationStatus.CheckedIn)
 			status = "Checked in";
 		
-		String roomType = "Any";
-		String bedType = "Any";
-		String view = "Any";
-		String wifi = "Not required";
-		String smoking = "Not required";
-		
-		if(criteria.getRoomType() != null)
-			roomType = criteria.getRoomType().getName();
-		if(criteria.getBedType() != null)
-			bedType = criteria.getBedType().toString();
-		if(criteria.getView() != null)
-			view = criteria.getView();
-		if(criteria.isWifi())
-			wifi = "Required";
-		if(criteria.isSmoking())
-			smoking = "Required";
-		
-		BillingInformation billing = this.getBillingInformation();
-		String ccNumberMask = billing.getCreditCardNumber();
-		
-		// Prepare obfuscation mask
-		char[] mask = new char[ccNumberMask.length() - 4];
-		Arrays.fill(mask, '*');
-		ccNumberMask = new String(mask) + ccNumberMask.substring(ccNumberMask.length() - 4, ccNumberMask.length());
-		
-		return "Reservation number: " + this.getIdentifier() + "\n" +
-				"Reserved by: " + this.getGuest().getName() + "(ID: " + this.getIdentifier() + ")\n" +
+		return "----- Reservation Information -----\n" +
+				"Reservation number: " + this.getIdentifier() + "\n" +
+				"Reserved by: " + this.getGuest().getName() + "(ID: " + this.getGuest().getIdentifier() + ")\n" +
 				"Start date: " + sdf.format(this.getStartDate()) + "\n" +
 				"End date: " + sdf.format(this.getEndDate()) + "\n" + 
-				"Status: " + status + "\n" +
-				"----- Room Requirements -----\n" + 
-				"Room type: " + roomType + "\n" +
-				"Bed type: " + bedType + "\n" +
-				"View: " + view + "\n" +
-				"Wifi-Enabled: " + wifi + "\n" +
-				"Smoking-Room: " + smoking + "\n" + 
-				"----- Billing Information -----\n" +
-				"Credit card number: " + ccNumberMask + "\n" +
-				billing.getAddress().toString();
+				"Status: " + status + "\n";
 	}
 
 }
