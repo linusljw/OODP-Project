@@ -151,6 +151,7 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 	 * @param room - Room assigned to this reservation.
 	 */
 	public void setAssignedRoom(Room room) {
+		this.assignedRoom.getReservationList().remove(this);
 		this.assignedRoom = room;
 		if(room == null) {
 			this.setStatus(ReservationStatus.Waitlist);

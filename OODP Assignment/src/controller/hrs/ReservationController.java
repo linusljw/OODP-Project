@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import controller.AddressValidator;
 import controller.EntityController;
+import controller.Options;
 import controller.PersistenceController;
 import model.BedType;
 import model.BillingInformation;
@@ -42,11 +43,7 @@ public class ReservationController extends PersistenceController {
 	public final static String KEY_VIEW = "Room View";
 	public final static String KEY_WIFI = "Wifi Status";
 	public final static String KEY_SMOKING = "Smoking Room";
-	public final static String KEY_YES = "Yes";
-	public final static String KEY_NO = "No";
 	public final static String KEY_ANY = "Any";
-	public final static String KEY_REQUIRED = "Required";
-	public final static String KEY_NOT_REQUIRED = "Not required";
 	public final static String KEY_CREDIT_CARD_NO = "credit card number(Omit dashes and spaces)";
 	public final static String KEY_CVV_NO = "credit card cvv/cvc";
 	private EntityController<Guest> gController;
@@ -186,7 +183,7 @@ public class ReservationController extends PersistenceController {
 			long matches = persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true);
 			view.message("There are " + matches + " room(s) that are available and matches your room requirements");
 			view.message("Do you want to refine your room requirements?");
-			if(view.options(Arrays.asList(KEY_YES, KEY_NO)).equals(KEY_NO))
+			if(view.options(Arrays.asList(Options.Yes, Options.No)).equals(Options.No))
 				done = true;
 			else {
 				view.message("Please select one of the options to update your room requirements");
@@ -326,21 +323,24 @@ public class ReservationController extends PersistenceController {
 	private void updateWifiStatus(View view, Reservation reservation) throws Exception {
 		boolean wifiStatus = reservation.getCriteria().isWifi();
 		
-		String wifiStatusName = KEY_NOT_REQUIRED;
+		String required = Options.Required.toString();
+		String notRequired = Options.NotRequired.toString();
+		
+		String wifiStatusName = notRequired;
 		if(wifiStatus)
-			wifiStatusName = KEY_REQUIRED;
+			wifiStatusName = required;
 		view.message("Currently selected Wifi requirement: " + wifiStatusName);
 		
 		Persistence persistence = this.getPersistenceImpl();
 		List<TextAndCountVM> options = new ArrayList<TextAndCountVM>();
 		
 		reservation.getCriteria().setIsWifi(true);
-		options.add(new TextAndCountVM(KEY_REQUIRED, persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true)));
+		options.add(new TextAndCountVM(required, persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true)));
 		reservation.getCriteria().setIsWifi(false);
-		options.add(new TextAndCountVM(KEY_NOT_REQUIRED, persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true)));
+		options.add(new TextAndCountVM(notRequired, persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true)));
 		
 		view.message("Please select a Wifi requirement");
-		wifiStatus = view.options(options).getText().equals(KEY_REQUIRED);
+		wifiStatus = view.options(options).getText().equals(required);
 		
 		reservation.getCriteria().setIsWifi(wifiStatus);
 	}
@@ -354,21 +354,24 @@ public class ReservationController extends PersistenceController {
 	private void updateSmokingStatus(View view, Reservation reservation) throws Exception {
 		boolean smokingStatus = reservation.getCriteria().isSmoking();
 		
-		String smokingStatusName = KEY_NOT_REQUIRED;
+		String required = Options.Required.toString();
+		String notRequired = Options.NotRequired.toString();
+		
+		String smokingStatusName = required;
 		if(smokingStatus)
-			smokingStatusName = KEY_REQUIRED;
+			smokingStatusName = notRequired;
 		view.message("Currently selected Smoking-Room requirement: " + smokingStatusName);
 		
 		Persistence persistence = this.getPersistenceImpl();
 		List<TextAndCountVM> options = new ArrayList<TextAndCountVM>();
 		
 		reservation.getCriteria().setIsSmoking(true);
-		options.add(new TextAndCountVM(KEY_REQUIRED, persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true)));
+		options.add(new TextAndCountVM(required, persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true)));
 		reservation.getCriteria().setIsSmoking(false);
-		options.add(new TextAndCountVM(KEY_NOT_REQUIRED, persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true)));
+		options.add(new TextAndCountVM(notRequired, persistence.getCount(new RoomReservationPredicate(reservation), Room.class, true)));
 		
 		view.message("Please select a Smoking-Room requirement");
-		smokingStatus = view.options(options).getText().equals(KEY_REQUIRED);
+		smokingStatus = view.options(options).getText().equals(required);
 		
 		reservation.getCriteria().setIsSmoking(smokingStatus);
 	}
@@ -412,7 +415,7 @@ public class ReservationController extends PersistenceController {
 				view.error(invalids);
 			else {
 				view.message("Do you want to use guest's address as billing address?");
-				if(view.options(Arrays.asList(KEY_YES, KEY_NO)).equals(KEY_YES))
+				if(view.options(Arrays.asList(Options.Yes, Options.No)).equals(Options.Yes))
 					guest.getAddress().set(billing.getAddress());
 				else
 					AddressValidator.update(view, billing.getAddress());

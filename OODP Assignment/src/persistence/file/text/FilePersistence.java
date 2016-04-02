@@ -579,29 +579,36 @@ public class FilePersistence implements Persistence {
 			
 			Field[] fields = this.getFieldsForType(type);
 			for(Field field: fields) {
-				// Delete fields with cascade delete annotations
+				// Delete fields with cascade delete annotations and update fields with cascade update annotations.
 				PersistAnnotation metadata = this.getFieldPersistenceMetadata(field);
-				if(CascadeType.cascade(metadata.cascade(), CascadeType.Delete)) {
-					Class fType = field.getType();
-					Object value = field.get(entity);
-					
-					if(Entity.class.isAssignableFrom(fType))
+				
+				Class fType = field.getType();
+				Object value = field.get(entity);
+				
+				if(Entity.class.isAssignableFrom(fType)) {
+					if(CascadeType.cascade(metadata.cascade(), CascadeType.Delete))
 						this.delete((Entity) value, fType);
-					else if(fType.isArray() || List.class.isAssignableFrom(fType)) {
-						Class componentType = type.isArray()? type.getComponentType():
-							metadata.type();
+					else if(CascadeType.cascade(metadata.cascade(), CascadeType.Update))
+						this.update((Entity) value, fType);
+				}
+				else if(fType.isArray() || List.class.isAssignableFrom(fType)) {
+					Class componentType = type.isArray()? type.getComponentType():
+						metadata.type();
+					
+					if(Entity.class.isAssignableFrom(componentType)) {
+						// Cast the references as a List
+						List items = null;
+						if(type.isArray())
+							items = Arrays.asList((Object[]) value);
+						else
+							items = (List) value;
 						
-						if(Entity.class.isAssignableFrom(componentType)) {
-							// Cast the references as a List
-							List items = null;
-							if(type.isArray())
-								items = Arrays.asList((Object[]) value);
-							else
-								items = (List) value;
-							
-							// Loop through all items and delete
-							for(Object item: items)
-								this.delete((Entity)item, componentType);
+						// Loop through all items and delete
+						for(Object item: items) {
+							if(CascadeType.cascade(metadata.cascade(), CascadeType.Delete))
+								this.delete((Entity) item, componentType);
+							else if(CascadeType.cascade(metadata.cascade(), CascadeType.Update))
+								this.update((Entity) item, componentType);
 						}
 					}
 				}
