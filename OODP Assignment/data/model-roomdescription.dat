@@ -9,3 +9,10 @@ model.RoomDescription|_id:43|bedType:Double|wifi:false|smoking:false
 model.RoomDescription|_id:44|bedType:Double|wifi:false|smoking:false
 model.RoomDescription|_id:45|bedType:Double|wifi:false|smoking:false
 model.RoomDescription|_id:46|bedType:Double|wifi:false|smoking:false
+model.RoomDescription|_id:47|bedType:Double|wifi:false|smoking:false
+model.RoomDescription|_id:48|wifi:false|smoking:true
+model.RoomDescription|_id:49|wifi:false|smoking:true
+model.RoomDescription|_id:50|type:1|wifi:false|smoking:true
+model.RoomDescription|_id:51|wifi:false|smoking:true
+model.RoomDescription|_id:52|wifi:false|smoking:false
+model.RoomDescription|_id:53|wifi:false|smoking:true

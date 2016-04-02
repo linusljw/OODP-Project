@@ -195,8 +195,12 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 	
 	@Override
 	public void setStatus(ReservationStatus status) {
-		if(status == ReservationStatus.Cancelled)
+		if(status == ReservationStatus.Cancelled || status == ReservationStatus.Expired)
 			setAssignedRoom(null);
+		else if(status == ReservationStatus.CheckedIn)
+			getAssignedRoom().setStatus(RoomStatus.Occupied);
+		else if(status == ReservationStatus.CheckedOut)
+			getAssignedRoom().setStatus(RoomStatus.Vacant);
 		
 		super.setStatus(status);
 	}

@@ -30,7 +30,7 @@ public class Test {
 			
 			NavigationController hrsController = new NavigationController();
 			hrsController.addView(new ConsoleView(rController, "Reservation System", sc));
-			hrsController.addView(new ConsoleView(new CheckInCheckOutController(persistence, rController), "Check-in/Check-out", sc));
+			hrsController.addView(new ConsoleView(new CheckInCheckOutController(persistence, gController, rController), "Check-in/Check-out", sc));
 			
 			ConsoleView hrsView = new ConsoleView(hrsController, "Hotel Reservation System", sc);
 			

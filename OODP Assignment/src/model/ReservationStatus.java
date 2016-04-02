@@ -18,13 +18,23 @@ public enum ReservationStatus {
 	Waitlist,
 	
 	/**
-	 * The Guest with this reservation has made a check-in and assigned a room.
+	 * The Guest with this reservation has made a check-in with the assigned room.
 	 */
 	CheckedIn,
 	
 	/**
-	 * This reservation has been cancelled
+	 * The Guest with this reservation has made a check-out with the assigned room.
 	 */
-	Cancelled
+	CheckedOut,
+	
+	/**
+	 * This reservation has been cancelled.
+	 */
+	Cancelled,
+	
+	/**
+	 * This reservation has expired.
+	 */
+	Expired
 
 }

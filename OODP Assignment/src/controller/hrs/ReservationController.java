@@ -86,86 +86,92 @@ public class ReservationController extends PersistenceController implements Rese
 		Reservation reservation = null;
 		Guest guest = gController.select(view);
 		
-		if(guest != null) {
-			Map<String, String> inputMap = new LinkedHashMap<String, String>();
-			reservation = new Reservation(guest);
+		if(guest != null)
+			reservation = makeReservation(view, guest);
+		
+		return reservation;
+	}
+	
+	@Override
+	public Reservation makeReservation(View view, Guest guest) throws Exception {
+		Reservation reservation = new Reservation(guest);
+		Map<String, String> inputMap = new LinkedHashMap<String, String>();
+		
+		inputMap.put(KEY_START_DATE, null);
+		inputMap.put(KEY_END_DATE, null);
+		
+		Persistence persistence = this.getPersistenceImpl();
+		boolean valid = false;
+		do {
+			view.input(inputMap);
 			
-			inputMap.put(KEY_START_DATE, null);
-			inputMap.put(KEY_END_DATE, null);
-			
-			Persistence persistence = this.getPersistenceImpl();
-			boolean valid = false;
-			do {
-				view.input(inputMap);
+			try {
+				SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 				
-				try {
-					SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-					
-					Date todayDate = new Date();
-					Date startDate = sdf.parse(inputMap.get(KEY_START_DATE));
-					Date endDate = sdf.parse(inputMap.get(KEY_END_DATE));
-					
-					if(startDate.after(todayDate)) {
-						if(endDate.after(startDate)) {
-							reservation.setStartDate(startDate);
-							reservation.setEndDate(endDate);
+				Date todayDate = sdf.parse(sdf.format(new Date()));
+				Date startDate = sdf.parse(inputMap.get(KEY_START_DATE));
+				Date endDate = sdf.parse(inputMap.get(KEY_END_DATE));
+				
+				if(!startDate.before(todayDate)) {
+					if(endDate.after(startDate)) {
+						reservation.setStartDate(startDate);
+						reservation.setEndDate(endDate);
+						
+						// Updates the criteria for the desired room
+						updateRoomCriteria(view, reservation);
+						
+						// Prompts the user whether or not the reservation should be made
+						view.message("Do you want to continue to make the reservation?");
+						if(view.options(Arrays.asList(Options.Yes, Options.No)) == Options.Yes) {
+							inputMap.clear();
+							inputMap.put(KEY_NUM_CHILDREN, null);
+							inputMap.put(KEY_NUM_ADULT, null);
 							
-							// Updates the criteria for the desired room
-							updateRoomCriteria(view, reservation);
-							
-							// Prompts the user whether or not the reservation should be made
-							view.message("Do you want to continue to make the reservation?");
-							if(view.options(Arrays.asList(Options.Yes, Options.No)) == Options.Yes) {
-								inputMap.clear();
-								inputMap.put(KEY_NUM_CHILDREN, null);
-								inputMap.put(KEY_NUM_ADULT, null);
+							do {
+								view.input(inputMap);
 								
-								do {
-									view.input(inputMap);
+								try {
+									reservation.setNumOfChildren(Integer.parseInt(inputMap.get(KEY_NUM_CHILDREN)));
+									reservation.setNumOfAdult(Integer.parseInt(inputMap.get(KEY_NUM_ADULT)));
 									
-									try {
-										reservation.setNumOfChildren(Integer.parseInt(inputMap.get(KEY_NUM_CHILDREN)));
-										reservation.setNumOfAdult(Integer.parseInt(inputMap.get(KEY_NUM_ADULT)));
-										
-										// Updates the billing information
-										updateBillingInformation(view, guest, reservation.getBillingInformation());
-										
-										// Attempts to reserve room for the reservation
-										reserveRoomForReservation(reservation);
-										
-										persistence.create(reservation, Reservation.class);
-										
-										valid = true;
-										if(reservation.getStatus() == ReservationStatus.Waitlist)
-											view.message("The reservation has been made, but no room is currently available, your reservation has been placed in the waiting list.");
-										else
-											view.message("The reservation has been made, and a room has been reserved for you.");
-										
-										view.message("Please take note of the reservation receipt below");
-										view.display(reservation);
-										view.display(reservation.getCriteria());
-										view.display(reservation.getBillingInformation());
-									} catch(NumberFormatException e) {
-										view.error(Arrays.asList(KEY_NUM_CHILDREN, KEY_NUM_ADULT));
-									}
-								} while(!valid && !view.bailout());
-							}
-							else {
-								valid = true;
-							}
+									// Updates the billing information
+									updateBillingInformation(view, guest, reservation.getBillingInformation());
+									
+									// Attempts to reserve room for the reservation
+									reserveRoomForReservation(reservation);
+									
+									persistence.create(reservation, Reservation.class);
+									
+									valid = true;
+									if(reservation.getStatus() == ReservationStatus.Waitlist)
+										view.message("The reservation has been made, but no room is currently available, your reservation has been placed in the waiting list.");
+									else
+										view.message("The reservation has been made, and a room has been reserved for you.");
+									
+									view.message("Please take note of the reservation receipt below");
+									view.display(reservation);
+									view.display(reservation.getCriteria());
+									view.display(reservation.getBillingInformation());
+								} catch(NumberFormatException e) {
+									view.error(Arrays.asList(KEY_NUM_CHILDREN, KEY_NUM_ADULT));
+								}
+							} while(!valid && !view.bailout());
 						}
 						else {
-							view.message("Invalid end date, end date must be after start date.");
+							valid = true;
 						}
 					}
 					else {
-						view.message("Invalid start date, start date must be after today's date.");
+						view.message("Invalid end date, end date must be after start date.");
 					}
-				} catch(ParseException e) {
-					view.error(Arrays.asList(KEY_START_DATE, KEY_END_DATE));
 				}
-			} while(!valid && !view.bailout());
-		}
+				else {
+					view.message("Invalid start date, start date must be equals to or after today's date.");
+				}
+			} catch(ParseException e) {
+				view.error(Arrays.asList(KEY_START_DATE, KEY_END_DATE));
+			}
+		} while(!valid && !view.bailout());
 		
 		return reservation;
 	}
