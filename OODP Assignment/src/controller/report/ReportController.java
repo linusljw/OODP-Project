@@ -4,13 +4,13 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import controller.PersistenceController;
 import model.Room;
 import model.RoomStatus;
 import persistence.Persistence;
 import persistence.Predicate;
-import view.Options;
 import view.View;
 
 /**
@@ -38,13 +38,21 @@ public class ReportController extends PersistenceController {
 
 	@Override
 	protected void safeOnOptionSelected(View view, int option) throws Exception {
-		switch(option) {
-		case 0:
+		if(option == 0)
 			viewReportForToday(view);
-			break;
-		default:
-			viewReportForRange(view, option);
-			break;
+		else {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+			Date end = sdf.parse(sdf.format(new Date()));
+			Date start = end;
+			
+			if(option == 1)
+				start = new Date(end.getTime() - TimeUnit.DAYS.toMillis(7));
+			else if(option == 2)
+				start = new Date(end.getTime() - TimeUnit.DAYS.toMillis(30));
+			else
+				start = new Date(end.getTime() - TimeUnit.DAYS.toMillis(365));
+			
+			viewReportForRange(view, start, end);
 		}
 	}
 	
@@ -74,9 +82,13 @@ public class ReportController extends PersistenceController {
 	/**
 	 * Displays room occupancy report for the specified date range.
 	 * @param view - A view interface that provides input/output.
-	 * @param option - The option of the date range selected. This depends on {@link #getOptions()}.
+	 * @param startDate - The start date to generate the report.
+	 * @param endDate - The end date to generate the report.
 	 */
-	private void viewReportForRange(View view, int option) {
+	private void viewReportForRange(View view, Date startDate, Date endDate) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+		view.message("----- Room Occupancy Report(" + sdf.format(startDate) + " to " + sdf.format(endDate) + ") -----");
+	
 		
 	}
 	
