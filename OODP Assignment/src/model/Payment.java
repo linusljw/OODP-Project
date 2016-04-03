@@ -3,12 +3,14 @@ package model;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import persistence.Entity;
+import persistence.PersistAnnotation;
 
 /**
  * Address is an {@link Entity} class that encapsulates information about an Payment.
  * @author YingHao
  */
 public class Payment extends Entity {
+	@PersistAnnotation(type = Reservation.class)
 	private final List<Reservation> reservations;
 	private DiscountType discountType;
 	private double discountValue;

@@ -216,6 +216,10 @@ public class ReservationController extends PersistenceController implements Rese
 						view.error(Arrays.asList(KEY_RESERVATION_NO));
 						valid = view.bailout();
 					}
+					else if(reservation.getStatus() != ReservationStatus.Confirmed && reservation.getStatus() != ReservationStatus.Waitlist) {
+						view.message("Unable to cancel the selected reservation, this reservation is not eligible for cancellation.");
+						valid = true;
+					}
 					else {
 						Room room = reservation.getAssignedRoom();
 						reservation.setStatus(ReservationStatus.Cancelled);
