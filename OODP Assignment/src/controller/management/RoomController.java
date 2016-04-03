@@ -279,18 +279,19 @@ public class RoomController extends EntityController<Room> {
 			RoomStatus status = null;
 			
 			if (ableMaintain) {
-				if (room.getStatus() == RoomStatus.Occupied || room.getStatus() == RoomStatus.Maintenance)
+				if (room.getStatus() == RoomStatus.Maintenance)
 					status = view.options(Arrays.asList(RoomStatus.Vacant, RoomStatus.Exit));
 				else
 					status = view.options(Arrays.asList(RoomStatus.Maintenance, RoomStatus.Exit));
 				
 				if (status != RoomStatus.Exit) {
+					room.setStatus(status);
 					if (persistence.update(room, Room.class)) {
 						view.message("Room status has been updated successfully!");
 					}
 				}
 			} else {
-				view.message("Room is unable to maintain as it is currently checked in/confirmed/in waitlist.");
+				view.message("Room is unable to maintain as it is currently Occupied/Reserved.");
 			}
 		}
 	}
