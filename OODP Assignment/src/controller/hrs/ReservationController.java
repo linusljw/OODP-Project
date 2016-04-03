@@ -216,6 +216,10 @@ public class ReservationController extends PersistenceController implements Rese
 						view.error(Arrays.asList(KEY_RESERVATION_NO));
 						valid = view.bailout();
 					}
+					else if(reservation.getStatus() != ReservationStatus.Confirmed && reservation.getStatus() != ReservationStatus.Waitlist) {
+						view.message("Unable to cancel the selected reservation, this reservation is not eligible for cancellation.");
+						valid = true;
+					}
 					else {
 						Room room = reservation.getAssignedRoom();
 						reservation.setStatus(ReservationStatus.Cancelled);
@@ -542,11 +546,11 @@ public class ReservationController extends PersistenceController implements Rese
 			List<String> invalids = new ArrayList<String>();
 			if(!Pattern.matches(
 					"^(?:4[0-9]{12}(?:[0-9]{3})?" + // Visa
-					"|  5[1-5][0-9]{14}" + // Mastercard
-					"|  3[47][0-9]{13}" + // American Express
-					"|  3(?:0[0-5]|[68][0-9])[0-9]{11}" + // Diners club
-					"|  6(?:011|5[0-9]{2})[0-9]{12}" + // Discover
-					"|  (?:2131|1800|35\\d{3})\\d{11}" + // JCB
+					"|5[1-5][0-9]{14}" + // Mastercard
+					"|3[47][0-9]{13}" + // American Express
+					"|3(?:0[0-5]|[68][0-9])[0-9]{11}" + // Diners club
+					"|6(?:011|5[0-9]{2})[0-9]{12}" + // Discover
+					"|(?:2131|1800|35\\d{3})\\d{11}" + // JCB
 					")$", billing.getCreditCardNumber()))
 				invalids.add(KEY_CREDIT_CARD_NO);
 			if(!Pattern.matches(
