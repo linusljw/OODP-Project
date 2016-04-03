@@ -90,4 +90,14 @@ public class ServiceOrder extends StatusEntity<OrderStatus> {
 		this.remarks = remarks;
 	}
 
+	
+	@Override
+	public String toString() {
+		return super.toString() +
+					"Item: " + item.getName() + "\n" +
+					"Price: " + item.getPrice() + "\n" +
+					"Room Ordered: " + room.getNumber() + "\n" +
+					"Date Time: " + timestamp.toString() + "\n" +
+					"Status: " + this.getStatus() + "\n";
+	}
 }

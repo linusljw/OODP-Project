@@ -1,2 +1,4 @@
-model.ServiceOrder|_id:5|reservation:12|item:3|timestamp:1459694908930|room:2
-model.ServiceOrder|_id:6|reservation:12|item:2|timestamp:1459694910152|room:2
+model.ServiceOrder|_id:5|status:Cancelled|reservation:12|item:3|timestamp:1459694908930|room:2|remarks:-
+model.ServiceOrder|_id:6|status:Cancelled|reservation:12|item:2|timestamp:1459694910152|room:2|remarks:-
+model.ServiceOrder|_id:7|status:Delivered|reservation:12|item:3|timestamp:1459699648976|room:2|remarks:-
+model.ServiceOrder|_id:8|status:Confirmed|reservation:12|item:1|timestamp:1459699653692|room:2|remarks:-

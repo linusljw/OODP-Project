@@ -8,6 +8,8 @@ import java.util.Map;
 
 import controller.EntityController;
 import model.BedType;
+import model.Reservation;
+import model.ReservationStatus;
 import model.Room;
 import model.RoomStatus;
 import model.RoomType;
@@ -265,19 +267,30 @@ public class RoomController extends EntityController<Room> {
 		Room room = select(view);
 		
 		if (room != null) {
+			boolean ableMaintain = true;
+			
+			for(Reservation reservation:room.getReservationList())
+				if (reservation.getStatus() == ReservationStatus.CheckedIn ||
+					reservation.getStatus() == ReservationStatus.Confirmed ||
+					reservation.getStatus() == ReservationStatus.Waitlist)
+						ableMaintain = false;
 			Persistence persistence = this.getPersistenceImpl();
 			
 			RoomStatus status = null;
 			
-			if (room.getStatus() == RoomStatus.Occupied || room.getStatus() == RoomStatus.Maintenance)
-				status = view.options(Arrays.asList(RoomStatus.Vacant, RoomStatus.Exit));
-			else
-				status = view.options(Arrays.asList(RoomStatus.Maintenance, RoomStatus.Exit));
-			
-			if (status != RoomStatus.Exit) {
-				if (persistence.update(room, Room.class)) {
-					view.message("Room status has been updated successfully!");
+			if (ableMaintain) {
+				if (room.getStatus() == RoomStatus.Occupied || room.getStatus() == RoomStatus.Maintenance)
+					status = view.options(Arrays.asList(RoomStatus.Vacant, RoomStatus.Exit));
+				else
+					status = view.options(Arrays.asList(RoomStatus.Maintenance, RoomStatus.Exit));
+				
+				if (status != RoomStatus.Exit) {
+					if (persistence.update(room, Room.class)) {
+						view.message("Room status has been updated successfully!");
+					}
 				}
+			} else {
+				view.message("Room is unable to maintain as it is currently checked in/confirmed/in waitlist.");
 			}
 		}
 	}
