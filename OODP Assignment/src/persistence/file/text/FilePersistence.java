@@ -13,6 +13,7 @@ import java.lang.ref.SoftReference;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
@@ -343,6 +344,26 @@ public class FilePersistence implements Persistence {
 	}
 	
 	/**
+	 * Creates a new entity of the specified type.
+	 * @param type - The type of entity to create.
+	 * @param id - The identifier of the entity.
+	 * @return A new instance of the entity set to the given identifier.
+	 */
+	private <T extends Entity> T createEntity(Class<T> type, long id) throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		T entity;
+		
+		Field idField = this.getFieldsForType(Entity.class)[0];
+		
+		// Enable no-args constructor
+		Constructor<T> constructor = type.getDeclaredConstructor();
+		constructor.setAccessible(true);
+		entity = (T) constructor.newInstance();
+		idField.set(entity, id);
+		
+		return entity;
+	}
+	
+	/**
 	 * Deserializes the specified string data into the field for the specified entity instance.
 	 * @param genericType - The generic type of the containing class
 	 * @param type - The type to deserialize into.
@@ -447,19 +468,17 @@ public class FilePersistence implements Persistence {
 		long id = Long.parseLong(kvMap.get("_id"));
 		// Search cache for entity or create a new entity in cache
 		T entity = null;
-		synchronized(this.entityCache) {
-			entity = (T) this.getEntityFromCache(type, id);
-			if(entity == null) {
-				Field idField = this.getFieldsForType(Entity.class)[0];
-				
-				// Enable no-args constructor
-				Constructor<T> constructor = type.getDeclaredConstructor();
-				constructor.setAccessible(true);
-				entity = (T) constructor.newInstance();
-				idField.set(entity, id);
-				
-				this.setEntityToCache(type, entity);
+		if(loadR) {
+			synchronized(this.entityCache) {
+				entity = (T) this.getEntityFromCache(type, id);
+				if(entity == null) {
+					entity = (T) this.createEntity(type, id);
+					this.setEntityToCache(type, entity);
+				}
 			}
+		}
+		else {
+			entity = (T) this.createEntity(type, id);
 		}
 		
 		// Probe for generics and retrieve the actual types whenever it contains generics. Supports up to one generic only.

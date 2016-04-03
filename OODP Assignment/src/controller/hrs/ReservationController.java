@@ -102,6 +102,7 @@ public class ReservationController extends PersistenceController implements Rese
 		inputMap.put(KEY_END_DATE, null);
 		
 		Persistence persistence = this.getPersistenceImpl();
+		boolean persisted = false;
 		boolean valid = false;
 		do {
 			view.input(inputMap);
@@ -169,6 +170,7 @@ public class ReservationController extends PersistenceController implements Rese
 									view.display(reservation);
 									view.display(reservation.getCriteria());
 									view.display(reservation.getBillingInformation());
+									persisted = true;
 								} catch(NumberFormatException e) {
 									view.error(Arrays.asList(KEY_NUM_CHILDREN, KEY_NUM_ADULT));
 								}
@@ -190,7 +192,7 @@ public class ReservationController extends PersistenceController implements Rese
 			}
 		} while(!valid && !view.bailout());
 		
-		return reservation;
+		return persisted? reservation: null;
 	}
 	
 	@Override
