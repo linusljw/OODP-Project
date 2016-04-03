@@ -10,3 +10,4 @@ model.Reservation|_id:9|status:CheckedOut|guest:1|criteria:16|billingInformation
 model.Reservation|_id:10|status:Cancelled|guest:1|criteria:17|billingInformation:10|orders:|numOfChildren:1|numOfAdult:1|startDate:1459612800000|endDate:1459699200000
 model.Reservation|_id:11|status:Expired|guest:1|criteria:18|billingInformation:11|orders:|numOfChildren:0|numOfAdult:2|startDate:1459612800000|endDate:1459699200000|assignedRoom:2
 model.Reservation|_id:12|status:CheckedIn|guest:1|criteria:19|billingInformation:12|orders:5;6;7;8|numOfChildren:1|numOfAdult:1|startDate:1459612800000|endDate:1459785600000|assignedRoom:2
+model.Reservation|_id:13|status:CheckedOut|guest:2|criteria:20|billingInformation:13|orders:9;10;11|numOfChildren:1|numOfAdult:1|startDate:1459699200000|endDate:1459699200000|assignedRoom:4|payment:6
