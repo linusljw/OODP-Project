@@ -272,7 +272,7 @@ public class RoomController extends EntityController<Room> {
 			if (room.getStatus() == RoomStatus.Occupied || room.getStatus() == RoomStatus.Maintenance)
 				status = view.options(Arrays.asList(RoomStatus.Vacant, RoomStatus.Exit));
 			else
-				status = view.options(Arrays.asList(RoomStatus.Occupied, RoomStatus.Maintenance, RoomStatus.Exit));
+				status = view.options(Arrays.asList(RoomStatus.Maintenance, RoomStatus.Exit));
 			
 			if (status != RoomStatus.Exit) {
 				if (persistence.update(room, Room.class)) {

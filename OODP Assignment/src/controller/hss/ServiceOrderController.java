@@ -90,7 +90,32 @@ public class ServiceOrderController extends EntityController<ServiceOrder> {
 
 	@Override
 	protected boolean retrieve(View view) throws Exception {
-		// TODO Auto-generated method stub
+		Reservation reservation = null;
+		Map<String, String> inputMap = new LinkedHashMap<String, String>();
+		inputMap.put(KEY_ROOM, null);
+		
+		boolean valid = false;
+		Persistence persistence = this.getPersistenceImpl();
+		
+		view.input(inputMap);
+		
+		EntityIterator<Reservation> reservations = (EntityIterator<Reservation>)persistence.search(new Predicate<Reservation>() {
+			@Override
+			public boolean test(Reservation item) {
+				return item.getStatus() == ReservationStatus.CheckedIn && 
+						item.getAssignedRoom().getNumber().equals(inputMap.get(KEY_ROOM));
+			}
+		}, Reservation.class, true).iterator();
+		
+		if (reservations.hasNext())
+			reservation = reservations.next();
+		else {
+			valid = true;
+			view.message("Room is not checked in, please try again.");
+		}
+		
+		reservations.close();
+		
 		return false;
 	}
 
