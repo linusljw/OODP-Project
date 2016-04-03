@@ -62,6 +62,8 @@ public class ServiceOrderController extends EntityController<ServiceOrder> {
 					view.message("Room is not checked in, please try again.");
 				}
 				
+				reservations.close();
+				
 				if (reservation != null) {
 					Options option = Options.No;
 					do {
