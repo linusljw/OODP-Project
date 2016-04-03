@@ -35,6 +35,9 @@ public class ServiceOrderController extends EntityController<ServiceOrder> {
 		return "Service Order";
 	}
 
+	/**
+	 * Prompts the user to enter relevant information required to create a Service Order.
+	 */
 	@Override
 	protected void create(View view) throws Exception {
 		Reservation reservation = null;

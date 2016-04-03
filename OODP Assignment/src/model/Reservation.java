@@ -22,6 +22,9 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 			cascade = {CascadeType.Create, CascadeType.Update, CascadeType.Delete}
 	)
 	private final BillingInformation billingInformation;
+	@PersistAnnotation(
+		      cascade = {CascadeType.Create, CascadeType.Update, CascadeType.Delete}
+	)
 	private final List<ServiceOrder> orders;
 	private int numOfChildren;
 	private int numOfAdult;
