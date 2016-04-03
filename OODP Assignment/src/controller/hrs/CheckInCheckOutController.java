@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import controller.EntityController;
 import controller.PersistenceController;
@@ -272,7 +273,7 @@ public class CheckInCheckOutController extends PersistenceController {
 		Persistence persistence = this.getPersistenceImpl();
 		
 		long now = new Date().getTime();
-		long grace = Long.parseLong(persistence.getConfiguration().getProperty(KEY_GRACE_PERIOD, Integer.toString(10))) * 60 * 60 * 1000;
+		long grace = TimeUnit.HOURS.toMillis(Long.parseLong(persistence.getConfiguration().getProperty(KEY_GRACE_PERIOD, Integer.toString(10))));
 		
 		List<Reservation> expiredList = new ArrayList<Reservation>();
 		// Attempts to get a room if reservation is in wait list

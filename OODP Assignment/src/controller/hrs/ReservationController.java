@@ -135,7 +135,7 @@ public class ReservationController extends PersistenceController implements Rese
 							// Retrieve the cost of the selected room type
 							cost = reservation.getCriteria().getRoomType().getPrice();
 						}
-						cost = cost * (reservation.getEndDate().getTime() - reservation.getStartDate().getTime()) / TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
+						cost = cost * (reservation.getEndDate().getTime() - reservation.getStartDate().getTime()) / TimeUnit.DAYS.toMillis(1);
 						view.message("The expected cost will be: $" + String.format("%.2f", cost));
 						
 						// Prompts the user whether or not the reservation should be made
