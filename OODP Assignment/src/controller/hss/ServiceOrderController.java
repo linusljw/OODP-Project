@@ -49,7 +49,7 @@ public class ServiceOrderController extends EntityController<ServiceOrder> {
 				EntityIterator<Reservation> reservations = (EntityIterator<Reservation>)persistence.search(new Predicate<Reservation>() {
 					@Override
 					public boolean test(Reservation item) {
-						return item.getAssignedRoom().getNumber().equals(KEY_ROOM);
+						return item.getAssignedRoom().getNumber().equals(inputMap.get(KEY_ROOM));
 					}
 				}, Reservation.class, true).iterator();
 				
