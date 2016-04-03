@@ -1,13 +1,19 @@
 package controller.hrs;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import controller.EntityController;
 import controller.PersistenceController;
+import model.DiscountType;
 import model.Guest;
+import model.Payment;
+import model.PaymentType;
 import model.Reservation;
 import model.ReservationStatus;
 import model.Room;
@@ -25,6 +31,7 @@ import view.View;
 public class CheckInCheckOutController extends PersistenceController {
 	public final static String KEY_GRACE_PERIOD = "grace-period";
 	public final static String KEY_RESERVATION_NO = "reservation number or 'Search' to search for reservation by guest";
+	public final static String KEY_DISCOUNT_VALUE = "discount value";
 	private final EntityController<Guest> gController;
 	private final ReservationInterface rInterface;
 
@@ -205,11 +212,53 @@ public class CheckInCheckOutController extends PersistenceController {
 	private void checkout(View view, List<Reservation> reservations) throws Exception {
 		Persistence persistence = this.getPersistenceImpl();
 		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		Date today = sdf.parse(sdf.format(new Date()));
 		for(Reservation reservation: reservations) {
+			// Update the end date of the reservations to today's date;
+			reservation.setEndDate(today);
+		}
+		
+		Payment payment = new Payment(reservations);
+		view.display(payment);
+		
+		view.message("Do you wish to specify a discount?");
+		if(view.options(Arrays.asList(Options.Yes, Options.No)) == Options.Yes) {
+			Map<String, String> inputMap = new LinkedHashMap<String, String>();
+			inputMap.put(KEY_DISCOUNT_VALUE, null);
+			
+			view.message("Select a discount type");
+			DiscountType dType = view.options(Arrays.asList(DiscountType.values()));
+			double value = 0;
+			boolean valid;
+			do {
+				view.input(inputMap);
+				try {
+					value = Double.parseDouble(inputMap.get(KEY_DISCOUNT_VALUE));
+					valid = true;
+				} catch(NumberFormatException e) {
+					view.error(Arrays.asList(KEY_DISCOUNT_VALUE));
+					valid = false;
+				}
+			} while(!valid);
+			
+			payment.setDiscount(dType, value);
+			view.display(payment);
+		}
+		
+		view.message("Which method of payment to use?");
+		payment.setPaymentType(view.options(Arrays.asList(PaymentType.values())));
+		
+		// Create payment
+		persistence.create(payment, Payment.class);
+		view.message("Your payment is successful, thank you for staying with us, we hope to see you again!");
+		for(Reservation reservation: reservations) {
+			// Update status and save changes to file
 			reservation.setStatus(ReservationStatus.CheckedOut);
+			reservation.setPayment(payment);
 			persistence.update(reservation, Reservation.class);
 			
-			// TODO create payment VM and display after looping through all reservations
+			view.message("Successfully checked out from room " + reservation.getAssignedRoom().getNumber() + ".");
 		}
 	}
 	

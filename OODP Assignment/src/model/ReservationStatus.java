@@ -1,7 +1,7 @@
 package model;
 
 /**
- * OrderStatus is an enumeration that specifies the possible status of a {@link Reservation}.
+ * ReservationStatus is an enumeration that specifies the possible status of a {@link Reservation}.
  * @author YingHao
  */
 public enum ReservationStatus {

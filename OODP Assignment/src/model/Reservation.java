@@ -31,7 +31,7 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 			cascade = {CascadeType.Update}
 	)
 	private Room assignedRoom;
-	private PaymentType paymentType;
+	private Payment payment;
 	
 	/**
 	 * Reservation constructor. For Persistence API usage.
@@ -178,29 +178,31 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 	}
 	
 	/**
-	 * Gets the payment type. This returns null if no payment has been made for this reservation yet.
-	 * @return PaymentType enum
+	 * Gets the payment instance that was made for this reservation.
+	 * @return payment
 	 */
-	public PaymentType getPaymentType() {
-		return paymentType;
+	public Payment getPayment() {
+		return payment;
 	}
 	
 	/**
-	 * Sets the payment type.
-	 * @param paymentType 
+	 * Sets the payment instance that was made for this reservation.
+	 * @param payment 
 	 */
-	public void setPaymentType(PaymentType paymentType) {
-		this.paymentType = paymentType;
+	public void setPayment(Payment payment) {
+		this.payment = payment;
 	}
 	
 	@Override
 	public void setStatus(ReservationStatus status) {
-		if(status == ReservationStatus.Cancelled || status == ReservationStatus.Expired)
+		if(status == ReservationStatus.Cancelled || status == ReservationStatus.Expired || status == ReservationStatus.CheckedOut) {
+			if(status == ReservationStatus.CheckedOut)
+				assignedRoom.setStatus(RoomStatus.Vacant);
 			setAssignedRoom(null);
-		else if(status == ReservationStatus.CheckedIn)
-			getAssignedRoom().setStatus(RoomStatus.Occupied);
-		else if(status == ReservationStatus.CheckedOut)
-			getAssignedRoom().setStatus(RoomStatus.Vacant);
+		}
+		else if(status == ReservationStatus.CheckedIn) {
+			assignedRoom.setStatus(RoomStatus.Occupied);
+		}
 		
 		super.setStatus(status);
 	}

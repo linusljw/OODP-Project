@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import controller.AddressValidator;
@@ -47,7 +48,6 @@ public class ReservationController extends PersistenceController implements Rese
 	public final static String KEY_SMOKING = "Smoking Room";
 	public final static String KEY_CREDIT_CARD_NO = "credit card number(Omit dashes and spaces)";
 	public final static String KEY_CVV_NO = "credit card cvv/cvc";
-	public final static int DAY_IN_MILLIS = 24 * 60 * 60 * 1000;
 	private final EntityController<Guest> gController;
 	
 	/**
@@ -134,7 +134,7 @@ public class ReservationController extends PersistenceController implements Rese
 							// Retrieve the cost of the selected room type
 							cost = reservation.getCriteria().getRoomType().getPrice();
 						}
-						cost = cost * (reservation.getEndDate().getTime() - reservation.getStartDate().getTime()) / DAY_IN_MILLIS;
+						cost = cost * (reservation.getEndDate().getTime() - reservation.getStartDate().getTime()) / TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
 						view.message("The expected cost will be: $" + String.format("%.2f", cost));
 						
 						// Prompts the user whether or not the reservation should be made
