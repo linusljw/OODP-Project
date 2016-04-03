@@ -491,7 +491,7 @@ public class FilePersistence implements Persistence {
 		// Loop through all fields and attempt to initialize them if they are present in kvMap
 		for(Field field: fields) {
 			if(kvMap.containsKey(field.getName())) {
-				if(!partial || field.get(entity) == null || field.getType().isPrimitive()) {
+				if(!partial || field.get(entity) == null) {
 					PersistAnnotation metadata = this.getFieldPersistenceMetadata(field);
 					field.set(entity, this.deserialize(genericType, field.getType(), metadata, kvMap.get(field.getName()), loadR));
 				}
