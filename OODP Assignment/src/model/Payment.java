@@ -106,8 +106,8 @@ public class Payment extends Entity {
 			roomSubTotal = days * room.getType().getPrice();
 			
 			int count = 0;
+			builder.append("--- Service Orders ---\n");
 			for(ServiceOrder order: reservation.getOrderList()) {
-				builder.append("--- Service Orders ---\n");
 				// Loop through all the service orders and count the number of delivered service order.
 				if(order.getStatus() == OrderStatus.Delivered) {
 					count++;

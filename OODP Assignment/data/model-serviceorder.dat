@@ -1,2 +1,2 @@
-model.ServiceOrder|_id:1|reservation:12|item:3|timestamp:1459693797325|room:2
-model.ServiceOrder|_id:2|reservation:12|item:1|timestamp:1459693799297|room:2
+model.ServiceOrder|_id:5|reservation:12|item:3|timestamp:1459694908930|room:2
+model.ServiceOrder|_id:6|reservation:12|item:2|timestamp:1459694910152|room:2

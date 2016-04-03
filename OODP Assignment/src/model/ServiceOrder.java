@@ -15,6 +15,15 @@ public class ServiceOrder extends StatusEntity<OrderStatus> {
 	private String remarks;
 	
 	/**
+	 * ServiceOrder constructor. For Persistence API usage.
+	 */
+	protected ServiceOrder() {
+		this.reservation = null;
+		this.item = null;
+		this.timestamp = null;
+	}
+	
+	/**
 	 * RoomServiceOrder constructor.
 	 * @param reservation - The reservation to place this ServiceOrder under.
 	 * @param item - The MenuItem that this RoomServiceOrder will reference.
