@@ -55,7 +55,7 @@ public class EntityIterator<T extends Entity> implements Iterator<T>, AutoClosea
 					T next = persistence.deserialize(entityString, loadR, false);
 					if(predicate == null || predicate.test(next)) {
 						if(!loadR)
-							this.entity = persistence.deserialize(entityString, true, true);
+							this.entity = persistence.deserialize(entityString, true, false);
 						else
 							this.entity = next;
 					}
