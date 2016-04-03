@@ -57,41 +57,9 @@ public class ReportController extends PersistenceController {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
 		view.message("----- Room Occupancy Report For " + sdf.format(new Date()) + " -----");
 		
-		String message;
-		int occupiedRoomCount = 0;
-		int vacantRoomCount = 0;
-		int maintenanceRoomCount = 0;
-		
-		Persistence persistence = this.getPersistenceImpl();
-		Iterable<Room> occupiedRooms = persistence.search(new Predicate<Room>() {
-
-			@Override
-			public boolean test(Room item) {
-				return item.getStatus() == RoomStatus.Occupied;
-			}
-			
-		}, Room.class, false);
-		message = "Occupied Room(s): ";
-		for(Room room: occupiedRooms) {
-			message += room.getNumber() + " ";
-			occupiedRoomCount++;
-		}
-		view.message(message);
-		
-		Iterable<Room> vacantRooms = persistence.search(new Predicate<Room>() {
-
-			@Override
-			public boolean test(Room item) {
-				return item.getStatus() == RoomStatus.Vacant;
-			}
-			
-		}, Room.class, false);
-		message = "Vacant Room(s): ";
-		for(Room room: vacantRooms) {
-			message += room.getNumber() + " ";
-			vacantRoomCount++;
-		}
-		view.message(message);
+		int occupiedRoomCount = printRoomsWithStatus(view, RoomStatus.Occupied);
+		int vacantRoomCount = printRoomsWithStatus(view, RoomStatus.Vacant);
+		int maintenanceRoomCount = printRoomsWithStatus(view, RoomStatus.Maintenance);
 		
 		double occupancyRate = ((double)occupiedRoomCount / (occupiedRoomCount + vacantRoomCount + maintenanceRoomCount)) * 100;
 		view.message("\n----- Summary -----");
@@ -111,4 +79,37 @@ public class ReportController extends PersistenceController {
 	private void viewReportForRange(View view, int option) {
 		
 	}
+	
+	/**
+	 * Prints the rooms with the following status and returns the number of rooms printed.
+	 * @param view - A view interface that provides input/output.
+	 * @param status - The rooms with this status will be printed out.
+	 * @return The number of rooms with the specified status.
+	 */
+	private int printRoomsWithStatus(View view, RoomStatus status) throws Exception {
+		Persistence persistence = this.getPersistenceImpl();
+		
+		String message = "";
+		int count = 0;
+		Iterable<Room> vacantRooms = persistence.search(new Predicate<Room>() {
+
+			@Override
+			public boolean test(Room item) {
+				return item.getStatus() == status;
+			}
+			
+		}, Room.class, false);
+		message = status + " Room(s): ";
+		for(Room room: vacantRooms) {
+			message += room.getNumber() + " ";
+			count++;
+		}
+		if(count == 0)
+			message += "None";
+		view.message(message);
+		
+		return count;
+	}
+	
+	
 }
