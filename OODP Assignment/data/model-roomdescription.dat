@@ -14,3 +14,6 @@ model.RoomDescription|_id:13|bedType:Queen|wifi:false|smoking:false
 model.RoomDescription|_id:14|bedType:Double|wifi:false|smoking:false
 model.RoomDescription|_id:15|bedType:Double|wifi:false|smoking:false
 model.RoomDescription|_id:16|bedType:Double|wifi:false|smoking:false
+model.RoomDescription|_id:17|bedType:Double|wifi:false|smoking:false
+model.RoomDescription|_id:18|bedType:Double|wifi:false|smoking:false
+model.RoomDescription|_id:19|bedType:Double|wifi:false|smoking:false

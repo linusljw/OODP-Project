@@ -1,1 +1,2 @@
 model.Payment|_id:4|reservations:2;6|discountType:PERCENTAGE|discountValue:50.0|paymentType:CreditCard
+model.Payment|_id:5|reservations:9|discountValue:0.0|paymentType:CreditCard

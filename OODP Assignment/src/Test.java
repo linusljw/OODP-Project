@@ -5,6 +5,7 @@ import controller.NavigationController;
 import controller.hrs.CheckInCheckOutController;
 import controller.hrs.ReservationController;
 import controller.management.*;
+import controller.report.ReportController;
 import persistence.file.text.FilePersistence;
 import view.ConsoleView;
 
@@ -34,9 +35,12 @@ public class Test {
 			
 			ConsoleView hrsView = new ConsoleView(hrsController, "Hotel Reservation System", sc);
 			
+			ConsoleView reportView = new ConsoleView(new ReportController(persistence), "Room occupancy report", sc);
+			
 			NavigationController mainNav = new NavigationController();
 			mainNav.addView(managementView);
 			mainNav.addView(hrsView);
+			mainNav.addView(reportView);
 			
 			ConsoleView mainView = new ConsoleView(mainNav, "Main View", sc);
 			mainView.display();
