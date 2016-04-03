@@ -49,7 +49,8 @@ public class ServiceOrderController extends EntityController<ServiceOrder> {
 				EntityIterator<Reservation> reservations = (EntityIterator<Reservation>)persistence.search(new Predicate<Reservation>() {
 					@Override
 					public boolean test(Reservation item) {
-						return item.getAssignedRoom().getNumber().equals(inputMap.get(KEY_ROOM));
+						return item.getStatus() == ReservationStatus.CheckedIn && 
+								item.getAssignedRoom().getNumber().equals(inputMap.get(KEY_ROOM));
 					}
 				}, Reservation.class, true).iterator();
 				
@@ -57,25 +58,20 @@ public class ServiceOrderController extends EntityController<ServiceOrder> {
 					reservation = reservations.next();
 				else {
 					valid = true;
-					view.message("Room is vacant, please try again.");
+					view.message("Room is not checked in, please try again.");
 				}
 				
 				if (reservation != null) {
 					List<ServiceOrder> orderList = reservation.getOrderList();
 					Options option = Options.No;
-					if (reservation.getStatus() == ReservationStatus.CheckedIn) {
-						do {
-							MenuItem item = miController.select(view);
-							ServiceOrder svcOrder = new ServiceOrder(reservation, item);
-							svcOrder.setRoom(reservation.getAssignedRoom());
-							orderList.add(svcOrder);
-							view.message("Do you want to add more items?");
-							option = view.options(Arrays.asList(Options.Yes, Options.No));
-						} while(option == Options.Yes);
-					} else {
-						valid = true;
-						view.message("Room is not checked in, please try again.");
-					}
+					do {
+						MenuItem item = miController.select(view);
+						ServiceOrder svcOrder = new ServiceOrder(reservation, item);
+						svcOrder.setRoom(reservation.getAssignedRoom());
+						orderList.add(svcOrder);
+						view.message("Do you want to add more items?");
+						option = view.options(Arrays.asList(Options.Yes, Options.No));
+					} while(option == Options.Yes);
 				}
 		} while(!valid && !view.bailout());
 	}
