@@ -7,6 +7,7 @@ import java.util.Map;
 
 import controller.EntityController;
 import model.MenuItem;
+import model.OrderStatus;
 import model.Reservation;
 import model.ReservationStatus;
 import model.ServiceOrder;
@@ -62,16 +63,22 @@ public class ServiceOrderController extends EntityController<ServiceOrder> {
 				}
 				
 				if (reservation != null) {
-					List<ServiceOrder> orderList = reservation.getOrderList();
 					Options option = Options.No;
 					do {
 						MenuItem item = miController.select(view);
 						ServiceOrder svcOrder = new ServiceOrder(reservation, item);
 						svcOrder.setRoom(reservation.getAssignedRoom());
-						orderList.add(svcOrder);
+						reservation.getOrderList().add(svcOrder);
 						view.message("Do you want to add more items?");
 						option = view.options(Arrays.asList(Options.Yes, Options.No));
 					} while(option == Options.Yes);
+					
+					if (!reservation.getOrderList().isEmpty()) {
+						if (persistence.update(reservation, Reservation.class)) {
+							view.message("Ordered has been placed, it will be delivered to your room!");
+							valid = true;
+						}
+					}
 				}
 		} while(!valid && !view.bailout());
 	}
