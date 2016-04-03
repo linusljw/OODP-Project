@@ -13,3 +13,4 @@ model.Address|_id:12|country:Singapore|city:Singapore|state:Singapore|street:Faj
 model.Address|_id:13|country:Singapore|city:Singapore|state:Singapore|street:Fajar Road|unitNumber:Blk 405 #02-11|postalCode:670405
 model.Address|_id:14|country:Singapore|city:Singapore|state:Singapore|street:Fajar Road|unitNumber:Blk 405 #02-11|postalCode:670405
 model.Address|_id:15|country:Singapore|city:Singapore|state:Singapore|street:Tampines avenue 9 street 45|unitNumber:Blk 487A #06-94|postalCode:520487
+model.Address|_id:16|country:Singapore|city:Singapore|state:Singapore|street:Fajar Road|unitNumber:Blk 405 #02-11|postalCode:670405
