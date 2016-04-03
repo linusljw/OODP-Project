@@ -4,6 +4,7 @@ import java.util.Scanner;
 import controller.NavigationController;
 import controller.hrs.CheckInCheckOutController;
 import controller.hrs.ReservationController;
+import controller.hss.ServiceOrderController;
 import controller.management.*;
 import controller.report.ReportController;
 import persistence.file.text.FilePersistence;
@@ -20,6 +21,7 @@ public class Test {
 			RoomTypeController rtController = new RoomTypeController(persistence);
 			GuestController gController = new GuestController(persistence);
 			ReservationController rController = new ReservationController(persistence, gController);
+			ServiceOrderController soController = new ServiceOrderController(persistence, new MenuItemController(persistence));
 			
 			NavigationController managementController = new NavigationController();
 			managementController.addView(new ConsoleView(new GuestController(persistence), "Manage Guest", sc));
@@ -33,13 +35,18 @@ public class Test {
 			hrsController.addView(new ConsoleView(rController, "Reservation System", sc));
 			hrsController.addView(new ConsoleView(new CheckInCheckOutController(persistence, gController, rController), "Check-in/Check-out", sc));
 			
-			ConsoleView hrsView = new ConsoleView(hrsController, "Hotel Reservation System", sc);
+
+			NavigationController hssController = new NavigationController();
+			hssController.addView(new ConsoleView(soController, "Manage Service Order", sc));
 			
+			ConsoleView hrsView = new ConsoleView(hrsController, "Hotel Reservation System", sc);
+			ConsoleView hssView = new ConsoleView(hssController, "Hotel Service System", sc);
 			ConsoleView reportView = new ConsoleView(new ReportController(persistence), "Room occupancy report", sc);
 			
 			NavigationController mainNav = new NavigationController();
 			mainNav.addView(managementView);
 			mainNav.addView(hrsView);
+			mainNav.addView(hssView);
 			mainNav.addView(reportView);
 			
 			ConsoleView mainView = new ConsoleView(mainNav, "Main View", sc);
