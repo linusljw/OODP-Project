@@ -67,7 +67,7 @@ public class ReservationController extends PersistenceController implements Rese
 	protected void safeOnOptionSelected(View view, int option) throws Exception {
 		switch(option) {
 		case 0:
-			checkRoomAvailability(view, new Reservation(null));
+			makeReservation(view);
 			break;
 		case 1:
 			cancelReservation(view);
@@ -79,80 +79,85 @@ public class ReservationController extends PersistenceController implements Rese
 	}
 	
 	/**
-	 * Prompts the user to make a reservation.
+	 * Handler method for make reservation options.
 	 * @param view - A view interface that provides input/output.
-	 * @param reservation - The reservation to be made.
-	 * @return A flag indicating if the reservation was made.
 	 */
-	private boolean makeReservation(View view, Reservation reservation) throws Exception {
+	private void makeReservation(View view) throws Exception {
+		Reservation tmp = new Reservation(null);
+		checkRoomAvailability(view, tmp);
+		
+		view.message("Do you want to continue to make the reservation?");
+		if(view.options(Arrays.asList(Options.Yes, Options.No)) == Options.Yes) {
+			Guest guest = gController.select(view);
+			
+			if(guest != null) {
+				Reservation reservation = new Reservation(guest);
+				reservation.setStartDate(tmp.getStartDate());
+				reservation.setEndDate(tmp.getEndDate());
+				tmp.getCriteria().set(reservation.getCriteria());
+				
+				makeReservation(view, reservation);
+			}
+		}
+	}
+	
+	@Override
+	public boolean makeReservation(View view, Reservation reservation) throws Exception {
 		boolean flag = false;
 		
-		if(reservation.getGuest() == null) {
-			// Ask user for guest information if not yet set
-			Reservation tmp = new Reservation(gController.select(view));
-			tmp.setStartDate(reservation.getStartDate());
-			tmp.setEndDate(reservation.getEndDate());
-			reservation.getCriteria().set(tmp.getCriteria());
-			
-			reservation = tmp;
-		}
+		Map<String, String> inputMap = new LinkedHashMap<String, String>();
+		inputMap.put(KEY_NUM_CHILDREN, null);
+		inputMap.put(KEY_NUM_ADULT, null);
 		
-		if(reservation.getGuest() != null) {
-			Map<String, String> inputMap = new LinkedHashMap<String, String>();
-			inputMap.put(KEY_NUM_CHILDREN, null);
-			inputMap.put(KEY_NUM_ADULT, null);
+		boolean valid = false;
+		Guest guest = reservation.getGuest();
+		Persistence persistence = this.getPersistenceImpl();
+		do {
+			view.input(inputMap);
 			
-			boolean valid = false;
-			Guest guest = reservation.getGuest();
-			Persistence persistence = this.getPersistenceImpl();
-			do {
-				view.input(inputMap);
+			try {
+				reservation.setNumOfChildren(Integer.parseInt(inputMap.get(KEY_NUM_CHILDREN)));
+				reservation.setNumOfAdult(Integer.parseInt(inputMap.get(KEY_NUM_ADULT)));
 				
-				try {
-					reservation.setNumOfChildren(Integer.parseInt(inputMap.get(KEY_NUM_CHILDREN)));
-					reservation.setNumOfAdult(Integer.parseInt(inputMap.get(KEY_NUM_ADULT)));
-					
-					// Updates the billing information
-					Object selected = null;
-					do {
-						view.message("Do you want to use the billing information registered with specified guest? (Select no to specify other billing information for this reservation)");
-						selected = view.options(Arrays.asList(Options.Yes, Options.No, "Show guest registered billing information"));
-						if(selected == Options.Yes) 
-							guest.getBillingInformation().set(reservation.getBillingInformation());
-						else if(selected == Options.No)
-							BillingInformationValidator.update(view, reservation.getBillingInformation());
-						else
-							view.display(guest.getBillingInformation());
-					} while(selected != Options.Yes && selected != Options.No);
-					
-					// Attempts to reserve room for the reservation
-					reserveRoomForReservation(reservation);
-					
-					persistence.create(reservation, Reservation.class);
-					
-					valid = true;
-					if(reservation.getStatus() == ReservationStatus.Waitlist)
-						view.message("The reservation has been made, but no room is currently available, your reservation has been placed in the waiting list.");
+				// Updates the billing information
+				Object selected = null;
+				do {
+					view.message("Do you want to use the billing information registered with specified guest? (Select no to specify other billing information for this reservation)");
+					selected = view.options(Arrays.asList(Options.Yes, Options.No, "Show guest registered billing information"));
+					if(selected == Options.Yes) 
+						guest.getBillingInformation().set(reservation.getBillingInformation());
+					else if(selected == Options.No)
+						BillingInformationValidator.update(view, reservation.getBillingInformation());
 					else
-						view.message("The reservation has been made, and a room has been reserved for you.");
-					
-					view.message("Please take note of the reservation receipt below");
-					view.display(reservation);
-					view.display(reservation.getCriteria());
-					view.display(reservation.getBillingInformation());
-					flag = true;
-				} catch(NumberFormatException e) {
-					view.error(Arrays.asList(KEY_NUM_CHILDREN, KEY_NUM_ADULT));
-				}
-			} while(!valid && !view.bailout());
-		}
+						view.display(guest.getBillingInformation());
+				} while(selected != Options.Yes && selected != Options.No);
+				
+				// Attempts to reserve room for the reservation
+				reserveRoomForReservation(reservation);
+				
+				persistence.create(reservation, Reservation.class);
+				
+				valid = true;
+				if(reservation.getStatus() == ReservationStatus.Waitlist)
+					view.message("The reservation has been made, but no room is currently available, your reservation has been placed in the waiting list.");
+				else
+					view.message("The reservation has been made, and a room has been reserved for you.");
+				
+				view.message("Please take note of the reservation receipt below");
+				view.display(reservation);
+				view.display(reservation.getCriteria());
+				view.display(reservation.getBillingInformation());
+				flag = true;
+			} catch(NumberFormatException e) {
+				view.error(Arrays.asList(KEY_NUM_CHILDREN, KEY_NUM_ADULT));
+			}
+		} while(!valid && !view.bailout());
 		
 		return flag;
 	}
 	
 	@Override
-	public boolean checkRoomAvailability(View view, Reservation reservation) throws Exception {
-		boolean flag = false;
+	public void checkRoomAvailability(View view, Reservation reservation) throws Exception {
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
 		
 		inputMap.put(KEY_START_DATE, null);
@@ -193,9 +198,6 @@ public class ReservationController extends PersistenceController implements Rese
 						}
 						cost = cost * (reservation.getEndDate().getTime() - reservation.getStartDate().getTime()) / TimeUnit.DAYS.toMillis(1);
 						view.message("The expected cost will be: $" + String.format("%.2f", cost));
-						view.message("Do you want to continue to make the reservation?");
-						if(view.options(Arrays.asList(Options.Yes, Options.No)) == Options.Yes)
-							flag = makeReservation(view, reservation);
 						valid = true;
 					}
 					else {
@@ -209,8 +211,6 @@ public class ReservationController extends PersistenceController implements Rese
 				view.error(Arrays.asList(KEY_START_DATE, KEY_END_DATE));
 			}
 		} while(!valid && !view.bailout());
-		
-		return flag;
 	}
 	
 	@Override

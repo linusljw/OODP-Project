@@ -33,9 +33,17 @@ public interface ReservationInterface {
 	/**
 	 * Prompts the user to enter relevant information to check for room availability and
 	 * allows user to make a reservation if desired.
-	 * @param reservation - The {@link Reservation} instance that should be populated with user chosen data.
 	 * @param view - A view interface that provides input/output.
-	 * @return A flag indicating if the reservation was made.
+	 * @param reservation - The {@link Reservation} instance that should be populated with user chosen data.
 	 */
-	public boolean checkRoomAvailability(View view, Reservation reservation) throws Exception;
+	public void checkRoomAvailability(View view, Reservation reservation) throws Exception;
+
+	/**
+	 * Prompts the user relevant information to make a reservation.
+	 * @param view - A view interface that provides input/output.
+	 * @param reservation - The reservation that should be made.
+	 * @return A flag indicating if the reservation has been made.
+	 * @see #checkRoomAvailability(View, Reservation)
+	 */
+	public boolean makeReservation(View view, Reservation reservation) throws Exception;
 }

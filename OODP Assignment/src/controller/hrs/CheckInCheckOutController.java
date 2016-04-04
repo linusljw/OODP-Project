@@ -84,9 +84,10 @@ public class CheckInCheckOutController extends PersistenceController {
 				view.message("You have no reservations for today, do you want to make one?");
 				if(view.options(ynOptionList) == Options.Yes) {
 					Reservation reservation = new Reservation(guest);
+					rInterface.checkRoomAvailability(view, reservation);
 					
 					// Add reservation to list if it passes check-in predicate
-					if(rInterface.checkRoomAvailability(view, reservation)) {
+					if(rInterface.makeReservation(view, reservation)) {
 						if(predicate.test(reservation))
 							reservations.add(reservation);
 						else
