@@ -261,6 +261,8 @@ public class CheckInCheckOutController extends PersistenceController {
 			
 			view.message("Successfully checked out from room " + reservation.getAssignedRoom().getNumber() + ".");
 		}
+		view.message("Please take not of your receipt below");
+		view.display(payment);
 	}
 	
 	/**
