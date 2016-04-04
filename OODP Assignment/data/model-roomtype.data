@@ -1,0 +1,7 @@
+model.RoomType|_id:4|name:Family Room|price:750.0
+model.RoomType|_id:5|name:Family Suite|price:1000.0
+model.RoomType|_id:6|name:Luxurious Suite|price:1275.0
+model.RoomType|_id:7|name:Grand Club Room|price:1500.0
+model.RoomType|_id:8|name:Presidential Suite|price:3000.0
+model.RoomType|_id:9|name:Chairman Suite|price:7500.0
+model.RoomType|_id:10|name:Normal Room|price:375.0

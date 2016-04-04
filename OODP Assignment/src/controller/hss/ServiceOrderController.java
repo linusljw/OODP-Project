@@ -100,28 +100,36 @@ public class ServiceOrderController extends EntityController<ServiceOrder> {
 				
 				if (reservation != null) {
 					Options option = Options.No;
+					int items = 0;
 					do {
 						MenuItem item = miController.select(view);
-						ServiceOrder svcOrder = new ServiceOrder(reservation, item);
-						svcOrder.setRoom(reservation.getAssignedRoom());
-						inputMap.clear();
-						inputMap.put(KEY_REMARKS, null);
-						view.input(inputMap);
-						svcOrder.setStatus(OrderStatus.Confirmed);
-						svcOrder.setRemarks(inputMap.get(KEY_REMARKS));
-						reservation.getOrderList().add(svcOrder);
+						if (item != null) {
+							inputMap.clear();
+							inputMap.put(KEY_REMARKS, null);
+							view.input(inputMap);
+							ServiceOrder svcOrder = new ServiceOrder(reservation, item);
+							svcOrder.setRoom(reservation.getAssignedRoom());
+							svcOrder.setStatus(OrderStatus.Confirmed);
+							svcOrder.setRemarks(inputMap.get(KEY_REMARKS));
+							reservation.getOrderList().add(svcOrder);
+							items++;
+						}
+						
 						view.message("Do you want to add more items?");
 						option = view.options(Arrays.asList(Options.Yes, Options.No));
 					} while(option == Options.Yes);
 					
-					if (!reservation.getOrderList().isEmpty()) {
+					if (items > 0) {
 						if (persistence.update(reservation, Reservation.class)) {
 							view.message("Ordered has been placed, it will be delivered to your room!");
 							valid = true;
 						}
 					}
+					else {
+						valid = true;
+					}
 				}
-		} while(!valid && !view.bailout());
+		} while(!valid);
 	}
 
 	/**

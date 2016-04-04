@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import controller.EntityController;
 import model.BedType;
@@ -99,14 +100,8 @@ public class RoomController extends EntityController<Room> {
 				char wifi = Character.toUpperCase(inputMap.get(KEY_WIFI).charAt(0));
 				try {
 					char smoking = Character.toUpperCase(inputMap.get(KEY_SMOKING).charAt(0));
-					int roomNumber = Integer.parseInt(inputMap.get(KEY_NUMBER));
 					
-					if (roomNumber > 200 && roomNumber < 208 ||
-						roomNumber > 300 && roomNumber < 308 ||
-						roomNumber > 400 && roomNumber < 408 ||
-						roomNumber > 500 && roomNumber < 508 ||
-						roomNumber > 600 && roomNumber < 608 ||
-						roomNumber > 700 && roomNumber < 708) {
+					if (Pattern.matches("0[2-7]0[1-8]", inputMap.get(KEY_NUMBER))) {
 							Room room = new Room(inputMap.get(KEY_NUMBER));
 							room.setView(inputMap.get(KEY_VIEW));
 							if (wifi == 'Y' || wifi == 'T')
@@ -139,7 +134,7 @@ public class RoomController extends EntityController<Room> {
 								valid = true;
 							}
 					} else {
-						view.message("Room Number must be <2 Level Digits><2 Running Digits>, <02-07><01-07>, e.g. 0201 or 0702\n");
+						view.message("Room Number must be <2 Level Digits><2 Running Digits>, <02-07><01-08>, e.g. 0201 or 0702\n");
 					}
 				} catch(IndexOutOfBoundsException e) {
 					view.error(Arrays.asList(KEY_SMOKING));
