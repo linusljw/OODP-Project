@@ -40,3 +40,9 @@ model.Room|_id:40|status:Vacant|number:0704|reservations:|description:40
 model.Room|_id:41|status:Vacant|number:0705|reservations:|description:41
 model.Room|_id:42|status:Vacant|number:0706|reservations:|description:42
 model.Room|_id:43|status:Vacant|number:0707|reservations:|description:43
+model.Room|_id:44|status:Vacant|number:0208|reservations:|description:45
+model.Room|_id:45|status:Vacant|number:0308|reservations:|description:46
+model.Room|_id:46|status:Vacant|number:0408|reservations:|description:47
+model.Room|_id:47|status:Vacant|number:0508|reservations:|description:48
+model.Room|_id:48|status:Vacant|number:0608|reservations:|description:49
+model.Room|_id:49|status:Vacant|number:0708|reservations:|description:50

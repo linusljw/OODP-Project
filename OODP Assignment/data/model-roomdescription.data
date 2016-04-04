@@ -41,3 +41,9 @@ model.RoomDescription|_id:41|view:Garden|type:9|bedType:Double|wifi:true|smoking
 model.RoomDescription|_id:42|view:Poolside|type:9|bedType:Queen|wifi:true|smoking:true
 model.RoomDescription|_id:43|view:Poolside|type:9|bedType:King|wifi:true|smoking:true
 model.RoomDescription|_id:44|type:9|bedType:King|wifi:true|smoking:false
+model.RoomDescription|_id:45|view:None|type:10|bedType:Single|wifi:true|smoking:true
+model.RoomDescription|_id:46|view:None|type:5|bedType:Single|wifi:true|smoking:true
+model.RoomDescription|_id:47|view:None|type:5|bedType:Single|wifi:true|smoking:true
+model.RoomDescription|_id:48|view:None|type:6|bedType:Single|wifi:true|smoking:true
+model.RoomDescription|_id:49|view:None|type:8|bedType:Single|wifi:true|smoking:true
+model.RoomDescription|_id:50|view:None|type:9|bedType:Single|wifi:true|smoking:true

@@ -186,7 +186,7 @@ public class ReportController extends PersistenceController {
 		}
 		if(occupiedCount == 0)
 			message += "None";
-		message += "\nTotal occupancy for " + roomType.getName() + " rooms: " + occupiedCount + " out of " + totalCount;
+		message += "\nTotal occupancy for " + roomType.getName() + " rooms: " + occupiedCount + " out of " + totalCount + "\n";
 		
 		view.message(message);
 	}
