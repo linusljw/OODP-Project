@@ -74,6 +74,12 @@ public class ReportController extends PersistenceController {
 		int vacantRoomCount = printRoomsWithStatus(view, RoomStatus.Vacant);
 		int maintenanceRoomCount = printRoomsWithStatus(view, RoomStatus.Maintenance);
 		
+		view.message("\n--- Room Occupancy By Room Type ---");
+		Iterable<RoomType> roomTypes = this.getPersistenceImpl().search(null, RoomType.class, false);
+		for(RoomType roomType: roomTypes)
+			printOccupancyByRoomType(view, roomType);
+		
+		
 		double occupancyRate = ((double)occupiedRoomCount / (occupiedRoomCount + vacantRoomCount + maintenanceRoomCount)) * 100;
 		view.message("\n----- Summary -----");
 		view.message("Number of occupied room(s): " + occupiedRoomCount);
@@ -150,6 +156,39 @@ public class ReportController extends PersistenceController {
 		view.message(message);
 		
 		return count;
+	}
+	
+	/**
+	 * Prints the rooms with this room type and is occupied.
+	 * @param view - A view interface that provides input/output.
+	 * @param roomType - The occupied rooms with this {@link RoomType} to print.
+	 */
+	private void printOccupancyByRoomType(View view, RoomType roomType) throws Exception {
+		Persistence persistence = this.getPersistenceImpl();
+		Iterable<Room> rooms = persistence.search(new Predicate<Room>() {
+
+			@Override
+			public boolean test(Room item) {
+				return item.getType().equals(roomType);
+			}
+			
+		}, Room.class, true);
+		
+		long occupiedCount = 0;
+		long totalCount = 0;
+		String message = roomType.getName() + " rooms that are occupied: ";
+		for(Room room: rooms) {
+			totalCount++;
+			if(room.getStatus() == RoomStatus.Occupied) {
+				message += room.getNumber() + " ";
+				occupiedCount++;
+			}
+		}
+		if(occupiedCount == 0)
+			message += "None";
+		message += "\nTotal occupancy for " + roomType.getName() + " rooms: " + occupiedCount + " out of " + totalCount;
+		
+		view.message(message);
 	}
 	
 	/**
