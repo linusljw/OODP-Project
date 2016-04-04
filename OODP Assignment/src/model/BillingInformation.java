@@ -20,7 +20,6 @@ public class BillingInformation extends Entity {
 	
 	/**
 	 * BillingInformation constructor.
-	 * @param address - The billing address associated with this BillingInformation.
 	 */
 	public BillingInformation() {
 		this.address = new Address();

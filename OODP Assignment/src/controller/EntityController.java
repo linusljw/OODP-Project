@@ -60,7 +60,7 @@ public abstract class EntityController<T> extends PersistenceController {
 	 * 	<li>Update guest profile</li>
 	 * 	<li>Delete guest profile</li>
 	 * </ol>
-	 * @return
+	 * @return The name to be displayed.
 	 */
 	protected abstract String getEntityName();
 	

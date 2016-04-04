@@ -1,6 +1,11 @@
 
 controller
+controller.hrs
+controller.hss
+controller.management
+controller.report
 model
 persistence
 persistence.file.text
 view
+viewmodel.reservation

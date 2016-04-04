@@ -250,7 +250,7 @@ public class FilePersistence implements Persistence {
 	 * Serializes a specific object into the given StringBuilder.
 	 * @param type - The type to serialize.
 	 * @param metadata - The persistence metadata.
-	 * @param object - The object to serialize.
+	 * @param value - The object to serialize.
 	 * @param builder - StringBuilder to serialize the field into. Must not be null.
 	 * @return
 	 * @throws Exception 

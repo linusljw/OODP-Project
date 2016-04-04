@@ -21,7 +21,6 @@ public class RoomType extends Entity {
 	/**
 	 * RoomType Constructor
 	 * @param name
-	 * @param price
 	 */
 	public RoomType(String name) {
 		this.name = name;

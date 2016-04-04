@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import model.StatusEntity;
+
 import persistence.CascadeType;
 import persistence.PersistAnnotation;
 
@@ -164,7 +166,10 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 	}
 	
 	/**
-	 * Sets the room assigned to this reservation and assigns this reservation to a Confirmed status.
+	 * Sets the room assigned to this reservation and assigns this reservation to a {@link ReservationStatus#Confirmed} status.
+	 * Passing in a null paramter will not cause the assigned room to change to null, it will only
+	 * remove this reservation from the reservation list of the assigned {@link Room} instance and
+	 * assigns this reservation a {@link ReservationStatus#Waitlist} status.
 	 * @param room - Room assigned to this reservation.
 	 */
 	public void setAssignedRoom(Room room) {
@@ -197,6 +202,12 @@ public class Reservation extends StatusEntity<ReservationStatus> {
 		this.payment = payment;
 	}
 	
+	/**
+	 * Sets the reservation status.
+	 * Setting to Cancelled or Expired or CheckedOut will also cause this method to invoke a
+	 * {@link #setAssignedRoom(Room)} with a null paramter. In addition, setting to CheckedOut will
+	 * invoke {@link StatusEntity#setStatus(Enum)} with a {@link RoomStatus#Vacant} parameter for the assigned {@link Room} instance.
+	 */
 	@Override
 	public void setStatus(ReservationStatus status) {
 		if(status == ReservationStatus.Cancelled || status == ReservationStatus.Expired || status == ReservationStatus.CheckedOut) {
