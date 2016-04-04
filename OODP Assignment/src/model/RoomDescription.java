@@ -119,6 +119,28 @@ public class RoomDescription extends Entity {
 		
 		return flag;
 	}
+	
+	/**
+	 * Sets the fields of the specified {@link RoomDescription} instance to be similar to the fields of this RoomDescription instance.
+	 * @param address
+	 */
+	public void set(RoomDescription desc) {
+		desc.setBedType(this.bedType);
+		desc.setRoomType(this.type);
+		desc.setView(this.view);
+		desc.setIsWifi(this.wifi);
+		desc.setIsSmoking(this.smoking);
+	}
+
+	/**
+	 * Clones this {@link RoomDescription} instance and returns a new instance with similar values.
+	 */
+	public RoomDescription clone() {
+		RoomDescription desc = new RoomDescription();
+		set(desc);
+		
+		return desc;
+	}
 
 	@Override
 	public String toString() {

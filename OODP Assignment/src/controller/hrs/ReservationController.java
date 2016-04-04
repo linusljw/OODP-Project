@@ -9,13 +9,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
-import controller.AddressValidator;
+import controller.BillingInformationValidator;
 import controller.EntityController;
 import controller.PersistenceController;
 import model.BedType;
-import model.BillingInformation;
 import model.Guest;
 import model.Reservation;
 import model.ReservationStatus;
@@ -46,8 +44,6 @@ public class ReservationController extends PersistenceController implements Rese
 	public final static String KEY_VIEW = "Room View";
 	public final static String KEY_WIFI = "Wifi Status";
 	public final static String KEY_SMOKING = "Smoking Room";
-	public final static String KEY_CREDIT_CARD_NO = "credit card number(Omit dashes and spaces)";
-	public final static String KEY_CVV_NO = "credit card cvv/cvc";
 	private final EntityController<Guest> gController;
 	
 	/**
@@ -71,7 +67,7 @@ public class ReservationController extends PersistenceController implements Rese
 	protected void safeOnOptionSelected(View view, int option) throws Exception {
 		switch(option) {
 		case 0:
-			makeReservation(view);
+			checkRoomAvailability(view, new Reservation(null));
 			break;
 		case 1:
 			cancelReservation(view);
@@ -82,27 +78,87 @@ public class ReservationController extends PersistenceController implements Rese
 		}
 	}
 	
-	@Override
-	public Reservation makeReservation(View view) throws Exception {
-		Reservation reservation = null;
-		Guest guest = gController.select(view);
+	/**
+	 * Prompts the user to make a reservation.
+	 * @param view - A view interface that provides input/output.
+	 * @param reservation - The reservation to be made.
+	 * @return A flag indicating if the reservation was made.
+	 */
+	private boolean makeReservation(View view, Reservation reservation) throws Exception {
+		boolean flag = false;
 		
-		if(guest != null)
-			reservation = makeReservation(view, guest);
+		if(reservation.getGuest() == null) {
+			// Ask user for guest information if not yet set
+			Reservation tmp = new Reservation(gController.select(view));
+			tmp.setStartDate(reservation.getStartDate());
+			tmp.setEndDate(reservation.getEndDate());
+			reservation.getCriteria().set(tmp.getCriteria());
+			
+			reservation = tmp;
+		}
 		
-		return reservation;
+		if(reservation.getGuest() != null) {
+			Map<String, String> inputMap = new LinkedHashMap<String, String>();
+			inputMap.put(KEY_NUM_CHILDREN, null);
+			inputMap.put(KEY_NUM_ADULT, null);
+			
+			boolean valid = false;
+			Guest guest = reservation.getGuest();
+			Persistence persistence = this.getPersistenceImpl();
+			do {
+				view.input(inputMap);
+				
+				try {
+					reservation.setNumOfChildren(Integer.parseInt(inputMap.get(KEY_NUM_CHILDREN)));
+					reservation.setNumOfAdult(Integer.parseInt(inputMap.get(KEY_NUM_ADULT)));
+					
+					// Updates the billing information
+					Object selected = null;
+					do {
+						view.message("Do you want to use the billing information registered with specified guest? (Select no to specify other billing information for this reservation)");
+						selected = view.options(Arrays.asList(Options.Yes, Options.No, "Show guest registered billing information"));
+						if(selected == Options.Yes) 
+							guest.getBillingInformation().set(reservation.getBillingInformation());
+						else if(selected == Options.No)
+							BillingInformationValidator.update(view, reservation.getBillingInformation());
+						else
+							view.display(guest.getBillingInformation());
+					} while(selected != Options.Yes && selected != Options.No);
+					
+					// Attempts to reserve room for the reservation
+					reserveRoomForReservation(reservation);
+					
+					persistence.create(reservation, Reservation.class);
+					
+					valid = true;
+					if(reservation.getStatus() == ReservationStatus.Waitlist)
+						view.message("The reservation has been made, but no room is currently available, your reservation has been placed in the waiting list.");
+					else
+						view.message("The reservation has been made, and a room has been reserved for you.");
+					
+					view.message("Please take note of the reservation receipt below");
+					view.display(reservation);
+					view.display(reservation.getCriteria());
+					view.display(reservation.getBillingInformation());
+					flag = true;
+				} catch(NumberFormatException e) {
+					view.error(Arrays.asList(KEY_NUM_CHILDREN, KEY_NUM_ADULT));
+				}
+			} while(!valid && !view.bailout());
+		}
+		
+		return flag;
 	}
 	
 	@Override
-	public Reservation makeReservation(View view, Guest guest) throws Exception {
-		Reservation reservation = new Reservation(guest);
+	public boolean checkRoomAvailability(View view, Reservation reservation) throws Exception {
+		boolean flag = false;
 		Map<String, String> inputMap = new LinkedHashMap<String, String>();
 		
 		inputMap.put(KEY_START_DATE, null);
 		inputMap.put(KEY_END_DATE, null);
 		
 		Persistence persistence = this.getPersistenceImpl();
-		boolean persisted = false;
 		boolean valid = false;
 		do {
 			view.input(inputMap);
@@ -137,48 +193,10 @@ public class ReservationController extends PersistenceController implements Rese
 						}
 						cost = cost * (reservation.getEndDate().getTime() - reservation.getStartDate().getTime()) / TimeUnit.DAYS.toMillis(1);
 						view.message("The expected cost will be: $" + String.format("%.2f", cost));
-						
-						// Prompts the user whether or not the reservation should be made
 						view.message("Do you want to continue to make the reservation?");
-						if(view.options(Arrays.asList(Options.Yes, Options.No)) == Options.Yes) {
-							inputMap.clear();
-							inputMap.put(KEY_NUM_CHILDREN, null);
-							inputMap.put(KEY_NUM_ADULT, null);
-							
-							do {
-								view.input(inputMap);
-								
-								try {
-									reservation.setNumOfChildren(Integer.parseInt(inputMap.get(KEY_NUM_CHILDREN)));
-									reservation.setNumOfAdult(Integer.parseInt(inputMap.get(KEY_NUM_ADULT)));
-									
-									// Updates the billing information
-									updateBillingInformation(view, guest, reservation.getBillingInformation());
-									
-									// Attempts to reserve room for the reservation
-									reserveRoomForReservation(reservation);
-									
-									persistence.create(reservation, Reservation.class);
-									
-									valid = true;
-									if(reservation.getStatus() == ReservationStatus.Waitlist)
-										view.message("The reservation has been made, but no room is currently available, your reservation has been placed in the waiting list.");
-									else
-										view.message("The reservation has been made, and a room has been reserved for you.");
-									
-									view.message("Please take note of the reservation receipt below");
-									view.display(reservation);
-									view.display(reservation.getCriteria());
-									view.display(reservation.getBillingInformation());
-									persisted = true;
-								} catch(NumberFormatException e) {
-									view.error(Arrays.asList(KEY_NUM_CHILDREN, KEY_NUM_ADULT));
-								}
-							} while(!valid && !view.bailout());
-						}
-						else {
-							valid = true;
-						}
+						if(view.options(Arrays.asList(Options.Yes, Options.No)) == Options.Yes)
+							flag = makeReservation(view, reservation);
+						valid = true;
 					}
 					else {
 						view.message("Invalid end date, end date must be after start date.");
@@ -192,7 +210,7 @@ public class ReservationController extends PersistenceController implements Rese
 			}
 		} while(!valid && !view.bailout());
 		
-		return persisted? reservation: null;
+		return flag;
 	}
 	
 	@Override
@@ -522,54 +540,5 @@ public class ReservationController extends PersistenceController implements Rese
 		smokingStatus = view.options(options).getText().equals(required);
 		
 		reservation.getCriteria().setIsSmoking(smokingStatus);
-	}
-	
-	/**
-	 * Prompts the user to enter relevant information for billing information and populates the BillingInformation parameter
-	 * with the information.
-	 * @param view - A view interface that provides input/output.
-	 * @param guest - The guest that made the billing request.
-	 * @param billing - BillingInformation to be populated with user entered information.
-	 */
-	private void updateBillingInformation(View view, Guest guest, BillingInformation billing) throws Exception {
-		view.message("----- Billing Information -----");
-		
-		Map<String, String> inputMap = new LinkedHashMap<String, String>();
-		inputMap.put(KEY_CREDIT_CARD_NO, null);
-		inputMap.put(KEY_CVV_NO, null);
-		
-		boolean valid = false;
-		do {
-			view.input(inputMap);
-			
-			billing.setCreditCardNumber(inputMap.get(KEY_CREDIT_CARD_NO));
-			billing.setCVV(inputMap.get(KEY_CVV_NO));
-			
-			List<String> invalids = new ArrayList<String>();
-			if(!Pattern.matches(
-					"^(?:4[0-9]{12}(?:[0-9]{3})?" + // Visa
-					"|5[1-5][0-9]{14}" + // Mastercard
-					"|3[47][0-9]{13}" + // American Express
-					"|3(?:0[0-5]|[68][0-9])[0-9]{11}" + // Diners club
-					"|6(?:011|5[0-9]{2})[0-9]{12}" + // Discover
-					"|(?:2131|1800|35\\d{3})\\d{11}" + // JCB
-					")$", billing.getCreditCardNumber()))
-				invalids.add(KEY_CREDIT_CARD_NO);
-			if(!Pattern.matches(
-					"[0-9]{3}|[0-9]{4}", billing.getCVV()))
-				invalids.add(KEY_CVV_NO);
-			
-			if(invalids.size() > 0)
-				view.error(invalids);
-			else {
-				view.message("Do you want to use guest's address as billing address?");
-				if(view.options(Arrays.asList(Options.Yes, Options.No)).equals(Options.Yes))
-					guest.getAddress().set(billing.getAddress());
-				else
-					AddressValidator.update(view, billing.getAddress());
-				
-				valid = true;
-			}
-		} while(!valid);
 	}
 }

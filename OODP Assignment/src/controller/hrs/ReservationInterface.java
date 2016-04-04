@@ -1,6 +1,5 @@
 package controller.hrs;
 
-import model.Guest;
 import model.Reservation;
 import view.View;
 
@@ -10,21 +9,6 @@ import view.View;
  * @author YingHao
  */
 public interface ReservationInterface {
-	
-	/**
-	 * Prompts the user to enter relevant information to make a reservation.
-	 * @param view - A view interface that provides input/output.
-	 * @return Reservation instance that was created.
-	 */
-	public Reservation makeReservation(View view) throws Exception;
-	
-	/**
-	 * Prompts the user to enter relevant information to make a reservation for the specified guest.
-	 * @param view - A view interface that provides input/output.
-	 * @param guest - The guest to make the reservation for.
-	 * @return A reservation instance that was made for the guest.
-	 */
-	public Reservation makeReservation(View view, Guest guest) throws Exception;
 	
 	/**
 	 * Prompts the user to enter relevant information to cancel a reservation.
@@ -46,4 +30,12 @@ public interface ReservationInterface {
 	 */
 	public boolean reserveRoomForReservation(Reservation reservation) throws Exception;
 
+	/**
+	 * Prompts the user to enter relevant information to check for room availability and
+	 * allows user to make a reservation if desired.
+	 * @param reservation - The {@link Reservation} instance that should be populated with user chosen data.
+	 * @param view - A view interface that provides input/output.
+	 * @return A flag indicating if the reservation was made.
+	 */
+	public boolean checkRoomAvailability(View view, Reservation reservation) throws Exception;
 }

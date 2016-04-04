@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import controller.AddressValidator;
+import controller.BillingInformationValidator;
 import controller.EntityController;
 import model.Guest;
 import persistence.Entity;
@@ -41,7 +41,36 @@ public class GuestController extends EntityController<Guest> {
 	protected String getEntityName() {
 		return "Guest Profile";
 	}
-	
+
+	@Override
+	public List<String> getOptions() {
+		List<String> options = new ArrayList<String>(super.getOptions());
+		options.add(3, "Update guest billing information");
+		
+		return options;
+	}
+
+	@Override
+	protected void safeOnOptionSelected(View view, int option) throws Exception {
+		switch(option) {
+		case 0:
+			create(view);
+			break;
+		case 1:
+			retrieve(view);
+			break;
+		case 2:
+			update(view);
+			break;
+		case 3:
+			updateBillingInformation(view);
+			break;
+		case 4:
+			delete(view);
+			break;
+		}
+	}
+
 	/**
 	 * Prompts the user to enter relevant information required and creates a new Guest instance.
 	 * @param view - A view interface that provides input/output.
@@ -102,8 +131,7 @@ public class GuestController extends EntityController<Guest> {
 					}
 					else {
 						// Update Address information
-						view.message("---- Address Information ----");
-						AddressValidator.update(view, guest.getAddress());
+						BillingInformationValidator.update(view, guest.getBillingInformation());
 						
 						persistence.create(guest, Guest.class);
 						
@@ -195,15 +223,9 @@ public class GuestController extends EntityController<Guest> {
 						invalids.add(KEY_EMAIL_ADDRESS);
 					
 					// Attempts to update entity
-					if(invalids.size() == 0) {
-						// Update address information
-						view.message("---- Address Information ----");
-						AddressValidator.update(view, guest.getAddress());
-						
-						if(persistence.update(guest, Guest.class)) {
-							valid = true;
-							view.message("Guest profile successfully updated!");
-						}
+					if(invalids.size() == 0 && persistence.update(guest, Guest.class)) {
+						valid = true;
+						view.message("Guest profile successfully updated!");
 					}
 					else {
 						view.error(invalids);
@@ -260,6 +282,20 @@ public class GuestController extends EntityController<Guest> {
 		} while(guest == null && !view.bailout());
 		
 		return guest;
+	}
+	
+	/**
+	 * Prompts user to enter relevant information and updates billing information of the guest.
+	 * @param view - A view interface that provides input/output.
+	 */
+	private void updateBillingInformation(View view) throws Exception {
+		Guest guest = select(view);
+		
+		if(guest != null) {
+			BillingInformationValidator.update(view, guest.getBillingInformation());
+			if(this.getPersistenceImpl().update(guest, Guest.class))
+				view.message("Guest billing information successfully updated!");
+		}
 	}
 
 }

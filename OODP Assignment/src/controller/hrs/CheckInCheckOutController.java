@@ -83,10 +83,10 @@ public class CheckInCheckOutController extends PersistenceController {
 				// There are no reservations, ask user to make reservation
 				view.message("You have no reservations for today, do you want to make one?");
 				if(view.options(ynOptionList) == Options.Yes) {
-					Reservation reservation = rInterface.makeReservation(view, guest);
+					Reservation reservation = new Reservation(guest);
 					
 					// Add reservation to list if it passes check-in predicate
-					if(reservation != null) {
+					if(rInterface.checkRoomAvailability(view, reservation)) {
 						if(predicate.test(reservation))
 							reservations.add(reservation);
 						else
@@ -96,7 +96,7 @@ public class CheckInCheckOutController extends PersistenceController {
 			}
 			else {
 				view.message("You have " + count + " reservations eligible for check-in");
-				view.message("Do you wish to add check-in all your reservations (Select no to inspect each reservation to decide which ones to check-in)?");
+				view.message("Do you wish to add check-in all your reservations? (Select no to inspect each reservation to decide which ones to check-in)");
 				
 				Options selectedOption = view.options(ynOptionList);
 				
@@ -188,7 +188,7 @@ public class CheckInCheckOutController extends PersistenceController {
 		Persistence persistence = this.getPersistenceImpl();
 		
 		for(Reservation reservation: reservations) {
-			view.display(reservation);
+			String message;
 			
 			if(reservation.getStatus() == ReservationStatus.Waitlist)
 				reservation.setAssignedRoom(findVacantAndAvailableRoom(reservation));
@@ -197,15 +197,18 @@ public class CheckInCheckOutController extends PersistenceController {
 				if(reservation.getAssignedRoom().getStatus() == RoomStatus.Vacant) {
 					reservation.setStatus(ReservationStatus.CheckedIn);
 					persistence.update(reservation, Reservation.class);
-					view.message("The above reservation has been checked-in successfully, the room number assigned is " + reservation.getAssignedRoom().getNumber());
+					message = "The above reservation has been checked-in successfully, the room number assigned is " + reservation.getAssignedRoom().getNumber();
 				}
 				else {
-					view.message("The hotel is still preparing your hotel room, please come back in an hour time, we apologise for any inconvenience caused.");
+					message = "The hotel is still preparing your hotel room, please come back in an hour time, we apologise for any inconvenience caused.";
 				}
 			}
 			else {
-				view.message("We are unable to check-in for the reservation above as it is still in the wait list and there are no available rooms for the specified room requirements.");
+				message = "We are unable to check-in for the reservation above as it is still in the wait list and there are no available rooms for the specified room requirements.";
 			}
+			
+			view.display(reservation);
+			view.message(message);
 		}
 	}
 	

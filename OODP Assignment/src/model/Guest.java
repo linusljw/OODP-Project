@@ -12,7 +12,7 @@ public class Guest extends Entity {
 	@PersistAnnotation(
 			cascade = {CascadeType.Create, CascadeType.Update, CascadeType.Delete}
 	)
-	private final Address address;
+	private final BillingInformation billing;
 	private final String identification;
 	private final String nationality;
 	private String name;
@@ -26,7 +26,7 @@ public class Guest extends Entity {
 	protected Guest() {
 		this.identification = null;
 		this.nationality = null;
-		this.address = null;
+		this.billing = null;
 	}
 	
 	/**
@@ -37,7 +37,7 @@ public class Guest extends Entity {
 	public Guest(String identification, String nationality) {
 		this.identification = identification;
 		this.nationality = nationality;
-		this.address = new Address();
+		this.billing = new BillingInformation();
 	}
 	
 	/**
@@ -105,12 +105,12 @@ public class Guest extends Entity {
 	}
 	
 	/**
-	 * Gets the address. Note that the lifetime of the returned address is tied to the
-	 * Guest. Clone the address for a seperate address instance with an independent lifetime.
+	 * Gets the billing information. Note that the lifetime of the returned {@link BillingInformation} is tied to the
+	 * Guest. Clone this instance for a seperate {@link BillingInformation} instance with an independent lifetime.
 	 * @return address
 	 */
-	public Address getAddress() {
-		return address;
+	public BillingInformation getBillingInformation() {
+		return billing;
 	}
 	
 	/**
@@ -137,8 +137,8 @@ public class Guest extends Entity {
 				"Nationality: " + this.getNationality() + "\n" +
 				"Gender: " + this.getGender() + "\n" +
 				"Contact number: " + this.getContactNo() + "\n" +
-				"Email address: " + this.getEmailAddress() + "\n" +
-				this.getAddress().toString();
+				"Email address: " + this.getEmailAddress() + "\n\n" +
+				this.getBillingInformation().toString();
 	}
 	
 }

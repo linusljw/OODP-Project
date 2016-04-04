@@ -1,5 +1,5 @@
-model.Guest|_id:1|address:1|identification:S9324341B|nationality:Singaporean|name:Tan Ying Hao|contactNo:91515341|emailAddress:yinghao.developer@barxix.com|gender:M
-model.Guest|_id:2|address:2|identification:S9331756D|nationality:Singaporean|name:Wong Yijie|contactNo:90290589|emailAddress:yijie02281@hotmail.com|gender:M
-model.Guest|_id:3|address:3|identification:S9029058K|nationality:Singaporean|name:Lim Xuan Yin|contactNo:92105948|emailAddress:xuanyin001@gmail.com|gender:M
-model.Guest|_id:4|address:4|identification:S92326025H|nationality:Singapore|name:Ng Yao Sheng|contactNo:+6592326025|emailAddress:ngyaosheng92@gmail.com|gender:M
-model.Guest|_id:5|address:5|identification:S9203920C|nationality:Singaporean|name:Ter Pei Ru|contactNo:96350192|emailAddress:terpeiru@gmail.com|gender:F
+model.Guest|_id:1|billing:2|identification:S9324341B|nationality:Singaporean|name:Tan Ying Hao|contactNo:91515341|emailAddress:yinghao.developer@barxix.com|gender:M
+model.Guest|_id:2|billing:3|identification:S9331756D|nationality:Singaporean|name:Wong Yijie|contactNo:90290589|emailAddress:yijie02281@hotmail.com|gender:M
+model.Guest|_id:3|billing:4|identification:S9029058K|nationality:Singaporean|name:Lim Xuan Yin|contactNo:92105948|emailAddress:xuanyin001@gmail.com|gender:M
+model.Guest|_id:4|billing:5|identification:S92326025H|nationality:Singaporean|name:Ng Yao Sheng|contactNo:+6592326025|emailAddress:ngyaosheng92@gmail.com|gender:M
+model.Guest|_id:5|billing:6|identification:S9203920C|nationality:Singaporean|name:Ter Pei Ru|contactNo:96350192|emailAddress:terpeiru@gmail.com|gender:F

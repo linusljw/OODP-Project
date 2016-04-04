@@ -64,6 +64,26 @@ public class BillingInformation extends Entity {
 	public void setCVV(String cvv) {
 		this.cvv = cvv;
 	}
+	
+	/**
+	 * Sets the fields of the specified {@link BillingInformation} instance to be similar to the fields of this {@link BillingInformation} instance.
+	 * @param billing
+	 */
+	public void set(BillingInformation billing) {
+		this.getAddress().set(billing.getAddress());
+		billing.setCreditCardNumber(this.getCreditCardNumber());
+		billing.setCVV(this.getCVV());
+	}
+
+	/**
+	 * Clones this {@link BillingInformation} instance and returns a new instance with similar values.
+	 */
+	public BillingInformation clone() {
+		BillingInformation billing = new BillingInformation();
+		set(billing);
+		
+		return billing;
+	}
 
 	@Override
 	public String toString() {
