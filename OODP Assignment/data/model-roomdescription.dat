@@ -21,3 +21,5 @@ model.RoomDescription|_id:20|type:2|wifi:false|smoking:false
 model.RoomDescription|_id:21|bedType:Queen|wifi:false|smoking:false
 model.RoomDescription|_id:22|type:2|wifi:false|smoking:false
 model.RoomDescription|_id:23|type:1|wifi:false|smoking:false
+model.RoomDescription|_id:24|type:2|wifi:false|smoking:false
+model.RoomDescription|_id:25|type:2|wifi:false|smoking:false

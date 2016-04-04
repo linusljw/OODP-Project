@@ -194,9 +194,14 @@ public class CheckInCheckOutController extends PersistenceController {
 				reservation.setAssignedRoom(findVacantAndAvailableRoom(reservation));
 			
 			if(reservation.getStatus() == ReservationStatus.Confirmed) {
-				reservation.setStatus(ReservationStatus.CheckedIn);
-				persistence.update(reservation, Reservation.class);
-				view.message("The above reservation has been checked-in successfully, the room number assigned is " + reservation.getAssignedRoom().getNumber());
+				if(reservation.getAssignedRoom().getStatus() == RoomStatus.Vacant) {
+					reservation.setStatus(ReservationStatus.CheckedIn);
+					persistence.update(reservation, Reservation.class);
+					view.message("The above reservation has been checked-in successfully, the room number assigned is " + reservation.getAssignedRoom().getNumber());
+				}
+				else {
+					view.message("The hotel is still preparing your hotel room, please come back in an hour time, we apologise for any inconvenience caused.");
+				}
 			}
 			else {
 				view.message("We are unable to check-in for the reservation above as it is still in the wait list and there are no available rooms for the specified room requirements.");
