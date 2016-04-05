@@ -73,5 +73,5 @@ public @interface PersistAnnotation {
 	 * This declaration is required for fields containing a {@link Collection}.
 	 * This has no effect for class-level declaration and fields that are not of Collection types.
 	 */
-	Class<?> type() default Entity.class;
+	Class<? extends Entity> type() default Entity.class;
 }
