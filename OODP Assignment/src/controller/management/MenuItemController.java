@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import controller.EntityController;
-import model.MenuItem;
+import model.service.fnb.MenuItem;
 import persistence.Entity;
 import persistence.Persistence;
 import persistence.Predicate;

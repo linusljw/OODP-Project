@@ -1,4 +1,4 @@
-package model;
+package model.service.fnb;
 
 /**
  * OrderStatus is an enumeration that specifies the possible status of an {@link ServiceOrder}

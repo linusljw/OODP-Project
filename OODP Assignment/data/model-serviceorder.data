@@ -1,2 +1,0 @@
-model.ServiceOrder|_id:3|status:Delivered|reservation:1|item:5|timestamp:1459763479320|room:37|remarks:Less chocolate
-model.ServiceOrder|_id:4|status:Delivered|reservation:1|item:8|timestamp:1459763504955|room:37|remarks:More chocolate

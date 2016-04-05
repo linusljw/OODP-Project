@@ -1,12 +1,17 @@
-package model;
+package model.reservation;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import model.BillingInformation;
+import model.Guest;
 import model.StatusEntity;
-
+import model.room.Room;
+import model.room.RoomDescription;
+import model.room.RoomStatus;
+import model.service.fnb.ServiceOrder;
 import persistence.CascadeType;
 import persistence.PersistAnnotation;
 

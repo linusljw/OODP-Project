@@ -1,6 +1,10 @@
-package model;
+package model.service.fnb;
 
 import java.util.Date;
+
+import model.StatusEntity;
+import model.reservation.Reservation;
+import model.room.Room;
 
 /**
  * ServiceOrder is a {@link StatusEntity} class that encapsulates information about a room

@@ -1,6 +1,6 @@
 package controller.hrs;
 
-import model.Reservation;
+import model.reservation.Reservation;
 import view.View;
 
 /**

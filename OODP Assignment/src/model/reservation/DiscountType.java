@@ -1,4 +1,4 @@
-package model;
+package model.reservation;
 
 /**
  * DiscountType is an enumeration that specifies the possible types of discount.

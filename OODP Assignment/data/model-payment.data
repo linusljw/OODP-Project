@@ -1,5 +1,0 @@
-model.Payment|_id:1|reservations:1|discountType:PERCENTAGE|discountValue:99.0|paymentType:Cash
-model.Payment|_id:2|reservations:4|discountValue:0.0|paymentType:CreditCard
-model.Payment|_id:3|reservations:5|discountType:PERCENTAGE|discountValue:50.0|paymentType:CreditCard
-model.Payment|_id:4|reservations:6|discountValue:0.0|paymentType:Cash
-model.Payment|_id:5|reservations:7|discountValue:0.0|paymentType:Cash

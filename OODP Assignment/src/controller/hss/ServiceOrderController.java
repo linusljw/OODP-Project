@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 import controller.EntityController;
-import model.MenuItem;
-import model.OrderStatus;
-import model.Reservation;
-import model.ReservationStatus;
-import model.ServiceOrder;
+import model.reservation.Reservation;
+import model.reservation.ReservationStatus;
+import model.service.fnb.MenuItem;
+import model.service.fnb.OrderStatus;
+import model.service.fnb.ServiceOrder;
 import persistence.EntityIterator;
 import persistence.Persistence;
 import persistence.Predicate;

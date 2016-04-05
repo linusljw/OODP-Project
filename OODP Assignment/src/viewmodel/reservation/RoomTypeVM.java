@@ -1,7 +1,7 @@
 package viewmodel.reservation;
 
-import model.RoomType;
-import model.Room;
+import model.room.Room;
+import model.room.RoomType;
 
 /**
  * A view model class that encapsulates information about a {@link RoomType} and the number of {@link Room} instances with the

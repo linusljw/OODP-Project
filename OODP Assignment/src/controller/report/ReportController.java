@@ -9,11 +9,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import controller.PersistenceController;
-import model.Reservation;
-import model.ReservationStatus;
-import model.Room;
-import model.RoomStatus;
-import model.RoomType;
+import model.reservation.Reservation;
+import model.reservation.ReservationStatus;
+import model.room.Room;
+import model.room.RoomStatus;
+import model.room.RoomType;
 import persistence.Persistence;
 import persistence.Predicate;
 import view.View;

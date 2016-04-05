@@ -8,12 +8,12 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import controller.EntityController;
-import model.BedType;
-import model.Reservation;
-import model.ReservationStatus;
-import model.Room;
-import model.RoomStatus;
-import model.RoomType;
+import model.reservation.Reservation;
+import model.reservation.ReservationStatus;
+import model.room.BedType;
+import model.room.Room;
+import model.room.RoomStatus;
+import model.room.RoomType;
 import persistence.Entity;
 import persistence.EntityIterator;
 import persistence.Persistence;

@@ -3,8 +3,8 @@ package controller.hrs;
 import java.util.Date;
 
 import model.Guest;
-import model.Reservation;
-import model.ReservationStatus;
+import model.reservation.Reservation;
+import model.reservation.ReservationStatus;
 import persistence.Predicate;
 
 /**

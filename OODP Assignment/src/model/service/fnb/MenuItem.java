@@ -1,4 +1,4 @@
-package model;
+package model.service.fnb;
 
 import persistence.Entity;
 

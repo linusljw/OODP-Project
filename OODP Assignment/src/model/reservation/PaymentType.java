@@ -1,4 +1,4 @@
-package model;
+package model.reservation;
 
 /**
  * PaymentType is an enumeration that specifies the possible payment types.

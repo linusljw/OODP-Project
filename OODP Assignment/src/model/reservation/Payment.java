@@ -1,7 +1,11 @@
-package model;
+package model.reservation;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import model.room.Room;
+import model.service.fnb.OrderStatus;
+import model.service.fnb.ServiceOrder;
 import persistence.Entity;
 import persistence.PersistAnnotation;
 

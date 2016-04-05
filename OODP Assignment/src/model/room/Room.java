@@ -1,8 +1,10 @@
-package model;
+package model.room;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import model.StatusEntity;
+import model.reservation.Reservation;
 import persistence.CascadeType;
 import persistence.PersistAnnotation;
 

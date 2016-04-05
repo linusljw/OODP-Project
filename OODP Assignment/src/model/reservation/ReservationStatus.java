@@ -1,4 +1,4 @@
-package model;
+package model.reservation;
 
 /**
  * ReservationStatus is an enumeration that specifies the possible status of a {@link Reservation}.

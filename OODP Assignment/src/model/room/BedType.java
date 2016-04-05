@@ -1,4 +1,4 @@
-package model;
+package model.room;
 
 /**
  * BedType is an enumeration that specifies the different type of beds.

@@ -1,4 +1,4 @@
-package model;
+package model.room;
 
 /**
  * RoomStatus is an enumeration that specifies the possible status of a room.

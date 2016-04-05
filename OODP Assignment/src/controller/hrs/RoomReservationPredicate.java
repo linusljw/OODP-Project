@@ -2,10 +2,10 @@ package controller.hrs;
 
 import java.util.List;
 
-import model.Reservation;
-import model.ReservationStatus;
-import model.Room;
-import model.RoomStatus;
+import model.reservation.Reservation;
+import model.reservation.ReservationStatus;
+import model.room.Room;
+import model.room.RoomStatus;
 import persistence.Predicate;
 
 /**

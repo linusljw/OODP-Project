@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import controller.EntityController;
-import model.RoomType;
+import model.room.RoomType;
 import persistence.Entity;
 import persistence.EntityIterator;
 import persistence.Persistence;
