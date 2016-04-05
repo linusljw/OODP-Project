@@ -19,9 +19,9 @@ import model.Reservation;
 import model.ReservationStatus;
 import model.Room;
 import model.RoomStatus;
+import persistence.EntityIterator;
 import persistence.Persistence;
 import persistence.Predicate;
-import persistence.file.text.EntityIterator;
 import view.Options;
 import view.View;
 

@@ -5,8 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Iterator;
 import persistence.Entity;
+import persistence.EntityIterator;
 import persistence.Predicate;
 
 /**
@@ -18,7 +18,7 @@ import persistence.Predicate;
  *
  * @param <T>
  */
-public class EntityIterator<T extends Entity> implements Iterator<T>, AutoCloseable {
+public class FileEntityIterator<T extends Entity> implements EntityIterator<T> {
 	private final FilePersistence persistence;
 	private final Predicate<T> predicate;
 	private final boolean loadR;
@@ -33,7 +33,7 @@ public class EntityIterator<T extends Entity> implements Iterator<T>, AutoClosea
 	 * @param loadR - Indicates if all entity references should be loaded during predicate evaluation or after predicate evaluation.
 	 * @throws IOException 
 	 */
-	public EntityIterator(FilePersistence persistence, File file, Predicate predicate, boolean loadR) throws Exception {
+	public FileEntityIterator(FilePersistence persistence, File file, Predicate predicate, boolean loadR) throws Exception {
 		this.persistence = persistence;
 		try {
 			this.reader = new BufferedReader(new FileReader(file));

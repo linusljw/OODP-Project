@@ -678,9 +678,9 @@ public class FilePersistence implements Persistence {
 	}
 
 	@Override
-	public <T extends Entity> EntityIterable<T> search(Predicate<T> predicate, Class<T> type, boolean loadBeforePredicate)
+	public <T extends Entity> FileEntityIterable<T> search(Predicate<T> predicate, Class<T> type, boolean loadBeforePredicate)
 			throws Exception {
-		return new EntityIterable(this, this.getDataFile(type), predicate, loadBeforePredicate);
+		return new FileEntityIterable(this, this.getDataFile(type), predicate, loadBeforePredicate);
 	}
 
 	@Override

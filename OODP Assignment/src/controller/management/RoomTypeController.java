@@ -9,9 +9,9 @@ import java.util.Map;
 import controller.EntityController;
 import model.RoomType;
 import persistence.Entity;
+import persistence.EntityIterator;
 import persistence.Persistence;
 import persistence.Predicate;
-import persistence.file.text.EntityIterator;
 import view.View;
 
 /**

@@ -11,9 +11,9 @@ import persistence.Predicate;
  * @author YingHao
  *
  * @param <T>
- * @see EntityIterator
+ * @see FileEntityIterator
  */
-public class EntityIterable<T extends Entity> implements Iterable<T> {
+public class FileEntityIterable<T extends Entity> implements Iterable<T> {
 	private final FilePersistence persistence;
 	private final File file;
 	private final Predicate<T> predicate;
@@ -26,7 +26,7 @@ public class EntityIterable<T extends Entity> implements Iterable<T> {
 	 * @param predicate - The predicate for entity to pass through to determine whether they are accepted or rejected.
 	 * @param loadR - Indicates if all entity references should be loaded during predicate evaluation or after predicate evaluation.
 	 */
-	public EntityIterable(FilePersistence persistence, File file, Predicate predicate, boolean loadR) {
+	public FileEntityIterable(FilePersistence persistence, File file, Predicate predicate, boolean loadR) {
 		this.persistence = persistence;
 		this.file = file;
 		this.predicate = predicate;
@@ -34,9 +34,9 @@ public class EntityIterable<T extends Entity> implements Iterable<T> {
 	}
 
 	@Override
-	public EntityIterator<T> iterator() {
+	public FileEntityIterator<T> iterator() {
 		try {
-			return new EntityIterator<T>(persistence, file, predicate, loadR);
+			return new FileEntityIterator<T>(persistence, file, predicate, loadR);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

@@ -12,9 +12,9 @@ import model.OrderStatus;
 import model.Reservation;
 import model.ReservationStatus;
 import model.ServiceOrder;
+import persistence.EntityIterator;
 import persistence.Persistence;
 import persistence.Predicate;
-import persistence.file.text.EntityIterator;
 import view.Options;
 import view.View;
 
