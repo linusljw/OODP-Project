@@ -258,7 +258,7 @@ public class RoomController extends EntityController<Room> {
 	/**
 	 * Prompts the user to enter relevant information to update Room status.
 	 */
-	public void updateStatus(View view) throws Exception {
+	private void updateStatus(View view) throws Exception {
 		Room room = select(view);
 		
 		if (room != null) {
