@@ -5,7 +5,20 @@ package persistence;
  * @author YingHao
  */
 public enum CascadeType {
-	Create, Update, Delete;
+	/**
+	 * Indicates that entity reference should be created if it does not yet exist.
+	 */
+	Create, 
+	
+	/**
+	 * Indicates that entity reference should be updated if it exist.
+	 */
+	Update, 
+	
+	/**
+	 * Indicates that entity reference should be deleted if it exist.
+	 */
+	Delete;
 	
 	/**
 	 * Test if an array of cascade type can perform the given cascade operation.
