@@ -122,7 +122,7 @@ public class RoomDescription extends Entity {
 	
 	/**
 	 * Sets the fields of the specified {@link RoomDescription} instance to be similar to the fields of this RoomDescription instance.
-	 * @param address
+	 * @param desc
 	 */
 	public void set(RoomDescription desc) {
 		desc.setBedType(this.bedType);

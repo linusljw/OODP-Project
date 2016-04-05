@@ -11,7 +11,7 @@ import view.View;
 
 /**
  * BillInformation is a auxiliary class for classes that wish to manipulate a {@link BillingInformation}
- * instance. It provides a single method {@link BillValidator#update(View, BillingInformation)} to update the provided {@link BillingInformation} instance. 
+ * instance. It provides a single method {@link BillingInformationValidator#update(View, BillingInformation)} to update the provided {@link BillingInformation} instance. 
  * @author YingHao
  */
 public class BillingInformationValidator {
